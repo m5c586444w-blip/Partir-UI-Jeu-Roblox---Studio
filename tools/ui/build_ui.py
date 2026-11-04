@@ -819,6 +819,16 @@ def ping_marker():
     ], "repère de ping (7.8) ; DÉFAUT : nom")
 
 
+def creature_debug():
+    # 9.13 : outil de test (Studio seulement), désactivé par défaut ; F8 l'affiche
+    el = billboard("CreatureDebug", (0, 360, 0, 160), [0, 8, 0], [
+        label("Info", (0, 0, 1, 1), align="Left", valign="Top"),
+    ], "9.13 : texte écrit par AI/CreatureDebug ; F8 (CreatureDebugController)")
+    el.props["Enabled"] = False
+    el.props["MaxDistance"] = 300
+    return el
+
+
 def name_tag():
     return billboard("NameTag", (0, 160, 0, 30), [0, 3, 0], [
         label("PlayerName", (0, 0, 1, 1), align="Center"),
@@ -952,7 +962,7 @@ def main():
             walk(gui, gui.name, rows, missing, gui.controller)
             all_rows.append((section, where, gui.name, gui.controller, rows))
             all_missing.extend(missing)
-    templates = [ping_marker(), name_tag()]
+    templates = [ping_marker(), name_tag(), creature_debug()]
     for el in templates:
         write_model(el, os.path.join(OUT, "UITemplates"))
         rows, missing = [], []

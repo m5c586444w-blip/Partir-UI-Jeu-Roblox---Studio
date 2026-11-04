@@ -1,0 +1,82 @@
+{
+  "className": "BillboardGui",
+  "properties": {
+    "Size": {
+      "UDim2": [
+        [
+          0,
+          360
+        ],
+        [
+          0,
+          160
+        ]
+      ]
+    },
+    "StudsOffset": [
+      0,
+      8,
+      0
+    ],
+    "AlwaysOnTop": true,
+    "LightInfluence": 0,
+    "ResetOnSpawn": false,
+    "Enabled": false,
+    "MaxDistance": 300
+  },
+  "children": [
+    {
+      "name": "Info",
+      "className": "TextLabel",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Left",
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        "TextYAlignment": "Top"
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        }
+      ]
+    }
+  ]
+}

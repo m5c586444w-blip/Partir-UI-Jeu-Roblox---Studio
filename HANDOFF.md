@@ -12,6 +12,8 @@ Section 18.1 ter de la bible.
   objets, inventaire, lampes, tablette, documents, preuves, armes ; contrôleurs client de la Partie.
 - A4 : actes, horloge, siège, extractions E1–E4, fins, cinématiques, météo, ambiance ;
   lobby complet côté scripts (groupe, rôles, armes, votes, CS_01, résultats).
+- A5 : IA de la famille (dossier `ServerScriptService/AI`), directeur de tension, événements
+  inexpliqués, outil `CreatureDebug` (F8 en Studio) ; objets `Animation` vides (section 14).
 - Images d'interface dans `assets/ui/png` (vignettage de peur, 41 icônes) : à importer.
 
 ## Ce que la phase A n'a pas pu vérifier
@@ -90,6 +92,15 @@ dans l'ordre de 2.5. Sans terrain, poser d'abord la plaque provisoire sous S1 (�
   `P05c/Door`, `P05c/Window`, `P05c/RoofHole` (sinon ancres invisibles aux coordonnées de la bible).
 - Accélérer un test : réduire temporairement les durées dans `Config/ActConfig.Acts` (ne pas commit).
 - Fin attendue : cinématique de fin, `RE_EndGame`, retour au Lobby et `ResultsGui`.
+
+## Tests de J10 à J12 (IA)
+
+- Sans modèle `ServerStorage/Creatures/CRT_Alpha`, une capsule `MANQUANT_CRT_Alpha` de 10 studs la remplace (J10).
+- F8 en Studio : comportement, cible, scores, vigilance, chemin, tension au-dessus de chaque créature.
+- À poser dans Studio : Part taguées `ClimbPoint` (paires bas/haut, 9.11 ; l'escalade reste à brancher),
+  `StoneTree` (3 arbres à pierres, 9.1), `Foliage` sur le feuillage (ne bloque pas la vue, 9.4),
+  `CreatureNav` (nœuds en plus) ; volumes `PathfindingModifier` nommés `Cover`, `Trail`, `Forbidden` (9.11).
+- Coller les identifiants des animations dans `ReplicatedStorage/Animations/Creature/ANIM_Creature_*`.
 
 ## Commandes
 

@@ -59,4 +59,44 @@ for _, name in ORDER do
 	end
 end
 
+-- 16.1 : modules de ServerScriptService/AI (IA de la créature), après les services
+local AI_ORDER = {
+	"NavGraph",
+	"Perception",
+	"CreatureAnimator",
+	"MimicService",
+	"TensionDirector",
+	"EventDirector",
+	"FamilyBrain",
+	"CreatureDebug",
+}
+local aiFolder = ServerScriptService:WaitForChild("AI")
+local aiModules = {}
+for _, name in AI_ORDER do
+	local module = aiFolder:FindFirstChild(name)
+	if module == nil then
+		warn("Bootstrap : module d'IA manquant : AI/" .. name)
+	else
+		aiModules[name] = require(module)
+	end
+end
+for _, name in AI_ORDER do
+	local module = aiModules[name]
+	if module and module.Init then
+		local ok, err = pcall(module.Init, module, services, aiModules)
+		if not ok then
+			warn("Bootstrap : échec de AI/" .. name .. ".Init : " .. tostring(err))
+		end
+	end
+end
+for _, name in AI_ORDER do
+	local module = aiModules[name]
+	if module and module.Start then
+		local ok, err = pcall(module.Start, module)
+		if not ok then
+			warn("Bootstrap : échec de AI/" .. name .. ".Start : " .. tostring(err))
+		end
+	end
+end
+
 print("Bootstrap (Partie) : services démarrés")

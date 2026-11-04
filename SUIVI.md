@@ -11,7 +11,7 @@ seulement pour que le code tourne : elle attend la bible.
 ## État de reprise (à lire en premier)
 
 - Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- Phases terminées dans cette session : **A3, A4**. En cours : A5. Restent : A6, A7, A8.
+- Phases terminées dans cette session : **A3, A4, A5**. En cours : A6. Restent : A7, A8.
 - Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
   puis `rojo build` des deux places.
@@ -65,6 +65,23 @@ images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script
 - `Lighting.Technology = Future` dans le projet Partie (12.1).
 - Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build des deux places réussi.
 
+**Phase A5 (J10, J11, J12)** — fait :
+- Config : `CreatureConfig` (section 9 complète), `DirectorConfig` (9.12 et catalogue 10.2).
+- `ServerScriptService/AI` (16.1) : `NavGraph` (nœuds tous les 200 studs + un par lieu, A*),
+  `Perception` (vue, cône, périphérie, vigilance, ouïe et atténuations, odorat selon le vent, lumière,
+  visibilité 7.6), `CreatureBrain` (corps ou capsule `MANQUANT_<ID>` de 10/8/9 studs, simulation à
+  distance au-delà de 600 studs, PathfindingService avec les coûts de 9.11, allures et sprint,
+  régénération, choix par utilité avec ×1,25 et durées minimales), 16 comportements `Behaviors/BHV_*`,
+  7 attaques `Attacks/ATK_*` (signal sonore avant les dégâts, × difficulté), `FamilyBrain`
+  (présence selon 5.5, femelle au repaire, personnalité de l'Alpha, cible 9.7 toutes les 2 s, échelle
+  d'intimidation 9.6, coordination, lisibilité ≤ 2 créatures visibles, parades, empreintes, capacité
+  du Pisteur), `TensionDirector` (T, intensité, montée, pic, règles des actes 1 à 4), `EventDirector`
+  (EVT_01–22, règles de 10.1), `MimicService` (sons préenregistrés, repérage par l'Opératrice),
+  `CreatureDebug` (Studio, F8) ; `Bootstrap` charge le dossier AI après les services.
+- Client : `CreatureDebugController` (F8 ; empreintes fraîches en surbrillance pour le Pisteur).
+- Objets `Animation` vides de la section 14 (56 joueur, 41 créature) : `tools/animations/build_animations.py`.
+- Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
+
 Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
 décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
 caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
@@ -89,8 +106,8 @@ sont pas encore importés.
 | A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | Fait — à tester en B |
 | A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | Fait (code) — à tester en B |
 | A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | Fait (code) — à tester en B |
-| A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | En cours |
-| A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | À faire |
+| A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | Fait (code) — à tester et régler en B |
+| A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | En cours |
 | A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | À faire |
 | A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | À faire |
 | B1 | Studio | J2, J3 | Lancer `TerrainBuilder`, vérifier les positions, poser la végétation | À faire |
@@ -106,6 +123,9 @@ En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié 
 - J6 : [ ] chaque valeur de la section 7 vérifiable dans `CreatureDebug` ou la console — les valeurs sont toutes dans `PlayerConfig` et lisibles en attributs du joueur ; `CreatureDebug` vient en A5
 - J7 : [ ] 6 indices sur 12 tirés (code) · [ ] graine affichée (code : console de `ItemSpawnService`) · [ ] preuves sauvegardées après extraction (code : `EvidenceService:CommitForSurvivor`, appelé par l'extraction en A4)
 - J8 : [ ] tir impossible sans munitions (code) · [ ] cadence respectée (code) · [ ] tir allié seulement en Difficile et Cauchemar (code)
+- J10 : [ ] elle suit un joueur bruyant (code : ouïe + cible) · [ ] perd un joueur couché dans les fougères (code : visibilité ×0,1, invisible au-delà de 10 studs) · [ ] grimpe par les `ClimbPoint` (non fait : escalade à brancher quand les falaises et les points existeront, phase B1)
+- J11 : [ ] chaque comportement observé au moins une fois en test (16 comportements écrits) · [ ] aucune attaque sans signal (code : chaque ATK_ attend son signal)
+- J12 : [ ] aucun mort en acte 1 hors exceptions (code : `TensionDirector:AllowAttack`) · [ ] au moins un temps fort par acte (code partiel : CS_03 et 2 signes garantis en acte 1 ; acte 3 « au moins 2 tentatives » compté mais pas forcé)
 - J9 : [ ] une partie complète jouable sans créature, de CS_02 à l'écran de résultats (code ; plans de caméra à poser dans Studio, sinon bandes et texte seuls)
 
 ## Questions encore ouvertes (TODO(BIBLE))
@@ -142,6 +162,13 @@ phases A ; ces points bloquent le réglage final.
 | C25 | Textes de fin pour `ResultsGui > EndingText` (seul Silence en a un). | `LoreConfig.Endings` | Vides |
 | C26 | Rayon du bruit du démarrage du van (E1, « démarrage bruyant »). | `ActConfig.Routes.E1` | Pas de bruit |
 | C27 | Durée d'une rafale de vent. | `AmbienceConfig.GustDuration` | PROVISOIRE : 1 s |
+| C28 | Position des 3 « arbres à pierres » fixes (9.1). | `CreatureConfig.StoneTreeTag` | Part taguées `StoneTree` à poser |
+| C29 | « Hors combat » (régénération) : combien de secondes sans dégâts ? | `CreatureConfig.OutOfCombatAfter` | PROVISOIRE : 10 s |
+| C30 | Vitesse d'une pierre lancée, force du recul de ATK_Strike. | `CreatureConfig` | PROVISOIRE : 80 studs/s, 40 |
+| C31 | « Lance plus » après 2 tirs reçus (9.8) : de combien ? | `CreatureConfig.Memory.ThrowMoreFactor` | PROVISOIRE : ×1,5 |
+| C32 | Catalogue « bas » du directeur (10) : quels événements ? | `DirectorConfig.LowCatalog` | PROVISOIRE : tous |
+| C33 | Distances « au loin » et « tout près » des événements. | `DirectorConfig` | PROVISOIRE : 150 et 15 studs |
+| C34 | Cadence des pierres du siège (= C20). | `ActConfig.Siege.StoneInterval` | PROVISOIRE : 4 s par créature |
 
 Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
 bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
@@ -184,6 +211,18 @@ Actes, extractions, lobby (A4) :
 - Cauchemar : seul un joueur qui l'a débloqué peut voter pour.
 - CS_00 joue tant que le joueur n'a joué aucune partie (`plays = 0`) ; compteurs `xp`, `plays`, `survivals`, `nightmareUnlocked` publiés en attributs.
 - Formats : heure « 19 h 00 », XP « +250 XP », preuve « A · Carte mémoire · Theo » ; statuts « Extrait », « Mort », « Disparu » (5.1).
+
+IA (A5) :
+- Scores des comportements (`baseScore`) : la bible donne les conditions, pas les valeurs ; score = `baseScore` quand la condition est pleinement remplie (à régler en B3). Retreat, Siege, Guard et Avoid interrompent le comportement en cours.
+- Famille au départ au repaire (P07a ; femelle en P07b) ; éclaireurs : jamais dans les tunnels.
+- Un bruit entendu fait tourner la tête (vigilance ≥ 0,3) ; un coup de feu → 1,0 (9.4) ; l'odorat donne la position (≥ 0,7).
+- « À découvert » (7.6) = P02, P06, P08, P12 ; ailleurs, forêt.
+- Les coefficients météo de 7.6 (visibilité du joueur) et de 9.4 (portée) sont appliqués tous les deux, comme écrits.
+- Échelle 9.6 : un cran par activation de BHV_Intimidate ; plus de 5 min après le cran précédent, l'échelle repart du bas ; fausse charge 60 % sans lampe, sinon vraie charge.
+- Lisibilité : au-delà de 2 créatures visibles, les plus lointaines reculent brièvement.
+- Pisteur : direction de la créature la plus proche en attribut `trackerDirection` (degrés depuis le nord) ; Opératrice : `mimicDirection` (pas d'élément d'UI prévu en 15 pour les afficher).
+- Empreintes : plaques grises (décalque à créer), une tous les 6 studs, retirées après 300 s.
+- Simulation à distance : déplacement en ligne sur le graphe ; le corps réapparaît quand aucun joueur ne regarde le point.
 
 ## Assets MANQUANT_
 

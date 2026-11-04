@@ -718,3 +718,10 @@ Lu par `NotificationController`.
 | --- | --- | --- | --- | --- |
 | `NameTag` | BillboardGui | — |  | nom au-dessus de la tête ; DÉFAUT : nom |
 | `NameTag/PlayerName` | TextLabel | — |  |  |
+
+### CreatureDebug — ReplicatedStorage/UITemplates (les deux places), section 15.5
+
+| Chemin | Classe | Statut | Texte de départ | Remarque |
+| --- | --- | --- | --- | --- |
+| `CreatureDebug` | BillboardGui | — |  | 9.13 : texte écrit par AI/CreatureDebug ; F8 (CreatureDebugController) |
+| `CreatureDebug/Info` | TextLabel | — |  |  |

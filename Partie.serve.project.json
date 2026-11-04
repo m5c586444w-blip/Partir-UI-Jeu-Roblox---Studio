@@ -19,13 +19,7 @@
         }
       },
       "Animations": {
-        "$className": "Folder",
-        "Player": {
-          "$className": "Folder"
-        },
-        "Creature": {
-          "$className": "Folder"
-        }
+        "$path": "src/shared/Animations"
       },
       "Characters": {
         "$className": "Folder"
@@ -53,13 +47,7 @@
         }
       },
       "AI": {
-        "$className": "Folder",
-        "Behaviors": {
-          "$className": "Folder"
-        },
-        "Attacks": {
-          "$className": "Folder"
-        }
+        "$path": "src/server/Partie/AI"
       }
     },
     "StarterPlayer": {

@@ -50,8 +50,8 @@ ActConfig.Siege = {
 	PlankImpacts = 4, -- une planche reçoit 4 impacts avant de céder
 	SilenceAfter = 20, -- silence total 20 s, puis CS_07
 	NotebookPageUnlocked = 2,
-	-- TODO(BIBLE): cadence des pierres pendant le siège (impacts par minute) — réglée au jalon J11/J12
-	StoneInterval = nil,
+	-- TODO(BIBLE): cadence des pierres pendant le siège. PROVISOIRE : une pierre toutes les 4 s par créature
+	StoneInterval = 4,
 }
 
 -- 5.2 : acte 3 — voie principale tirée parmi E1, E2, E3 ; E4 ouverte si DOC_07 a été lu

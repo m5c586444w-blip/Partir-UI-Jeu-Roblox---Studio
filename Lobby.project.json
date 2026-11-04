@@ -19,13 +19,7 @@
         }
       },
       "Animations": {
-        "$className": "Folder",
-        "Player": {
-          "$className": "Folder"
-        },
-        "Creature": {
-          "$className": "Folder"
-        }
+        "$path": "src/shared/Animations"
       },
       "Characters": {
         "$className": "Folder"
