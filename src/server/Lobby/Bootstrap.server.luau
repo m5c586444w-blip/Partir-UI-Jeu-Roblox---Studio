@@ -14,6 +14,11 @@ local ORDER = {
 	"RoleService",
 	"WeaponBoardService",
 	"VoteService",
+	"LobbyPrompts",
+	"DialogueService",
+	"MuseumService",
+	"SkinService",
+	"RecordsService",
 }
 
 local services = {}

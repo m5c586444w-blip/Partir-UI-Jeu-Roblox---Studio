@@ -205,6 +205,7 @@ PlayerConfig.Keys = {
 	Ping = Enum.KeyCode.G,
 	Bag = Enum.KeyCode.B,
 	Ability = Enum.KeyCode.V,
+	Settings = Enum.KeyCode.P, -- DÉFAUT : ouvre SettingsGui (Échap est le menu Roblox)
 	Slots = { Enum.KeyCode.One, Enum.KeyCode.Two, Enum.KeyCode.Three, Enum.KeyCode.Four },
 	GamepadSprint = Enum.KeyCode.ButtonL3,
 	GamepadCrouch = Enum.KeyCode.ButtonB,

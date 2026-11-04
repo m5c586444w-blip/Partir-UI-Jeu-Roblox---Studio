@@ -27,6 +27,7 @@ local ORDER = {
 	"WeatherService",
 	"ExtractionService",
 	"GameStateService",
+	"GoreService",
 }
 
 local services = {}

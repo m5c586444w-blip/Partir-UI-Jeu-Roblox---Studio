@@ -16,6 +16,9 @@
         },
         "RE_PlayCinematic": {
           "$path": "src/shared/Remotes/Common/RE_PlayCinematic.model.json"
+        },
+        "RE_SaveSettings": {
+          "$path": "src/shared/Remotes/Common/RE_SaveSettings.model.json"
         }
       },
       "Animations": {
@@ -57,6 +60,9 @@
           },
           "NotificationController": {
             "$path": "src/client/Common/Controllers/NotificationController.luau"
+          },
+          "SettingsController": {
+            "$path": "src/client/Common/Controllers/SettingsController.luau"
           }
         }
       }

@@ -14,6 +14,8 @@ Section 18.1 ter de la bible.
   lobby complet côté scripts (groupe, rôles, armes, votes, CS_01, résultats).
 - A5 : IA de la famille (dossier `ServerScriptService/AI`), directeur de tension, événements
   inexpliqués, outil `CreatureDebug` (F8 en Studio) ; objets `Animation` vides (section 14).
+- A6 : gore (deux profils, `GoreConfig.Profile`), musée, dialogue du ranger, skins, records,
+  tableau des preuves, menu Réglages (touche P).
 - Images d'interface dans `assets/ui/png` (vignettage de peur, 41 icônes) : à importer.
 
 ## Ce que la phase A n'a pas pu vérifier
@@ -101,6 +103,13 @@ dans l'ordre de 2.5. Sans terrain, poser d'abord la plaque provisoire sous S1 (�
   `StoneTree` (3 arbres à pierres, 9.1), `Foliage` sur le feuillage (ne bloque pas la vue, 9.4),
   `CreatureNav` (nœuds en plus) ; volumes `PathfindingModifier` nommés `Cover`, `Trail`, `Forbidden` (9.11).
 - Coller les identifiants des animations dans `ReplicatedStorage/Animations/Creature/ANIM_Creature_*`.
+
+## Lobby (J14) à poser dans Studio
+
+Ville du lobby (4.1) : Part taguées `RangerHollis` (L02), `MuseumPanel` ×8 avec l'attribut `panelId`
+= M1…M8 (L03), `EvidenceBoard` (L03), `SkinShop` (L04), `RecordsBoard` (L05) ; `SpawnLocation` en
+L01 (0, 5, 120). Sans elles, des ancres invisibles sont créées aux positions de 4.1.
+Créer dans `SoundService` les `SoundGroup` Ambience, Voice, Music, Effects (réglages 17.2).
 
 ## Commandes
 

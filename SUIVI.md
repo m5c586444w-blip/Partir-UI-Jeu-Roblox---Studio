@@ -11,7 +11,7 @@ seulement pour que le code tourne : elle attend la bible.
 ## État de reprise (à lire en premier)
 
 - Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- Phases terminées dans cette session : **A3, A4, A5**. En cours : A6. Restent : A7, A8.
+- Phases terminées dans cette session : **A3, A4, A5, A6**. En cours : A7. Reste : A8.
 - Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
   puis `rojo build` des deux places.
@@ -82,6 +82,20 @@ images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script
 - Objets `Animation` vides de la section 14 (56 joueur, 41 créature) : `tools/animations/build_animations.py`.
 - Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
 
+**Phase A6 (J13, J14 scripts)** — fait :
+- `GoreConfig` (section 11 : deux profils, démembrement, flaques, plafonds 17.3), `GoreService`
+  (DÉFAUT, démembrement en Restricted, variantes des corps des géologues), `GoreController`
+  (jet court, flaques par rayon, plafond selon le préréglage, option « Gore réduit », noir de la mise à mort).
+- Lobby : `LobbyPrompts` (DÉFAUT : invites du ranger, des 8 panneaux, du magasin, du diner, du tableau
+  des preuves), `DialogueService` + `DialogueController` (4.2), `MuseumService` + `MuseumController`
+  (4.3, 5 XP la première lecture), `SkinService` + `SkinShopController` (7.1 : A, B après 5 parties,
+  C après 1 survie ; aperçu en ViewportFrame), `RecordsService` + `RecordsController` (4.5),
+  `EvidenceBoardController` (preuves personnelles et pages du carnet).
+- Réglages : `ProgressionConfig.Settings` (17.2, défauts PC / mobile) et `Presets` (17.3),
+  `SettingsController` (les deux places), remote `RE_SaveSettings` (DÉFAUT), validation par `DataService`.
+- Textes recopiés : dialogue du ranger (4.2), 8 panneaux du musée (4.3), plan du lobby (4.1, `MapConfig.Lobby`).
+- Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
+
 Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
 décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
 caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
@@ -107,8 +121,8 @@ sont pas encore importés.
 | A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | Fait (code) — à tester en B |
 | A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | Fait (code) — à tester en B |
 | A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | Fait (code) — à tester et régler en B |
-| A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | En cours |
-| A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | À faire |
+| A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | Fait (code) — à tester en B |
+| A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | En cours |
 | A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | À faire |
 | B1 | Studio | J2, J3 | Lancer `TerrainBuilder`, vérifier les positions, poser la végétation | À faire |
 | B2 | Studio | J4 | Lumière, brouillard, météo, sons : réglage à l'œil, captures | À faire |
@@ -126,6 +140,8 @@ En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié 
 - J10 : [ ] elle suit un joueur bruyant (code : ouïe + cible) · [ ] perd un joueur couché dans les fougères (code : visibilité ×0,1, invisible au-delà de 10 studs) · [ ] grimpe par les `ClimbPoint` (non fait : escalade à brancher quand les falaises et les points existeront, phase B1)
 - J11 : [ ] chaque comportement observé au moins une fois en test (16 comportements écrits) · [ ] aucune attaque sans signal (code : chaque ATK_ attend son signal)
 - J12 : [ ] aucun mort en acte 1 hors exceptions (code : `TensionDirector:AllowAttack`) · [ ] au moins un temps fort par acte (code partiel : CS_03 et 2 signes garantis en acte 1 ; acte 3 « au moins 2 tentatives » compté mais pas forcé)
+- J13 : [ ] bascule Restricted / Moderate sans erreur (code : `GoreConfig.Profile`) · [ ] limites fixes respectées (11.3 : aucun organe, aucun gros plan, aucun ralenti, aucune torture — rien de tel n'est codé)
+- J14 : [ ] les 8 panneaux lisibles avec sources (textes recopiés ; adresses sources manquantes, C36) · [ ] déblocages corrects (code)
 - J9 : [ ] une partie complète jouable sans créature, de CS_02 à l'écran de résultats (code ; plans de caméra à poser dans Studio, sinon bandes et texte seuls)
 
 ## Questions encore ouvertes (TODO(BIBLE))
@@ -169,6 +185,11 @@ phases A ; ces points bloquent le réglage final.
 | C32 | Catalogue « bas » du directeur (10) : quels événements ? | `DirectorConfig.LowCatalog` | PROVISOIRE : tous |
 | C33 | Distances « au loin » et « tout près » des événements. | `DirectorConfig` | PROVISOIRE : 150 et 15 studs |
 | C34 | Cadence des pierres du siège (= C20). | `ActConfig.Siege.StoneInterval` | PROVISOIRE : 4 s par créature |
+| C35 | **19.4 bloquant** : profil publié, Restricted (18+ vérifié) ou Moderate ? | `GoreConfig.Profile` | PROVISOIRE : Moderate |
+| C36 | Adresse « Source » de chaque panneau du musée (4.3). | `LoreConfig.Museum` | Vides |
+| C37 | Plage de la sensibilité (17.2 : « — »). | `ProgressionConfig.Settings.Sensitivity` | PROVISOIRE : 0,1 à 3 |
+| C38 | Déblocage des accessoires (bonnet, frontale colorée, sac, 7.1). | `ProgressionConfig.SkinUnlocks` | Non fait |
+| C39 | Taille d'une flaque et d'une petite tache de sang. | `GoreConfig.PoolSize` | PROVISOIRE : 4 et 1,5 studs |
 
 Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
 bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
@@ -223,6 +244,14 @@ IA (A5) :
 - Pisteur : direction de la créature la plus proche en attribut `trackerDirection` (degrés depuis le nord) ; Opératrice : `mimicDirection` (pas d'élément d'UI prévu en 15 pour les afficher).
 - Empreintes : plaques grises (décalque à créer), une tous les 6 studs, retirées après 300 s.
 - Simulation à distance : déplacement en ligne sur le graphe ; le corps réapparaît quand aucun joueur ne regarde le point.
+
+Gore, lobby, réglages (A6) :
+- `GoreService` ajouté (16.2 ne nomme pas de service pour le gore) ; corps des géologues : enfants « Restricted » et « Moderate » des modèles `Body_*`, posés dans Studio ; flaques et taches en plaques rouge sombre tant que `Decal_Blood_Pool` manque.
+- En Moderate, pas de mise à mort : BHV_Drag emporte le joueur à terre (11.2).
+- Invites du lobby : `LobbyPrompts` (ajouté) ; ancres taguées `RangerHollis`, `MuseumPanel` (attribut `panelId`), `SkinShop`, `RecordsBoard`, `EvidenceBoard`, sinon ancres invisibles aux positions 4.1 ; libellés « Tenues », « Records », « Preuves » ; les fenêtres se ferment en s'éloignant.
+- Records « du serveur » = joueurs présents sur ce serveur du lobby, une ligne par joueur.
+- Réglages : touche P ; option choisie marquée « • » dans son texte ; valeur des curseurs dans `Value` ; seules les valeurs changées sont enregistrées ; volumes appliqués aux `SoundGroup` nommés Ambience, Voice, Music, Effects (à créer dans Studio).
+- Données publiées en attributs JSON pour l'interface : `settingsJson`, `evidenceJson`, `notebookPagesJson`, `museumReadJson`, `skinsJson`, `equippedJson`, `endingsJson`.
 
 ## Assets MANQUANT_
 

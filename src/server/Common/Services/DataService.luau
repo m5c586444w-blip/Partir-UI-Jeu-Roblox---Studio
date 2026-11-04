@@ -63,7 +63,8 @@ local function buildDefaultData()
 		notebookPages = Util.deepCopy(ProgressionConfig.DefaultNotebookPages),
 		museumRead = museumRead,
 		nightmareUnlocked = false,
-		-- TODO(J15): valeurs par défaut des réglages de la section 17.2 (Défaut PC / mobile)
+		-- 17.2 : les défauts PC / mobile sont appliqués par le client (SettingsController) ; seules les
+		-- valeurs changées par le joueur sont enregistrées
 		settings = {},
 	}
 end
@@ -130,10 +131,39 @@ end
 
 -- DÉFAUT : quelques compteurs publiés en attributs pour l'interface (lecture seule côté client)
 local PUBLISHED = { "xp", "plays", "survivals", "nightmareUnlocked" }
+local PUBLISHED_JSON = { "settings", "evidence", "notebookPages", "museumRead", "skins", "equipped", "endings" }
 local function publishAttributes(player, data)
 	for _, key in PUBLISHED do
 		player:SetAttribute(key, data[key])
 	end
+	for _, key in PUBLISHED_JSON do
+		player:SetAttribute(key .. "Json", Util.encode(data[key]))
+	end
+end
+
+-- 17.2 : RE_SaveSettings (DÉFAUT : remote ajoutée, 16.3 n'en prévoit pas) — valeurs vérifiées
+local function validSetting(key, value)
+	local spec = ProgressionConfig.Settings[key]
+	if spec == nil then
+		return false
+	end
+	if spec.options then
+		return table.find(spec.options, value) ~= nil
+	end
+	return type(value) == "number" and value >= spec.min and value <= spec.max
+end
+
+function DataService:SaveSettings(player, values)
+	local session = sessions[player]
+	if session == nil or type(values) ~= "table" then
+		return
+	end
+	for key, value in values do
+		if type(key) == "string" and validSetting(key, value) then
+			session.data.settings[key] = value
+		end
+	end
+	publishAttributes(player, session.data)
 end
 
 local function onPlayerAdded(player)
@@ -144,6 +174,7 @@ local function onPlayerAdded(player)
 	if store == nil then
 		-- Studio sans accès aux API : données par défaut, jamais sauvegardées
 		sessions[player] = { data = buildDefaultData(), released = true }
+		publishAttributes(player, sessions[player].data)
 		player:SetAttribute("dataLoaded", true)
 		DataService.Loaded:Fire(player, sessions[player].data)
 		return
@@ -245,6 +276,15 @@ function DataService:Init()
 end
 
 function DataService:Start()
+	local settingsRemote = Util.getRemote("RE_SaveSettings")
+	if settingsRemote then
+		require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("RateLimiter")).connect(
+			settingsRemote,
+			function(player, values)
+				DataService:SaveSettings(player, values)
+			end
+		)
+	end
 	Players.PlayerAdded:Connect(onPlayerAdded)
 	for _, player in Players:GetPlayers() do
 		task.spawn(onPlayerAdded, player)

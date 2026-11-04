@@ -336,6 +336,18 @@ MapConfig.Terrain = {
 -- 8.3 : P11 et P23, une barre de réseau
 MapConfig.NetworkPlaces = { "P11", "P23" }
 
+-- 4.1 : plan du lobby (place « Lobby », 600 × 600 studs)
+MapConfig.Lobby = {
+	Size = 600,
+	L01 = { name = "Point d'apparition", pos = Vector3.new(0, 5, 120) },
+	L02 = { name = "Station des rangers", pos = Vector3.new(-80, 5, 20) },
+	L03 = { name = "Musée « Ape Canyon 1924 »", pos = Vector3.new(80, 5, 20) },
+	L04 = { name = "Magasin général", pos = Vector3.new(-80, 5, -80) },
+	L05 = { name = "Diner", pos = Vector3.new(80, 5, -80) },
+	L06 = { name = "Parking et van", pos = Vector3.new(0, 5, -180) },
+	L07 = { name = "Ponton sur le lac", pos = Vector3.new(0, 0, 260) },
+}
+
 -- position (Vector3) d'une entrée de lieu ou d'un Vector3 direct ; nil si inconnue
 function MapConfig.resolve(spot)
 	if typeof(spot) == "Vector3" then
