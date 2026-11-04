@@ -32,6 +32,9 @@
       },
       "UITemplates": {
         "$path": "src/ui/UITemplates"
+      },
+      "Credits": {
+        "$path": "src/shared/Credits.luau"
       }
     },
     "ServerScriptService": {

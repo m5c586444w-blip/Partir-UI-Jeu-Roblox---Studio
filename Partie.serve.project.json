@@ -29,6 +29,9 @@
       },
       "Items": {
         "$className": "Folder"
+      },
+      "Credits": {
+        "$path": "src/shared/Credits.luau"
       }
     },
     "ServerStorage": {
@@ -37,6 +40,9 @@
       },
       "Props": {
         "$className": "Folder"
+      },
+      "TerrainBuilder": {
+        "$path": "tools/terrain/TerrainBuilder.luau"
       }
     },
     "ServerScriptService": {

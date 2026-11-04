@@ -331,6 +331,27 @@ MapConfig.Terrain = {
 		},
 	},
 	SwiftReservoirZ = 4600, -- 3.8 : plan d'eau décoratif au-delà
+	-- TODO(BIBLE): largeur des gorges (Ape Canyon, Lava Canyon). PROVISOIRE : demi-largeurs 60 et 40 studs.
+	ApeCanyonHalfWidth = 60,
+	LavaCanyonHalfWidth = 40,
+	-- TODO(BIBLE): niveau du plan d'eau du réservoir Swift (3.8). PROVISOIRE : le bas de la pente (Y = 40).
+	ReservoirLevel = 40,
+	-- DÉFAUT (technique) : maille de calcul du relief, blocs écrits par TerrainBuilder, bloc gris par lieu,
+	-- hauteur du mur invisible des limites
+	Cell = 8,
+	WriteChunk = 256,
+	PlaceBlockSize = 6,
+	WallHeight = 2000,
+	Materials = {
+		-- 3.6 : sol par biome (premier matériau) ; routes et sentiers (3.5)
+		Default = "Grass",
+		Cliff = "Rock",
+		GorgeCliff = "Basalt",
+		Road = "Asphalt",
+		Gravel = "Pebble",
+		Trail = "Ground",
+		AshColor = Color3.fromHex("#7A7670"),
+	},
 }
 
 -- 8.3 : P11 et P23, une barre de réseau

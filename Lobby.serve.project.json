@@ -29,6 +29,9 @@
       },
       "Items": {
         "$className": "Folder"
+      },
+      "Credits": {
+        "$path": "src/shared/Credits.luau"
       }
     },
     "ServerScriptService": {

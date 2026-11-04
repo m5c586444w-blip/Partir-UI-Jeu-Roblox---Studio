@@ -11,7 +11,7 @@ seulement pour que le code tourne : elle attend la bible.
 ## État de reprise (à lire en premier)
 
 - Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- Phases terminées dans cette session : **A3, A4, A5, A6**. En cours : A7. Reste : A8.
+- Phases terminées dans cette session : **A3, A4, A5, A6, A7**. En cours : A8.
 - Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
   puis `rojo build` des deux places.
@@ -96,6 +96,18 @@ images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script
 - Textes recopiés : dialogue du ranger (4.2), 8 panneaux du musée (4.3), plan du lobby (4.1, `MapConfig.Lobby`).
 - Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
 
+**Phase A7 (préparation de J2)** — fait :
+- `tools/terrain/TerrainBuilder.luau` (→ `ServerStorage/TerrainBuilder` de la Partie) : les 9 étapes de
+  3.7 avec la graine 1924 (relief gaussien + pente, bruit fractal 5 octaves et crêtes, gorges, rivières à
+  fond descendant, lieux aplanis, routes et sentiers à pente bornée, F01, lac P20 et réservoir Swift,
+  matériaux par pente et biome, eau), un bloc gris par lieu (`Workspace/Places/Pxx_<Nom>`), murs
+  invisibles à ±4 000 ; `Vegetation()` séparé (modèles de 13.3 à importer d'abord).
+- `BoundaryController` : message de 3.8 à ±3 900.
+- Textures Poly Haven de 13.4 téléchargées en 1k (couleur, normale, rugosité) dans `assets/terrain/` par
+  `tools/terrain/download_polyhaven.py` ; crédits dans `ReplicatedStorage/Credits` (`src/shared/Credits.luau`).
+- Non exécuté ici : TerrainBuilder ne tourne que dans Studio (phase B1).
+- Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
+
 Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
 décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
 caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
@@ -122,8 +134,8 @@ sont pas encore importés.
 | A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | Fait (code) — à tester en B |
 | A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | Fait (code) — à tester et régler en B |
 | A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | Fait (code) — à tester en B |
-| A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | En cours |
-| A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | À faire |
+| A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | Fait — à lancer en B1 |
+| A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | En cours |
 | B1 | Studio | J2, J3 | Lancer `TerrainBuilder`, vérifier les positions, poser la végétation | À faire |
 | B2 | Studio | J4 | Lumière, brouillard, météo, sons : réglage à l'œil, captures | À faire |
 | B3 | Studio | J0, J15 | Import des modèles 3D et animations, tests en jeu, mobile, équilibrage | À faire |
@@ -190,6 +202,9 @@ phases A ; ces points bloquent le réglage final.
 | C37 | Plage de la sensibilité (17.2 : « — »). | `ProgressionConfig.Settings.Sensitivity` | PROVISOIRE : 0,1 à 3 |
 | C38 | Déblocage des accessoires (bonnet, frontale colorée, sac, 7.1). | `ProgressionConfig.SkinUnlocks` | Non fait |
 | C39 | Taille d'une flaque et d'une petite tache de sang. | `GoreConfig.PoolSize` | PROVISOIRE : 4 et 1,5 studs |
+| C40 | Largeur des gorges d'Ape Canyon et de Lava Canyon (3.7 donne la profondeur). | `MapConfig.Terrain` | PROVISOIRE : demi-largeurs 60 et 40 |
+| C41 | Niveau du réservoir Swift (3.8). | `MapConfig.Terrain.ReservoirLevel` | PROVISOIRE : 40 |
+| C42 | Lacets de T3 sous F01 : tracé non donné ; TerrainBuilder borne seulement la pente. | `TerrainBuilder` | À tracer en B1 |
 
 Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
 bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
@@ -252,6 +267,11 @@ Gore, lobby, réglages (A6) :
 - Records « du serveur » = joueurs présents sur ce serveur du lobby, une ligne par joueur.
 - Réglages : touche P ; option choisie marquée « • » dans son texte ; valeur des curseurs dans `Value` ; seules les valeurs changées sont enregistrées ; volumes appliqués aux `SoundGroup` nommés Ambience, Voice, Music, Effects (à créer dans Studio).
 - Données publiées en attributs JSON pour l'interface : `settingsJson`, `evidenceJson`, `notebookPagesJson`, `museumReadJson`, `skinsJson`, `equippedJson`, `endingsJson`.
+
+Terrain (A7) :
+- Colline gaussienne : `exp(−(dx² / rx² + dz² / rz²))`, rayon de l'ancre = écart de la gaussienne ; crêtes = ancres dont le nom contient « Crête ».
+- Maille de calcul 8 studs, écriture par blocs de 256 studs ; F01 = marche de 40 sur la bande juste au sud de Z = −800 ; lieux souterrains (P07b) non aplanis.
+- Végétation : un seul biome par bloc de 512 studs (celui du centre) ; modèles cherchés par préfixe (`Tree_DouglasFir` → `Tree_DouglasFir_A`…).
 
 ## Assets MANQUANT_
 

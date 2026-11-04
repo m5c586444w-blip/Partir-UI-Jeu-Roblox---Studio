@@ -16,6 +16,8 @@ Section 18.1 ter de la bible.
   inexpliqués, outil `CreatureDebug` (F8 en Studio) ; objets `Animation` vides (section 14).
 - A6 : gore (deux profils, `GoreConfig.Profile`), musée, dialogue du ranger, skins, records,
   tableau des preuves, menu Réglages (touche P).
+- A7 : `ServerStorage/TerrainBuilder` (terrain de 3.7, prêt à lancer), textures Poly Haven dans
+  `assets/terrain/`, crédits dans `ReplicatedStorage/Credits`.
 - Images d'interface dans `assets/ui/png` (vignettage de peur, 41 icônes) : à importer.
 
 ## Ce que la phase A n'a pas pu vérifier
