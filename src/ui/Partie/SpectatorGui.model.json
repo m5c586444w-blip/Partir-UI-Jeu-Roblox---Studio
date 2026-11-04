@@ -64,7 +64,7 @@
       "name": "Prev",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Précédent",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -91,7 +91,7 @@
         "Size": {
           "UDim2": [
             [
-              0.06,
+              0.08,
               0
             ],
             [
@@ -148,7 +148,7 @@
       "name": "Next",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Suivant",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -163,7 +163,7 @@
         "Position": {
           "UDim2": [
             [
-              0.92,
+              0.9,
               0
             ],
             [
@@ -175,7 +175,7 @@
         "Size": {
           "UDim2": [
             [
-              0.06,
+              0.08,
               0
             ],
             [
@@ -232,7 +232,7 @@
       "name": "Note",
       "className": "TextLabel",
       "properties": {
-        "Text": "",
+        "Text": "Tu es mort. Tu peux encore suivre ton groupe.",
         "Font": "RobotoMono",
         "TextColor3": [
           0.6039,

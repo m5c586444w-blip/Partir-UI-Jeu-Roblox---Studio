@@ -59,7 +59,7 @@
           "name": "Survivors",
           "className": "TextButton",
           "properties": {
-            "Text": "Plus grand nombre de survivants",
+            "Text": "Survivants",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,
@@ -143,7 +143,7 @@
           "name": "EvidenceA",
           "className": "TextButton",
           "properties": {
-            "Text": "Preuves de classe A",
+            "Text": "Preuves A",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,
@@ -227,7 +227,7 @@
           "name": "Endings",
           "className": "TextButton",
           "properties": {
-            "Text": "Fins débloquées",
+            "Text": "Fins",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

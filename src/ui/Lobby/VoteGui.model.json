@@ -353,15 +353,20 @@
             },
             {
               "name": "Lock",
-              "className": "Frame",
+              "className": "TextLabel",
               "properties": {
+                "Text": "Verrouillé",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
                 "BackgroundTransparency": 0.5,
                 "BorderSizePixel": 0,
-                "BackgroundColor3": [
-                  0.6392,
-                  0.2039,
-                  0.1686
-                ],
                 "Position": {
                   "UDim2": [
                     [
@@ -385,9 +390,22 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundColor3": [
+                  0.6392,
+                  0.2039,
+                  0.1686
+                ]
               },
               "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
                 {
                   "name": "UICorner",
                   "className": "UICorner",

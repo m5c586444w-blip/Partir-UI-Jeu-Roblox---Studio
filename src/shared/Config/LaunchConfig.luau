@@ -41,6 +41,16 @@ LaunchConfig.Teleport = {
 	RetryDelay = 5,
 }
 
+-- 4.4 et 5.4 : votes. Sans vote : Normal, météo aléatoire. Égalité : la difficulté la plus basse
+-- l'emporte ; pour la météo, aléatoire.
+LaunchConfig.Votes = {
+	Difficulties = { "Normal", "Hard", "Nightmare" }, -- de la plus basse à la plus haute
+	Weathers = { "Random", "Clear", "Fog", "Rain", "Snow" }, -- « Random » = tirage de 12.3
+	DefaultDifficulty = "Normal",
+	DefaultWeather = "Random",
+	TieWeather = "Random",
+}
+
 -- 16.2 : PartyLoaderService attend les joueurs 60 s au plus
 LaunchConfig.ArrivalTimeout = 60
 

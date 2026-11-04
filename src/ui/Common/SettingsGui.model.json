@@ -6668,7 +6668,7 @@
                           "name": "Opt_Small",
                           "className": "TextButton",
                           "properties": {
-                            "Text": "",
+                            "Text": "Petite",
                             "Font": "RobotoMono",
                             "TextColor3": [
                               0.9098,
@@ -6836,7 +6836,7 @@
                           "name": "Opt_Large",
                           "className": "TextButton",
                           "properties": {
-                            "Text": "",
+                            "Text": "Grande",
                             "Font": "RobotoMono",
                             "TextColor3": [
                               0.9098,
@@ -7876,7 +7876,7 @@
           "name": "Apply",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Appliquer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,
@@ -7959,7 +7959,7 @@
           "name": "Reset",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Réinitialiser",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,
@@ -8042,7 +8042,7 @@
           "name": "Close",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Fermer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

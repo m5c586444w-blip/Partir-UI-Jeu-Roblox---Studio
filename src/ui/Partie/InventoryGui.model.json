@@ -1425,7 +1425,7 @@
                   "name": "Drop",
                   "className": "TextButton",
                   "properties": {
-                    "Text": "",
+                    "Text": "Jeter",
                     "Font": "RobotoMono",
                     "TextColor3": [
                       0.9098,

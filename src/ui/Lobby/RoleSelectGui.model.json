@@ -145,13 +145,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -175,7 +170,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -525,13 +522,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -555,7 +547,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -905,13 +899,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -935,7 +924,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -1285,13 +1276,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -1315,7 +1301,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -1665,13 +1653,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -1695,7 +1678,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -2045,13 +2030,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -2075,7 +2055,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -2425,13 +2407,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -2455,7 +2432,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -2805,13 +2784,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -2835,7 +2809,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -3185,13 +3161,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -3215,7 +3186,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -3565,13 +3538,8 @@
             },
             {
               "name": "Portrait",
-              "className": "ImageLabel",
+              "className": "ViewportFrame",
               "properties": {
-                "Image": "",
-                "ScaleType": "Fit",
-                "BackgroundTransparency": 1,
-                "BorderSizePixel": 0,
-                "ImageTransparency": 0.0,
                 "Position": {
                   "UDim2": [
                     [
@@ -3595,7 +3563,9 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0
               }
             },
             {
@@ -3908,7 +3878,7 @@
       "name": "Confirm",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Confirmer",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,

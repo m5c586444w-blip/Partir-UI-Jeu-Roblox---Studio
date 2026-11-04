@@ -26,8 +26,7 @@ local function buildLaunchData(party, members)
 	local seed = os.time()
 	local random = Random.new(seed)
 
-	-- 4.4 : départ tiré parmi S1, S2, S3
-	-- TODO(BIBLE): tirage équiprobable supposé (la bible ne donne pas de poids)
+	-- 4.4 : départ tiré parmi S1, S2, S3, une chance sur trois chacun
 	local starts = Util.sortedKeys(MapConfig.Spawns)
 	local start = starts[random:NextInteger(1, #starts)]
 
@@ -44,10 +43,9 @@ local function buildLaunchData(party, members)
 	return {
 		version = Version.Number,
 		players = playersData,
-		-- TODO(BIBLE): difficulté à transmettre si personne n'a voté (VoteService, J9)
-		difficulty = party.difficulty,
-		-- 12.3 : météo tirée à chaque partie sauf vote « fixe » (VoteService, J9)
-		weather = party.weather,
+		-- 5.4 : sans vote, difficulté Normal et météo aléatoire (résultat de VoteService)
+		difficulty = party.difficulty or LaunchConfig.Votes.DefaultDifficulty,
+		weather = party.weather or LaunchConfig.Votes.DefaultWeather,
 		start = start,
 		seed = seed,
 	}

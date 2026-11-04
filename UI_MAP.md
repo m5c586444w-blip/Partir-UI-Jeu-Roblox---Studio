@@ -11,52 +11,15 @@ Contrat (15.1) : les scripts changent seulement `Text`, `Visible`, `Size.X.Scale
 `Fill`, les transparences, l'`Image` des icônes, et clonent les enfants `Template`.
 Tout le reste (position, taille, couleurs, polices, disposition) se règle à la main dans Studio.
 
-## Textes absents de la bible
+## Libellés hors section 15.6
 
-Ces éléments ont un texte vide : la bible ne donne pas leur libellé. La colonne
-« Proposition » n'est **pas** appliquée ; elle attend une validation dans la bible.
+15.6 : un libellé court absent du tableau prend la proposition de Claude Code, marquée DÉFAUT.
 
-| Élément | Proposition |
+| Élément | Libellé |
 | --- | --- |
-| `MuseumPanelGui/Panel/Close` | Fermer |
-| `PartyGui/PartyFrame/Header/Title` | Groupe |
-| `PartyGui/PartyFrame/Buttons/CreatePublic` | Créer un groupe public |
-| `PartyGui/PartyFrame/Buttons/CreatePrivate` | Créer un groupe privé |
-| `PartyGui/PartyFrame/Buttons/JoinCode` | Rejoindre avec le code |
-| `PartyGui/PartyFrame/Buttons/Leave` | Quitter le groupe |
-| `PartyGui/PartyFrame/CodeInput` | Code à 4 chiffres (texte d'aide du champ) |
-| `RoleSelectGui/Confirm` | Confirmer |
-| `WeaponBoardGui/Board/Slot_Rifle/Take` | Prendre |
-| `WeaponBoardGui/Board/Slot_Revolver/Take` | Prendre |
-| `WeaponBoardGui/Board/Slot_Shotgun/Take` | Prendre |
-| `SkinShopGui/Equip` | Équiper |
-| `ResultsGui/Card/Continue` | Continuer |
-| `InventoryGui/Bag/List/Template/Drop` | Jeter |
-| `TabletGui/Device/Screen/Pages/Page_Network/Send` | Envoyer |
-| `TabletGui/Device/Close` | Fermer |
-| `DocumentGui/Paper/Close` | Fermer |
-| `DocumentGui/Tape/Play` | Lire |
-| `DownedGui/HelpHint` | Texte d'aide « à terre » (appel à l'aide) |
-| `SpectatorGui/Prev` | Précédent (ou flèche) |
-| `SpectatorGui/Next` | Suivant (ou flèche) |
-| `SpectatorGui/Note` | Note du spectateur (ex. canal spectateurs, 7.3) |
-| `MobileControlsGui/Tablet` | Tablette |
-| `MobileControlsGui/Ping` | Ping |
-| `MobileControlsGui/Light` | Lampe |
-| `MobileControlsGui/Interact` | Interagir |
-| `MobileControlsGui/Reload` | Recharger |
-| `MobileControlsGui/Aim` | Viser |
-| `MobileControlsGui/Fire` | Tirer |
-| `MobileControlsGui/Sprint` | Courir |
-| `MobileControlsGui/Crouch` | Accroupi |
-| `MobileControlsGui/Prone` | Couché |
-| `MobileControlsGui/LeanL` | Pencher à gauche |
-| `MobileControlsGui/LeanR` | Pencher à droite |
-| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | Petite |
-| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Large` | Grande |
-| `SettingsGui/Window/Apply` | Appliquer |
-| `SettingsGui/Window/Reset` | Réinitialiser |
-| `SettingsGui/Window/Close` | Fermer |
+| `PartyGui/PartyFrame/Header/Title` | DÉFAUT appliqué : « Groupe » |
+| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | DÉFAUT appliqué : « Petite » |
+| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Large` | DÉFAUT appliqué : « Grande » |
 
 ## Éléments
 
@@ -87,7 +50,7 @@ Lu par `MuseumController`.
 | `MuseumPanelGui/Panel/Illustration` | ImageLabel | lu par `MuseumController` |  |  |
 | `MuseumPanelGui/Panel/Body` | TextLabel | lu par `MuseumController` |  |  |
 | `MuseumPanelGui/Panel/Source` | TextLabel | lu par `MuseumController` |  |  |
-| `MuseumPanelGui/Panel/Close` | TextButton | lu par `MuseumController` |  |  |
+| `MuseumPanelGui/Panel/Close` | TextButton | lu par `MuseumController` | Fermer |  |
 
 ### PartyGui — StarterGui (Lobby), section 15.3
 
@@ -98,7 +61,7 @@ Lu par `PartyController`.
 | `PartyGui` | ScreenGui | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame` | Frame | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame/Header` | Frame | lu par `PartyController` |  |  |
-| `PartyGui/PartyFrame/Header/Title` | TextLabel | lu par `PartyController` |  |  |
+| `PartyGui/PartyFrame/Header/Title` | TextLabel | lu par `PartyController` | Groupe |  |
 | `PartyGui/PartyFrame/Header/Code` | TextLabel | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame/MemberList` | ScrollingFrame | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame/MemberList/Template` | Frame | lu par `PartyController` |  |  |
@@ -106,12 +69,12 @@ Lu par `PartyController`.
 | `PartyGui/PartyFrame/MemberList/Template/RoleName` | TextLabel | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame/MemberList/Template/ReadyIcon` | Frame | lu par `PartyController` |  |  |
 | `PartyGui/PartyFrame/Buttons` | Frame | lu par `PartyController` |  |  |
-| `PartyGui/PartyFrame/Buttons/CreatePublic` | TextButton | lu par `PartyController` |  |  |
-| `PartyGui/PartyFrame/Buttons/CreatePrivate` | TextButton | lu par `PartyController` |  |  |
-| `PartyGui/PartyFrame/Buttons/JoinCode` | TextButton | lu par `PartyController` |  |  |
-| `PartyGui/PartyFrame/Buttons/QuickJoin` | TextButton | lu par `PartyController` | Rejoindre un groupe |  |
+| `PartyGui/PartyFrame/Buttons/CreatePublic` | TextButton | lu par `PartyController` | Groupe public |  |
+| `PartyGui/PartyFrame/Buttons/CreatePrivate` | TextButton | lu par `PartyController` | Groupe privé |  |
+| `PartyGui/PartyFrame/Buttons/JoinCode` | TextButton | lu par `PartyController` | Rejoindre avec un code |  |
+| `PartyGui/PartyFrame/Buttons/QuickJoin` | TextButton | lu par `PartyController` | Partie rapide |  |
 | `PartyGui/PartyFrame/Buttons/Ready` | TextButton | lu par `PartyController` | Prêt |  |
-| `PartyGui/PartyFrame/Buttons/Leave` | TextButton | lu par `PartyController` |  |  |
+| `PartyGui/PartyFrame/Buttons/Leave` | TextButton | lu par `PartyController` | Quitter le groupe |  |
 | `PartyGui/PartyFrame/CodeInput` | TextBox | lu par `PartyController` |  |  |
 
 ### RoleSelectGui — StarterGui (Lobby), section 15.3
@@ -123,7 +86,7 @@ Lu par `RoleController`.
 | `RoleSelectGui` | ScreenGui | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid` | ScrollingFrame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Leader` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Leader/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Leader/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Leader/CharacterName` | TextLabel | lu par `RoleController` | Caleb Marsh |  |
 | `RoleSelectGui/Grid/RoleCard_Leader/RoleTitle` | TextLabel | lu par `RoleController` | Meneur |  |
 | `RoleSelectGui/Grid/RoleCard_Leader/Ability` | TextLabel | lu par `RoleController` | Voit ses coéquipiers en contour à travers le décor ; donne un ordre qui réduit la peur |  |
@@ -131,7 +94,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Leader/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Leader/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Medic` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Medic/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Medic/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Medic/CharacterName` | TextLabel | lu par `RoleController` | Priya Natarajan |  |
 | `RoleSelectGui/Grid/RoleCard_Medic/RoleTitle` | TextLabel | lu par `RoleController` | Médecin |  |
 | `RoleSelectGui/Grid/RoleCard_Medic/Ability` | TextLabel | lu par `RoleController` | Soigne vite, arrête les hémorragies graves |  |
@@ -139,7 +102,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Medic/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Medic/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Tracker` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Tracker/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Tracker/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Tracker/CharacterName` | TextLabel | lu par `RoleController` | Wyatt Dunn |  |
 | `RoleSelectGui/Grid/RoleCard_Tracker/RoleTitle` | TextLabel | lu par `RoleController` | Pisteur |  |
 | `RoleSelectGui/Grid/RoleCard_Tracker/Ability` | TextLabel | lu par `RoleController` | Voit les empreintes fraîches en surbrillance ; devine la direction de la créature |  |
@@ -147,7 +110,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Tracker/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Tracker/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Cameraman` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Cameraman/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Cameraman/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Cameraman/CharacterName` | TextLabel | lu par `RoleController` | Theo Lindqvist |  |
 | `RoleSelectGui/Grid/RoleCard_Cameraman/RoleTitle` | TextLabel | lu par `RoleController` | Caméraman |  |
 | `RoleSelectGui/Grid/RoleCard_Cameraman/Ability` | TextLabel | lu par `RoleController` | Seul à produire des preuves de classe A |  |
@@ -155,7 +118,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Cameraman/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Cameraman/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Mechanic` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Mechanic/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Mechanic/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Mechanic/CharacterName` | TextLabel | lu par `RoleController` | Rosa Delgado |  |
 | `RoleSelectGui/Grid/RoleCard_Mechanic/RoleTitle` | TextLabel | lu par `RoleController` | Mécanicienne |  |
 | `RoleSelectGui/Grid/RoleCard_Mechanic/Ability` | TextLabel | lu par `RoleController` | Répare deux fois plus vite |  |
@@ -163,7 +126,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Mechanic/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Mechanic/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Descendant` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Descendant/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Descendant/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Descendant/CharacterName` | TextLabel | lu par `RoleController` | Nora Halvorsen |  |
 | `RoleSelectGui/Grid/RoleCard_Descendant/RoleTitle` | TextLabel | lu par `RoleController` | Descendante |  |
 | `RoleSelectGui/Grid/RoleCard_Descendant/Ability` | TextLabel | lu par `RoleController` | Lit le carnet familial, voit les indices cachés |  |
@@ -171,7 +134,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Descendant/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Descendant/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Geologist` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Geologist/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Geologist/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Geologist/CharacterName` | TextLabel | lu par `RoleController` | Malik Okafor |  |
 | `RoleSelectGui/Grid/RoleCard_Geologist/RoleTitle` | TextLabel | lu par `RoleController` | Géologue |  |
 | `RoleSelectGui/Grid/RoleCard_Geologist/Ability` | TextLabel | lu par `RoleController` | Lit la carte des tunnels, se repère sous terre |  |
@@ -179,7 +142,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Geologist/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Geologist/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Athlete` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Athlete/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Athlete/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Athlete/CharacterName` | TextLabel | lu par `RoleController` | Jake Kowalski |  |
 | `RoleSelectGui/Grid/RoleCard_Athlete/RoleTitle` | TextLabel | lu par `RoleController` | Sportif |  |
 | `RoleSelectGui/Grid/RoleCard_Athlete/Ability` | TextLabel | lu par `RoleController` | Porte un blessé en courant, barricade vite |  |
@@ -187,7 +150,7 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_Athlete/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Athlete/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_RadioOperator` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_RadioOperator/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_RadioOperator/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_RadioOperator/CharacterName` | TextLabel | lu par `RoleController` | Mei Tanaka |  |
 | `RoleSelectGui/Grid/RoleCard_RadioOperator/RoleTitle` | TextLabel | lu par `RoleController` | Opératrice radio |  |
 | `RoleSelectGui/Grid/RoleCard_RadioOperator/Ability` | TextLabel | lu par `RoleController` | Écoute les fréquences, repère les voix imitées |  |
@@ -195,14 +158,14 @@ Lu par `RoleController`.
 | `RoleSelectGui/Grid/RoleCard_RadioOperator/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_RadioOperator/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician` | TextButton | lu par `RoleController` |  |  |
-| `RoleSelectGui/Grid/RoleCard_Pyrotechnician/Portrait` | ImageLabel | lu par `RoleController` |  | portrait : image à créer (personnages MANQUANT, 13.3) |
+| `RoleSelectGui/Grid/RoleCard_Pyrotechnician/Portrait` | ViewportFrame | lu par `RoleController` |  | 13.5 : affiche le modèle Skin_A du rôle |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/CharacterName` | TextLabel | lu par `RoleController` | Dylan Croft |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/RoleTitle` | TextLabel | lu par `RoleController` | Pyrotechnicien |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/Ability` | TextLabel | lu par `RoleController` | Fabrique une fusée ou un piège à bruit |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/Weakness` | TextLabel | lu par `RoleController` | Torse 80 PV |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/TakenOverlay` | Frame | lu par `RoleController` |  |  |
 | `RoleSelectGui/Grid/RoleCard_Pyrotechnician/TakenOverlay/TakenBy` | TextLabel | lu par `RoleController` |  |  |
-| `RoleSelectGui/Confirm` | TextButton | lu par `RoleController` |  |  |
+| `RoleSelectGui/Confirm` | TextButton | lu par `RoleController` | Confirmer |  |
 
 ### WeaponBoardGui — StarterGui (Lobby), section 15.3
 
@@ -216,17 +179,17 @@ Lu par `WeaponBoardController`.
 | `WeaponBoardGui/Board/Slot_Rifle/Icon` | ImageLabel | lu par `WeaponBoardController` |  | icône d'arme : asset à créer |
 | `WeaponBoardGui/Board/Slot_Rifle/WeaponName` | TextLabel | décoratif | Fusil à verrou |  |
 | `WeaponBoardGui/Board/Slot_Rifle/Holder` | TextLabel | lu par `WeaponBoardController` |  |  |
-| `WeaponBoardGui/Board/Slot_Rifle/Take` | TextButton | lu par `WeaponBoardController` |  |  |
+| `WeaponBoardGui/Board/Slot_Rifle/Take` | TextButton | lu par `WeaponBoardController` | Prendre |  |
 | `WeaponBoardGui/Board/Slot_Revolver` | Frame | lu par `WeaponBoardController` |  |  |
 | `WeaponBoardGui/Board/Slot_Revolver/Icon` | ImageLabel | lu par `WeaponBoardController` |  | icône d'arme : asset à créer |
 | `WeaponBoardGui/Board/Slot_Revolver/WeaponName` | TextLabel | décoratif | Revolver |  |
 | `WeaponBoardGui/Board/Slot_Revolver/Holder` | TextLabel | lu par `WeaponBoardController` |  |  |
-| `WeaponBoardGui/Board/Slot_Revolver/Take` | TextButton | lu par `WeaponBoardController` |  |  |
+| `WeaponBoardGui/Board/Slot_Revolver/Take` | TextButton | lu par `WeaponBoardController` | Prendre |  |
 | `WeaponBoardGui/Board/Slot_Shotgun` | Frame | lu par `WeaponBoardController` |  |  |
 | `WeaponBoardGui/Board/Slot_Shotgun/Icon` | ImageLabel | lu par `WeaponBoardController` |  | icône d'arme : asset à créer |
 | `WeaponBoardGui/Board/Slot_Shotgun/WeaponName` | TextLabel | décoratif | Fusil à pompe |  |
 | `WeaponBoardGui/Board/Slot_Shotgun/Holder` | TextLabel | lu par `WeaponBoardController` |  |  |
-| `WeaponBoardGui/Board/Slot_Shotgun/Take` | TextButton | lu par `WeaponBoardController` |  |  |
+| `WeaponBoardGui/Board/Slot_Shotgun/Take` | TextButton | lu par `WeaponBoardController` | Prendre |  |
 | `WeaponBoardGui/VotePopup` | Frame | lu par `WeaponBoardController` |  |  |
 | `WeaponBoardGui/VotePopup/Question` | TextLabel | lu par `WeaponBoardController` |  |  |
 | `WeaponBoardGui/VotePopup/Option_1` | TextButton | lu par `WeaponBoardController` |  |  |
@@ -245,7 +208,7 @@ Lu par `VoteController`.
 | `VoteGui/Difficulty/Normal` | TextButton | lu par `VoteController` | Normal |  |
 | `VoteGui/Difficulty/Hard` | TextButton | lu par `VoteController` | Difficile |  |
 | `VoteGui/Difficulty/Nightmare` | TextButton | lu par `VoteController` | Cauchemar |  |
-| `VoteGui/Difficulty/Nightmare/Lock` | Frame | lu par `VoteController` |  |  |
+| `VoteGui/Difficulty/Nightmare/Lock` | TextLabel | lu par `VoteController` | Verrouillé |  |
 | `VoteGui/Weather` | Frame | lu par `VoteController` |  |  |
 | `VoteGui/Weather/Title` | TextLabel | décoratif | Météo |  |
 | `VoteGui/Weather/Random` | TextButton | lu par `VoteController` | Aléatoire |  |
@@ -266,16 +229,16 @@ Lu par `SkinShopController`.
 | `SkinShopGui/CharacterList/Template` | TextButton | lu par `SkinShopController` |  |  |
 | `SkinShopGui/SkinGrid` | Frame | lu par `SkinShopController` |  |  |
 | `SkinShopGui/SkinGrid/Skin_A` | TextButton | lu par `SkinShopController` | Tenue de départ |  |
-| `SkinShopGui/SkinGrid/Skin_A/Lock` | Frame | lu par `SkinShopController` |  |  |
+| `SkinShopGui/SkinGrid/Skin_A/Lock` | TextLabel | lu par `SkinShopController` | Verrouillé |  |
 | `SkinShopGui/SkinGrid/Skin_A/Requirement` | TextLabel | lu par `SkinShopController` |  |  |
 | `SkinShopGui/SkinGrid/Skin_B` | TextButton | lu par `SkinShopController` | Tenue de pluie |  |
-| `SkinShopGui/SkinGrid/Skin_B/Lock` | Frame | lu par `SkinShopController` |  |  |
+| `SkinShopGui/SkinGrid/Skin_B/Lock` | TextLabel | lu par `SkinShopController` | Verrouillé |  |
 | `SkinShopGui/SkinGrid/Skin_B/Requirement` | TextLabel | lu par `SkinShopController` | 5 parties jouées |  |
 | `SkinShopGui/SkinGrid/Skin_C` | TextButton | lu par `SkinShopController` | Tenue « Cold Trail » |  |
-| `SkinShopGui/SkinGrid/Skin_C/Lock` | Frame | lu par `SkinShopController` |  |  |
+| `SkinShopGui/SkinGrid/Skin_C/Lock` | TextLabel | lu par `SkinShopController` | Verrouillé |  |
 | `SkinShopGui/SkinGrid/Skin_C/Requirement` | TextLabel | lu par `SkinShopController` | 1 survie |  |
 | `SkinShopGui/Preview` | ViewportFrame | lu par `SkinShopController` |  |  |
-| `SkinShopGui/Equip` | TextButton | lu par `SkinShopController` |  |  |
+| `SkinShopGui/Equip` | TextButton | lu par `SkinShopController` | Équiper |  |
 
 ### RecordsGui — StarterGui (Lobby), section 15.3
 
@@ -285,9 +248,9 @@ Lu par `RecordsController`.
 | --- | --- | --- | --- | --- |
 | `RecordsGui` | ScreenGui | lu par `RecordsController` |  |  |
 | `RecordsGui/Tabs` | Frame | lu par `RecordsController` |  |  |
-| `RecordsGui/Tabs/Survivors` | TextButton | lu par `RecordsController` | Plus grand nombre de survivants |  |
-| `RecordsGui/Tabs/EvidenceA` | TextButton | lu par `RecordsController` | Preuves de classe A |  |
-| `RecordsGui/Tabs/Endings` | TextButton | lu par `RecordsController` | Fins débloquées |  |
+| `RecordsGui/Tabs/Survivors` | TextButton | lu par `RecordsController` | Survivants |  |
+| `RecordsGui/Tabs/EvidenceA` | TextButton | lu par `RecordsController` | Preuves A |  |
+| `RecordsGui/Tabs/Endings` | TextButton | lu par `RecordsController` | Fins |  |
 | `RecordsGui/Board` | ScrollingFrame | lu par `RecordsController` |  |  |
 | `RecordsGui/Board/Template` | Frame | lu par `RecordsController` |  |  |
 | `RecordsGui/Board/Template/Rank` | TextLabel | lu par `RecordsController` |  |  |
@@ -308,11 +271,11 @@ Lu par `EvidenceBoardController`.
 | `EvidenceBoardGui/Cork/Template/Class` | TextLabel | lu par `EvidenceBoardController` |  |  |
 | `EvidenceBoardGui/NotebookPages` | Frame | lu par `EvidenceBoardController` |  |  |
 | `EvidenceBoardGui/NotebookPages/Page_1` | TextLabel | lu par `EvidenceBoardController` | Il n'a jamais voulu en parler. Il disait seulement : ne tire pas le premier. |  |
-| `EvidenceBoardGui/NotebookPages/Page_1/Lock` | Frame | lu par `EvidenceBoardController` |  |  |
+| `EvidenceBoardGui/NotebookPages/Page_1/Lock` | TextLabel | lu par `EvidenceBoardController` | Verrouillé |  |
 | `EvidenceBoardGui/NotebookPages/Page_2` | TextLabel | lu par `EvidenceBoardController` | Ils frappaient les arbres avant les pierres. |  |
-| `EvidenceBoardGui/NotebookPages/Page_2/Lock` | Frame | lu par `EvidenceBoardController` |  |  |
+| `EvidenceBoardGui/NotebookPages/Page_2/Lock` | TextLabel | lu par `EvidenceBoardController` | Verrouillé |  |
 | `EvidenceBoardGui/NotebookPages/Page_3` | TextLabel | lu par `EvidenceBoardController` | On leur avait pris quelqu'un, à eux aussi. |  |
-| `EvidenceBoardGui/NotebookPages/Page_3/Lock` | Frame | lu par `EvidenceBoardController` |  |  |
+| `EvidenceBoardGui/NotebookPages/Page_3/Lock` | TextLabel | lu par `EvidenceBoardController` | Verrouillé |  |
 
 ### ResultsGui — StarterGui (Lobby), section 15.3
 
@@ -331,7 +294,7 @@ Lu par `ResultsController`.
 | `ResultsGui/Card/Evidence` | ScrollingFrame | lu par `ResultsController` |  |  |
 | `ResultsGui/Card/Evidence/Template` | TextLabel | lu par `ResultsController` |  |  |
 | `ResultsGui/Card/XPGained` | TextLabel | lu par `ResultsController` |  |  |
-| `ResultsGui/Card/Continue` | TextButton | lu par `ResultsController` |  |  |
+| `ResultsGui/Card/Continue` | TextButton | lu par `ResultsController` | Continuer |  |
 
 ### LoadingGui — StarterGui (Lobby), section 15.3
 
@@ -425,7 +388,7 @@ Lu par `InventoryController`.
 | `InventoryGui/Bag/List/Template/Icon` | ImageLabel | lu par `InventoryController` |  |  |
 | `InventoryGui/Bag/List/Template/Name` | TextLabel | lu par `InventoryController` |  |  |
 | `InventoryGui/Bag/List/Template/Count` | TextLabel | lu par `InventoryController` |  |  |
-| `InventoryGui/Bag/List/Template/Drop` | TextButton | lu par `InventoryController` |  |  |
+| `InventoryGui/Bag/List/Template/Drop` | TextButton | lu par `InventoryController` | Jeter |  |
 
 ### ObjectiveGui — StarterGui (Partie), section 15.4
 
@@ -490,9 +453,9 @@ Lu par `TabletController`.
 | `TabletGui/Device/Screen/Pages/Page_Network/Bars` | Frame | lu par `TabletController` |  | barres de réseau : Fill.Size.X.Scale = niveau |
 | `TabletGui/Device/Screen/Pages/Page_Network/Bars/Fill` | Frame | lu par `TabletController` |  |  |
 | `TabletGui/Device/Screen/Pages/Page_Network/Message` | TextLabel | lu par `TabletController` | Aucun réseau |  |
-| `TabletGui/Device/Screen/Pages/Page_Network/Send` | TextButton | lu par `TabletController` |  |  |
+| `TabletGui/Device/Screen/Pages/Page_Network/Send` | TextButton | lu par `TabletController` | Envoyer |  |
 | `TabletGui/Device/BatteryText` | TextLabel | lu par `TabletController` |  |  |
-| `TabletGui/Device/Close` | TextButton | lu par `TabletController` |  |  |
+| `TabletGui/Device/Close` | TextButton | lu par `TabletController` | Fermer |  |
 
 ### DocumentGui — StarterGui (Partie), section 15.4
 
@@ -505,10 +468,10 @@ Lu par `DocumentController`.
 | `DocumentGui/Paper/Title` | TextLabel | lu par `DocumentController` |  |  |
 | `DocumentGui/Paper/Picture` | ImageLabel | lu par `DocumentController` |  |  |
 | `DocumentGui/Paper/Body` | TextLabel | lu par `DocumentController` |  |  |
-| `DocumentGui/Paper/Close` | TextButton | lu par `DocumentController` |  |  |
+| `DocumentGui/Paper/Close` | TextButton | lu par `DocumentController` | Fermer |  |
 | `DocumentGui/Tape` | Frame | lu par `DocumentController` |  |  |
 | `DocumentGui/Tape/Label` | TextLabel | lu par `DocumentController` |  |  |
-| `DocumentGui/Tape/Play` | TextButton | lu par `DocumentController` |  |  |
+| `DocumentGui/Tape/Play` | TextButton | lu par `DocumentController` | Lire |  |
 | `DocumentGui/Tape/Progress` | Frame | lu par `DocumentController` |  |  |
 | `DocumentGui/Tape/Progress/Fill` | Frame | lu par `DocumentController` |  |  |
 
@@ -520,7 +483,7 @@ Lu par `DownedController`.
 | --- | --- | --- | --- | --- |
 | `DownedGui` | ScreenGui | lu par `DownedController` |  |  |
 | `DownedGui/Countdown` | TextLabel | lu par `DownedController` |  |  |
-| `DownedGui/HelpHint` | TextLabel | lu par `DownedController` |  |  |
+| `DownedGui/HelpHint` | TextLabel | lu par `DownedController` | Appelle à l'aide : un coéquipier peut te relever. |  |
 | `DownedGui/Bleed` | Frame | lu par `DownedController` |  |  |
 | `DownedGui/Bleed/Fill` | Frame | lu par `DownedController` |  |  |
 
@@ -532,9 +495,9 @@ Lu par `SpectatorController`.
 | --- | --- | --- | --- | --- |
 | `SpectatorGui` | ScreenGui | lu par `SpectatorController` |  |  |
 | `SpectatorGui/Watching` | TextLabel | lu par `SpectatorController` |  |  |
-| `SpectatorGui/Prev` | TextButton | lu par `SpectatorController` |  |  |
-| `SpectatorGui/Next` | TextButton | lu par `SpectatorController` |  |  |
-| `SpectatorGui/Note` | TextLabel | lu par `SpectatorController` |  |  |
+| `SpectatorGui/Prev` | TextButton | lu par `SpectatorController` | Précédent |  |
+| `SpectatorGui/Next` | TextButton | lu par `SpectatorController` | Suivant |  |
+| `SpectatorGui/Note` | TextLabel | lu par `SpectatorController` | Tu es mort. Tu peux encore suivre ton groupe. |  |
 
 ### RadioGui — StarterGui (Partie), section 15.4
 
@@ -554,18 +517,18 @@ Lu par `InputController`.
 | Chemin | Classe | Statut | Texte de départ | Remarque |
 | --- | --- | --- | --- | --- |
 | `MobileControlsGui` | ScreenGui | lu par `InputController` |  |  |
-| `MobileControlsGui/Tablet` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Ping` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Light` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Interact` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Reload` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Aim` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Fire` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Sprint` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Crouch` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/Prone` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/LeanL` | TextButton | lu par `InputController` |  |  |
-| `MobileControlsGui/LeanR` | TextButton | lu par `InputController` |  |  |
+| `MobileControlsGui/Tablet` | TextButton | lu par `InputController` | Tablette |  |
+| `MobileControlsGui/Ping` | TextButton | lu par `InputController` | Signaler |  |
+| `MobileControlsGui/Light` | TextButton | lu par `InputController` | Lampe |  |
+| `MobileControlsGui/Interact` | TextButton | lu par `InputController` | Utiliser |  |
+| `MobileControlsGui/Reload` | TextButton | lu par `InputController` | Recharger |  |
+| `MobileControlsGui/Aim` | TextButton | lu par `InputController` | Viser |  |
+| `MobileControlsGui/Fire` | TextButton | lu par `InputController` | Tirer |  |
+| `MobileControlsGui/Sprint` | TextButton | lu par `InputController` | Courir |  |
+| `MobileControlsGui/Crouch` | TextButton | lu par `InputController` | Accroupi |  |
+| `MobileControlsGui/Prone` | TextButton | lu par `InputController` | Couché |  |
+| `MobileControlsGui/LeanL` | TextButton | lu par `InputController` | ← Pencher |  |
+| `MobileControlsGui/LeanR` | TextButton | lu par `InputController` | Pencher → |  |
 
 ### CinematicGui — StarterGui (les deux places), section 15.5
 
@@ -709,9 +672,9 @@ Lu par `SettingsController`.
 | `SettingsGui/Window/Pages/Accessibility/SubtitleSize` | Frame | lu par `SettingsController` |  | lu par SettingsController |
 | `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Label` | TextLabel | décoratif | Taille |  |
 | `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options` | Frame | lu par `SettingsController` |  |  |
-| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | TextButton | lu par `SettingsController` |  |  |
+| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | TextButton | lu par `SettingsController` | Petite |  |
 | `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Medium` | TextButton | lu par `SettingsController` | Moyenne |  |
-| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Large` | TextButton | lu par `SettingsController` |  |  |
+| `SettingsGui/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Large` | TextButton | lu par `SettingsController` | Grande |  |
 | `SettingsGui/Window/Pages/Accessibility/ReduceMotion` | Frame | lu par `SettingsController` |  | lu par SettingsController |
 | `SettingsGui/Window/Pages/Accessibility/ReduceMotion/Label` | TextLabel | décoratif | Réduire les mouvements (balancement de caméra) |  |
 | `SettingsGui/Window/Pages/Accessibility/ReduceMotion/Options` | Frame | lu par `SettingsController` |  |  |
@@ -727,9 +690,9 @@ Lu par `SettingsController`.
 | `SettingsGui/Window/Pages/Accessibility/Language/Options` | Frame | lu par `SettingsController` |  |  |
 | `SettingsGui/Window/Pages/Accessibility/Language/Options/Opt_French` | TextButton | lu par `SettingsController` | Français |  |
 | `SettingsGui/Window/Pages/Accessibility/Language/Options/Opt_English` | TextButton | lu par `SettingsController` | Anglais |  |
-| `SettingsGui/Window/Apply` | TextButton | lu par `SettingsController` |  |  |
-| `SettingsGui/Window/Reset` | TextButton | lu par `SettingsController` |  |  |
-| `SettingsGui/Window/Close` | TextButton | lu par `SettingsController` |  |  |
+| `SettingsGui/Window/Apply` | TextButton | lu par `SettingsController` | Appliquer |  |
+| `SettingsGui/Window/Reset` | TextButton | lu par `SettingsController` | Réinitialiser |  |
+| `SettingsGui/Window/Close` | TextButton | lu par `SettingsController` | Fermer |  |
 
 ### NotificationGui — StarterGui (les deux places), section 15.5
 

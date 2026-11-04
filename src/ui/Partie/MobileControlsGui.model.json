@@ -11,7 +11,7 @@
       "name": "Tablet",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Tablette",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -106,7 +106,7 @@
       "name": "Ping",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Signaler",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -201,7 +201,7 @@
       "name": "Light",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Lampe",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -296,7 +296,7 @@
       "name": "Interact",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Utiliser",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -391,7 +391,7 @@
       "name": "Reload",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Recharger",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -486,7 +486,7 @@
       "name": "Aim",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Viser",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -581,7 +581,7 @@
       "name": "Fire",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Tirer",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -676,7 +676,7 @@
       "name": "Sprint",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Courir",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -771,7 +771,7 @@
       "name": "Crouch",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Accroupi",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -866,7 +866,7 @@
       "name": "Prone",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Couché",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -961,7 +961,7 @@
       "name": "LeanL",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "← Pencher",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,
@@ -1056,7 +1056,7 @@
       "name": "LeanR",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Pencher →",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,

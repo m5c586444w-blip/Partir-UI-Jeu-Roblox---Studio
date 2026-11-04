@@ -245,7 +245,7 @@
           "name": "Close",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Fermer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

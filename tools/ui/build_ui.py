@@ -171,11 +171,13 @@ def _text_props(text, font, color, align, r, visible, order, size_hint=None):
 
 
 def label(name, r=None, text="", font=BODY_FONT, color=TEXT, align="Left", visible=True, read=True,
-          missing=None, order=None, note=None, valign=None):
+          missing=None, order=None, note=None, valign=None, defaut=False):
     props = _text_props(text, font, color, align, r, visible, order)
     if valign:
         props["TextYAlignment"] = valign
-    return El(name, "TextLabel", props, [text_constraint()], read=read, missing=missing, note=note)
+    el = El(name, "TextLabel", props, [text_constraint()], read=read, missing=missing, note=note)
+    el.defaut = text if defaut else None
+    return el
 
 
 def title(name, r=None, text="", **kw):
@@ -184,7 +186,7 @@ def title(name, r=None, text="", **kw):
 
 
 def button(name, r=None, text="", font=BODY_FONT, color=TEXT, visible=True, read=True, missing=None,
-           order=None, note=None, children=()):
+           order=None, note=None, children=(), defaut=False):
     props = _text_props(text, font, color, "Center", r, visible, order)
     props["BackgroundColor3"] = PANEL
     props["BackgroundTransparency"] = PANEL_T
@@ -192,6 +194,7 @@ def button(name, r=None, text="", font=BODY_FONT, color=TEXT, visible=True, read
     el = El(name, "TextButton", props, [text_constraint(), corner(), stroke()], read=read, missing=missing,
             note=note)
     el.add(*children)
+    el.defaut = text if defaut else None
     return el
 
 
@@ -210,11 +213,24 @@ def card_button(name, r=None, order=None, children=(), visible=True, note=None):
     return el
 
 
-def textbox(name, r, missing=None):
+def textbox(name, r, missing=None, placeholder=""):
     props = _text_props("", BODY_FONT, TEXT, "Center", r, True, None)
-    props.update({"PlaceholderText": "", "PlaceholderColor3": TEXT2, "ClearTextOnFocus": False,
+    props.update({"PlaceholderText": placeholder, "PlaceholderColor3": TEXT2, "ClearTextOnFocus": False,
                   "BackgroundColor3": PANEL, "BackgroundTransparency": PANEL_T})
     return El(name, "TextBox", props, [text_constraint(), corner(), stroke()], missing=missing)
+
+
+def lock_label(bg, bg_t, visible=True):
+    # 15.6 : Lock = « Verrouillé »
+    el = label("Lock", (0, 0, 1, 1), text="Verrouillé", align="Center", visible=visible)
+    el.props.update({"BackgroundColor3": bg, "BackgroundTransparency": bg_t})
+    el.add(corner())
+    return el
+
+
+def viewport(name, r, note=None):
+    props = dict(rect(*r), BackgroundTransparency=1, BorderSizePixel=0)
+    return El(name, "ViewportFrame", props, note=note)
 
 
 def image(name, r=None, visible=True, read=True, note=None, transparency=0.0, order=None):
@@ -296,7 +312,7 @@ def museum_panel_gui():
         image("Illustration", (0.03, 0.15, 0.42, 0.62)),
         label("Body", (0.48, 0.15, 0.49, 0.62), valign="Top"),
         label("Source", (0.03, 0.82, 0.94, 0.08), color=TEXT2),
-        button("Close", (0.89, 0.03, 0.08, 0.08), missing="Fermer"),
+        button("Close", (0.89, 0.03, 0.08, 0.08), text="Fermer"),
     ])
     return screen_gui("MuseumPanelGui", "MuseumController", [p])
 
@@ -309,21 +325,21 @@ def party_gui():
     ]))
     buttons = frame("Buttons", (0.05, 0.62, 0.9, 0.24), children=[grid_layout(0.49, 0.3, 0.02, 0.05)])
     buttons.add(
-        button("CreatePublic", order=1, missing="Créer un groupe public"),
-        button("CreatePrivate", order=2, missing="Créer un groupe privé"),
-        button("JoinCode", order=3, missing="Rejoindre avec le code"),
-        button("QuickJoin", order=4, text="Rejoindre un groupe"),  # 4.4 : file « Rejoindre un groupe »
+        button("CreatePublic", order=1, text="Groupe public"),
+        button("CreatePrivate", order=2, text="Groupe privé"),
+        button("JoinCode", order=3, text="Rejoindre avec un code"),
+        button("QuickJoin", order=4, text="Partie rapide"),
         button("Ready", order=5, text="Prêt"),  # 4.4 : tous « Prêt »
-        button("Leave", order=6, missing="Quitter le groupe"),
+        button("Leave", order=6, text="Quitter le groupe"),
     )
     frame_ = panel("PartyFrame", (0.62, 0.1, 0.35, 0.8), children=[
         frame("Header", (0.05, 0.02, 0.9, 0.1), children=[
-            title("Title", (0, 0, 0.65, 1), missing="Groupe"),
+            title("Title", (0, 0, 0.65, 1), text="Groupe", defaut=True),
             title("Code", (0.65, 0, 0.35, 1), align="Right"),
         ]),
         scrolling("MemberList", (0.05, 0.14, 0.9, 0.46), children=[list_layout(padding=0.01), member]),
         buttons,
-        textbox("CodeInput", (0.05, 0.88, 0.9, 0.09), missing="Code à 4 chiffres (texte d'aide du champ)"),
+        textbox("CodeInput", (0.05, 0.88, 0.9, 0.09), placeholder="Code à 4 chiffres"),
     ])
     return screen_gui("PartyGui", "PartyController", [frame_])
 
@@ -347,7 +363,7 @@ def weapon_board_gui():
             image("Icon", (0.1, 0.05, 0.8, 0.45), note="icône d'arme : asset à créer"),
             title("WeaponName", (0.05, 0.52, 0.9, 0.12), text=weapon_name, align="Center", read=False),  # 8.2
             label("Holder", (0.05, 0.66, 0.9, 0.1), color=TEXT2, align="Center"),
-            button("Take", (0.15, 0.8, 0.7, 0.14), missing="Prendre"),
+            button("Take", (0.15, 0.8, 0.7, 0.14), text="Prendre"),
         ]))
     popup = panel("VotePopup", (0.32, 0.3, 0.36, 0.34), children=[
         label("Question", (0.05, 0.05, 0.9, 0.35), align="Center"),
@@ -365,7 +381,7 @@ def vote_gui():
         button("Normal", (0.05, 0.22, 0.9, 0.2), order=1, text="Normal"),  # 4.4, 5.4
         button("Hard", (0.05, 0.47, 0.9, 0.2), order=2, text="Difficile"),
         button("Nightmare", (0.05, 0.72, 0.9, 0.2), order=3, text="Cauchemar", children=[
-            frame("Lock", (0, 0, 1, 1), bg=DANGER, bg_t=0.5, children=[corner()]),
+            lock_label(DANGER, 0.5),
         ]),
     ])
     weather_options = [("Random", "Aléatoire"), ("Clear", "Nuit claire"), ("Fog", "Brouillard"),
@@ -388,7 +404,7 @@ def skin_shop_gui():
     grid = frame("SkinGrid", (0.27, 0.1, 0.4, 0.8), panel=True, children=[grid_layout(1, 0.31, 0, 0.03)])
     for i, (name, outfit, requirement) in enumerate(skins, start=1):
         grid.add(button(name, text=outfit, order=i, children=[
-            frame("Lock", (0, 0, 1, 1), bg=PANEL, bg_t=0.3, visible=(name != "Skin_A"), children=[corner()]),
+            lock_label(PANEL, 0.3, visible=(name != "Skin_A")),
             label("Requirement", (0.05, 0.7, 0.9, 0.25), text=requirement, color=TEXT2, align="Center"),
         ]))
     char_template = template(button("Template", (0, 0, 1, 0.09)))
@@ -399,7 +415,7 @@ def skin_shop_gui():
         El("Preview", "ViewportFrame", dict(rect(0.69, 0.1, 0.28, 0.66), BackgroundColor3=PANEL,
                                              BackgroundTransparency=PANEL_T, BorderSizePixel=0),
            [aspect(0.28, 0.66), corner()]),
-        button("Equip", (0.69, 0.8, 0.28, 0.1), missing="Équiper"),
+        button("Equip", (0.69, 0.8, 0.28, 0.1), text="Équiper"),
     ])
     return _hide_roots(gui)
 
@@ -413,9 +429,9 @@ def records_gui():
     tabs = frame("Tabs", (0.15, 0.08, 0.7, 0.09), children=[
         list_layout(vertical=False, padding=0.01),
         # 4.5 : records du serveur
-        button("Survivors", (0, 0, 0.32, 1), order=1, text="Plus grand nombre de survivants"),
-        button("EvidenceA", (0, 0, 0.32, 1), order=2, text="Preuves de classe A"),
-        button("Endings", (0, 0, 0.32, 1), order=3, text="Fins débloquées"),
+        button("Survivors", (0, 0, 0.32, 1), order=1, text="Survivants"),
+        button("EvidenceA", (0, 0, 0.32, 1), order=2, text="Preuves A"),
+        button("Endings", (0, 0, 0.32, 1), order=3, text="Fins"),
     ])
     board = scrolling("Board", (0.15, 0.2, 0.7, 0.72), children=[list_layout(padding=0.01), row])
     board.props.update({"BackgroundColor3": PANEL, "BackgroundTransparency": PANEL_T})
@@ -436,7 +452,7 @@ def evidence_board_gui():
     pages = frame("NotebookPages", (0.67, 0.08, 0.3, 0.84), panel=True, children=[list_layout(padding=0.02)])
     for i, text in enumerate(pages_text, start=1):
         page = title(f"Page_{i}", (0, 0, 0.95, 0.31), text=text, order=i, valign="Top")
-        page.add(frame("Lock", (0, 0, 1, 1), bg=PANEL, bg_t=0.1, visible=(i != 1)))
+        page.add(lock_label(PANEL, 0.1, visible=(i != 1)))
         pages.add(page)
     cork = frame("Cork", (0.03, 0.08, 0.62, 0.84), panel=True, children=[grid_layout(0.23, 0.3, 0.02, 0.03), item])
     return _hide_roots(screen_gui("EvidenceBoardGui", "EvidenceBoardController", [cork, pages]))
@@ -454,7 +470,7 @@ def results_gui():
         scrolling("Survivors", (0.05, 0.34, 0.43, 0.42), children=[list_layout(padding=0.01), survivor]),
         scrolling("Evidence", (0.52, 0.34, 0.43, 0.42), children=[list_layout(padding=0.01), evidence]),
         title("XPGained", (0.05, 0.78, 0.9, 0.07), align="Center", color=POSITIVE),
-        button("Continue", (0.3, 0.88, 0.4, 0.08), missing="Continuer"),
+        button("Continue", (0.3, 0.88, 0.4, 0.08), text="Continuer"),
     ])
     return screen_gui("ResultsGui", "ResultsController", [card])
 
@@ -525,7 +541,7 @@ def inventory_gui():
         image("Icon", (0, 0.05, 0.12, 0.9)),
         label("Name", (0.14, 0, 0.5, 1)),
         label("Count", (0.65, 0, 0.12, 1), align="Center"),
-        button("Drop", (0.79, 0.1, 0.2, 0.8), missing="Jeter"),
+        button("Drop", (0.79, 0.1, 0.2, 0.8), text="Jeter"),
     ]))
     bag = panel("Bag", (0.66, 0.25, 0.31, 0.58), children=[
         label("Weight", (0.05, 0.02, 0.9, 0.08), align="Right", color=TEXT2),
@@ -589,7 +605,7 @@ def tablet_gui():
         frame("Bars", (0.4, 0.1, 0.2, 0.1), bg=PANEL, bg_t=PANEL_T, children=[fill(color=TABLET_TEXT)],
               note="barres de réseau : Fill.Size.X.Scale = niveau"),
         label("Message", (0.1, 0.3, 0.8, 0.3), text="Aucun réseau", color=TABLET_TEXT, align="Center"),  # 8.3
-        button("Send", (0.35, 0.7, 0.3, 0.12), color=TABLET_TEXT, missing="Envoyer"),
+        button("Send", (0.35, 0.7, 0.3, 0.12), color=TABLET_TEXT, text="Envoyer"),
     ])
     screen = frame("Screen", (0.04, 0.05, 0.92, 0.84), bg=TABLET_BG, bg_t=0, children=[
         app_bar,
@@ -605,7 +621,7 @@ def tablet_gui():
         aspect(0.66, 0.86), corner(0.03, 0),
         screen,
         label("BatteryText", (0.75, 0.9, 0.2, 0.06), color=TABLET_TEXT, align="Right"),
-        button("Close", (0.04, 0.9, 0.2, 0.07), missing="Fermer"),
+        button("Close", (0.04, 0.9, 0.2, 0.07), text="Fermer"),
     ])
     return screen_gui("TabletGui", "TabletController", [device])
 
@@ -615,11 +631,11 @@ def document_gui():
         title("Title", (0.05, 0.03, 0.78, 0.08)),
         image("Picture", (0.05, 0.13, 0.9, 0.35)),
         label("Body", (0.05, 0.5, 0.9, 0.46), valign="Top"),
-        button("Close", (0.85, 0.03, 0.1, 0.07), missing="Fermer"),
+        button("Close", (0.85, 0.03, 0.1, 0.07), text="Fermer"),
     ])
     tape = panel("Tape", (0.3, 0.7, 0.4, 0.2), children=[
         label("Label", (0.05, 0.08, 0.9, 0.35)),
-        button("Play", (0.05, 0.5, 0.2, 0.4), missing="Lire"),
+        button("Play", (0.05, 0.5, 0.2, 0.4), text="Lire"),
         bar("Progress", (0.3, 0.65, 0.65, 0.1)),
     ])
     return screen_gui("DocumentGui", "DocumentController", [paper, tape])
@@ -628,7 +644,7 @@ def document_gui():
 def downed_gui():
     return _hide_roots(screen_gui("DownedGui", "DownedController", [
         title("Countdown", (0.4, 0.4, 0.2, 0.1), align="Center", color=DANGER),
-        label("HelpHint", (0.3, 0.52, 0.4, 0.06), align="Center", missing="Texte d'aide « à terre » (appel à l'aide)"),
+        label("HelpHint", (0.3, 0.52, 0.4, 0.06), align="Center", text="Appelle à l'aide : un coéquipier peut te relever."),
         bar("Bleed", (0.35, 0.6, 0.3, 0.015), color=DANGER),
     ]))
 
@@ -636,10 +652,10 @@ def downed_gui():
 def spectator_gui():
     return _hide_roots(screen_gui("SpectatorGui", "SpectatorController", [
         title("Watching", (0.3, 0.03, 0.4, 0.06), align="Center"),
-        button("Prev", (0.02, 0.45, 0.06, 0.1), missing="Précédent (ou flèche)"),
-        button("Next", (0.92, 0.45, 0.06, 0.1), missing="Suivant (ou flèche)"),
+        button("Prev", (0.02, 0.45, 0.08, 0.1), text="Précédent"),
+        button("Next", (0.9, 0.45, 0.08, 0.1), text="Suivant"),
         label("Note", (0.25, 0.9, 0.5, 0.05), align="Center", color=TEXT2,
-              missing="Note du spectateur (ex. canal spectateurs, 7.3)"),
+              text="Tu es mort. Tu peux encore suivre ton groupe."),
     ]))
 
 
@@ -657,15 +673,17 @@ MOBILE_BUTTONS = [  # (nom, x, y) — DÉFAUT : grille à droite, au-dessus du b
     ("Fire", 0.89, 0.46), ("Sprint", 0.80, 0.46), ("Crouch", 0.71, 0.46), ("Prone", 0.62, 0.46),
     ("LeanL", 0.02, 0.35), ("LeanR", 0.1, 0.35),
 ]
-MOBILE_LABELS = {"Fire": "Tirer", "Aim": "Viser", "Interact": "Interagir", "Reload": "Recharger",
-                 "Sprint": "Courir", "Crouch": "Accroupi", "Prone": "Couché", "Light": "Lampe",
-                 "Tablet": "Tablette", "Ping": "Ping", "LeanL": "Pencher à gauche", "LeanR": "Pencher à droite"}
+MOBILE_LABELS = {  # 15.6
+    "Sprint": "Courir", "Crouch": "Accroupi", "Prone": "Couché", "Interact": "Utiliser", "Aim": "Viser",
+    "Fire": "Tirer", "Reload": "Recharger", "Light": "Lampe", "Tablet": "Tablette", "Ping": "Signaler",
+    "LeanL": "← Pencher", "LeanR": "Pencher →",
+}
 
 
 def mobile_controls_gui():
     children = []
     for name, x, y in MOBILE_BUTTONS:
-        b = button(name, (x, y, 0.07, 0.124), visible=False, missing=MOBILE_LABELS[name])
+        b = button(name, (x, y, 0.07, 0.124), visible=False, text=MOBILE_LABELS[name])
         b.add(aspect(0.07, 0.124))
         b.children = [c for c in b.children if c.cls != "UICorner"] + [corner(0.5, 0)]
         children.append(b)
@@ -748,7 +766,7 @@ def setting_row(setting_id, text, kind, options, order):
         width = round((1 - 0.02 * (len(options) - 1)) / len(options), 3)
         for i, (opt_id, opt_text) in enumerate(options, start=1):
             if opt_text is None:
-                opts.add(button(opt_id, (0, 0, width, 1), order=i, missing=MISSING_OPTION[opt_id]))
+                opts.add(button(opt_id, (0, 0, width, 1), order=i, text=MISSING_OPTION[opt_id], defaut=True))
             else:
                 opts.add(button(opt_id, (0, 0, width, 1), order=i, text=opt_text))
         row.add(opts)
@@ -768,9 +786,9 @@ def settings_gui():
         pages.add(pg)
     window = panel("Window", (0.12, 0.06, 0.76, 0.88), children=[
         tabs, pages,
-        button("Apply", (0.03, 0.89, 0.2, 0.08), missing="Appliquer"),
-        button("Reset", (0.26, 0.89, 0.2, 0.08), missing="Réinitialiser"),
-        button("Close", (0.77, 0.89, 0.2, 0.08), missing="Fermer"),
+        button("Apply", (0.03, 0.89, 0.2, 0.08), text="Appliquer"),
+        button("Reset", (0.26, 0.89, 0.2, 0.08), text="Réinitialiser"),
+        button("Close", (0.77, 0.89, 0.2, 0.08), text="Fermer"),
     ])
     return screen_gui("SettingsGui", "SettingsController", [window], display_order=70)
 
@@ -887,7 +905,7 @@ def build_role_select():
     grid = scrolling("Grid", (0.04, 0.06, 0.92, 0.78), children=[grid_layout(0.19, 0.48, 0.0125, 0.04)])
     for role_id, name, role_title, ability, weakness in ROLES:
         grid.add(card_button(f"RoleCard_{role_id}", order=ROLE_ORDER.index(role_id) + 1, children=[
-            image("Portrait", (0, 0, 1, 0.32), note="portrait : image à créer (personnages MANQUANT, 13.3)"),
+            viewport("Portrait", (0, 0, 1, 0.32), note="13.5 : affiche le modèle Skin_A du rôle"),
             title("CharacterName", (0.04, 0.33, 0.92, 0.09), text=name),  # 2.5
             label("RoleTitle", (0.04, 0.43, 0.92, 0.07), text=role_title, color=TEXT2),  # 2.5
             label("Ability", (0.04, 0.51, 0.92, 0.31), text=ability, valign="Top"),  # 7.7
@@ -897,7 +915,7 @@ def build_role_select():
             ]),
         ]))
     return _hide_roots(screen_gui("RoleSelectGui", "RoleController", [
-        grid, button("Confirm", (0.4, 0.87, 0.2, 0.08), missing="Confirmer"),
+        grid, button("Confirm", (0.4, 0.87, 0.2, 0.08), text="Confirmer"),
     ]))
 
 
@@ -912,6 +930,8 @@ def walk(el, path, rows, missing, controller):
     rows.append((path, el.cls, status, text, el.note))
     if el.missing:
         missing.append((path, el.missing))
+    if getattr(el, "defaut", None):
+        missing.append((path, "DÉFAUT appliqué : « " + el.defaut + " »"))
     for child in el.children:
         walk(child, f"{path}/{child.name}", rows, missing, controller)
 
@@ -957,12 +977,11 @@ def write_ui_map(all_rows, all_missing):
         "`Fill`, les transparences, l'`Image` des icônes, et clonent les enfants `Template`.",
         "Tout le reste (position, taille, couleurs, polices, disposition) se règle à la main dans Studio.",
         "",
-        "## Textes absents de la bible",
+        "## Libellés hors section 15.6",
         "",
-        "Ces éléments ont un texte vide : la bible ne donne pas leur libellé. La colonne",
-        "« Proposition » n'est **pas** appliquée ; elle attend une validation dans la bible.",
+        "15.6 : un libellé court absent du tableau prend la proposition de Claude Code, marquée DÉFAUT.",
         "",
-        "| Élément | Proposition |",
+        "| Élément | Libellé |",
         "| --- | --- |",
     ]
     for path, proposal in all_missing:

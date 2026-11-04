@@ -558,7 +558,7 @@
           "name": "Continue",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Continuer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

@@ -193,7 +193,7 @@
           "name": "Close",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Fermer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,
@@ -391,7 +391,7 @@
           "name": "Play",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Lire",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

@@ -169,6 +169,16 @@ LaunchConfig.Teleport = {
 	RetryDelay = 5,
 }
 
+-- 4.4 et 5.4 : votes. Sans vote : Normal, météo aléatoire. Égalité : la difficulté la plus basse
+-- l'emporte ; pour la météo, aléatoire.
+LaunchConfig.Votes = {
+	Difficulties = { "Normal", "Hard", "Nightmare" }, -- de la plus basse à la plus haute
+	Weathers = { "Random", "Clear", "Fog", "Rain", "Snow" }, -- « Random » = tirage de 12.3
+	DefaultDifficulty = "Normal",
+	DefaultWeather = "Random",
+	TieWeather = "Random",
+}
+
 -- 16.2 : PartyLoaderService attend les joueurs 60 s au plus
 LaunchConfig.ArrivalTimeout = 60
 
@@ -217,6 +227,21 @@ LoreConfig.Messages = {
 	MSG_VersionMismatch = "Une mise à jour est en cours. Retour en ville.",
 	MSG_ReturnToLobby = "Retour en ville…",
 	MSG_DataLoadFailed = "Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session.",
+	MSG_LaunchConfigMissing = "La partie n'a pas pu être préparée. Retour en ville.",
+}
+
+-- 15.6 : textes d'interface remplis par les scripts ({player} remplacé par le code)
+LoreConfig.UI = {
+	TakenBy = "Pris par {player}",
+	Watching = "Tu regardes {player}",
+	Lock = "Verrouillé",
+}
+
+-- 15.6 : astuces de LoadingGui > Tip, tirées au hasard
+LoreConfig.LoadingTips = {
+	"Une lampe allumée se voit de très loin.",
+	"Le bruit de l'eau couvre tes pas.",
+	"Seul, tu es discret. Seul, tu es une proie.",
 }
 
 return LoreConfig
@@ -1112,8 +1137,8 @@ local function load()
 		return
 	end
 	if launchMap == nil then
-		-- DÉFAUT : configuration illisible → retour au Lobby avec MSG_ReturnToLobby
-		reject("MSG_ReturnToLobby", "MemoryStore inaccessible")
+		-- 4.6 : configuration introuvable → MSG_LaunchConfigMissing
+		reject("MSG_LaunchConfigMissing", "MemoryStore inaccessible")
 		return
 	end
 
@@ -1122,11 +1147,11 @@ local function load()
 		return launchMap:GetAsync(key)
 	end)
 	if not ok then
-		reject("MSG_ReturnToLobby", "lecture de la configuration impossible : " .. tostring(data))
+		reject("MSG_LaunchConfigMissing", "lecture de la configuration impossible : " .. tostring(data))
 		return
 	end
 	if type(data) ~= "table" then
-		reject("MSG_ReturnToLobby", "configuration de partie introuvable (" .. key .. ")")
+		reject("MSG_LaunchConfigMissing", "configuration de partie introuvable (" .. key .. ")")
 		return
 	end
 	if data.version ~= Version.Number then
@@ -1738,7 +1763,7 @@ return DataService
               <YS>0.07</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Fermer</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>
@@ -1917,7 +1942,7 @@ return DataService
               <YS>0.4</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Lire</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>
@@ -2120,7 +2145,7 @@ return DataService
             <YS>0.06</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Appelle à l'aide : un coéquipier peut te relever.</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -4970,7 +4995,7 @@ return DataService
                   <YS>0.8</YS>
                   <YO>0</YO>
                 </UDim2>
-                <string name="Text"></string>
+                <string name="Text">Jeter</string>
                 <Color3 name="TextColor3">
                   <R>0.9098</R>
                   <G>0.8941</G>
@@ -5102,7 +5127,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Tablette</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5194,7 +5219,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Signaler</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5286,7 +5311,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Lampe</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5378,7 +5403,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Utiliser</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5470,7 +5495,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Recharger</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5562,7 +5587,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Viser</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5654,7 +5679,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Tirer</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5746,7 +5771,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Courir</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5838,7 +5863,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Accroupi</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -5930,7 +5955,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Couché</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -6022,7 +6047,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">← Pencher</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -6114,7 +6139,7 @@ return DataService
             <YS>0.124</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Pencher →</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -6508,12 +6533,12 @@ return DataService
             <YO>0</YO>
           </UDim2>
           <UDim2 name="Size">
-            <XS>0.06</XS>
+            <XS>0.08</XS>
             <XO>0</XO>
             <YS>0.1</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Précédent</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -6584,18 +6609,18 @@ return DataService
             <Style>Normal</Style>
           </Font>
           <UDim2 name="Position">
-            <XS>0.92</XS>
+            <XS>0.9</XS>
             <XO>0</XO>
             <YS>0.45</YS>
             <YO>0</YO>
           </UDim2>
           <UDim2 name="Size">
-            <XS>0.06</XS>
+            <XS>0.08</XS>
             <XO>0</XO>
             <YS>0.1</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Suivant</string>
           <Color3 name="TextColor3">
             <R>0.9098</R>
             <G>0.8941</G>
@@ -6671,7 +6696,7 @@ return DataService
             <YS>0.05</YS>
             <YO>0</YO>
           </UDim2>
-          <string name="Text"></string>
+          <string name="Text">Tu es mort. Tu peux encore suivre ton groupe.</string>
           <Color3 name="TextColor3">
             <R>0.6039</R>
             <G>0.5882</G>
@@ -8089,7 +8114,7 @@ return DataService
                     <YS>0.12</YS>
                     <YO>0</YO>
                   </UDim2>
-                  <string name="Text"></string>
+                  <string name="Text">Envoyer</string>
                   <Color3 name="TextColor3">
                     <R>0.6235</R>
                     <G>0.8784</G>
@@ -8215,7 +8240,7 @@ return DataService
               <YS>0.07</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Fermer</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>
@@ -13931,7 +13956,7 @@ return DataService
                       <YS>1</YS>
                       <YO>0</YO>
                     </UDim2>
-                    <string name="Text"></string>
+                    <string name="Text">Petite</string>
                     <Color3 name="TextColor3">
                       <R>0.9098</R>
                       <G>0.8941</G>
@@ -14095,7 +14120,7 @@ return DataService
                       <YS>1</YS>
                       <YO>0</YO>
                     </UDim2>
-                    <string name="Text"></string>
+                    <string name="Text">Grande</string>
                     <Color3 name="TextColor3">
                       <R>0.9098</R>
                       <G>0.8941</G>
@@ -14983,7 +15008,7 @@ return DataService
               <YS>0.08</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Appliquer</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>
@@ -15064,7 +15089,7 @@ return DataService
               <YS>0.08</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Réinitialiser</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>
@@ -15145,7 +15170,7 @@ return DataService
               <YS>0.08</YS>
               <YO>0</YO>
             </UDim2>
-            <string name="Text"></string>
+            <string name="Text">Fermer</string>
             <Color3 name="TextColor3">
               <R>0.9098</R>
               <G>0.8941</G>

@@ -85,7 +85,7 @@
               "name": "Title",
               "className": "TextLabel",
               "properties": {
-                "Text": "",
+                "Text": "Groupe",
                 "Font": "SpecialElite",
                 "TextColor3": [
                   0.9098,
@@ -522,7 +522,7 @@
               "name": "CreatePublic",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Groupe public",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -582,7 +582,7 @@
               "name": "CreatePrivate",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Groupe privé",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -642,7 +642,7 @@
               "name": "JoinCode",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Rejoindre avec un code",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -702,7 +702,7 @@
               "name": "QuickJoin",
               "className": "TextButton",
               "properties": {
-                "Text": "Rejoindre un groupe",
+                "Text": "Partie rapide",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -822,7 +822,7 @@
               "name": "Leave",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Quitter le groupe",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -920,7 +920,7 @@
                 ]
               ]
             },
-            "PlaceholderText": "",
+            "PlaceholderText": "Code à 4 chiffres",
             "PlaceholderColor3": [
               0.6039,
               0.5882,

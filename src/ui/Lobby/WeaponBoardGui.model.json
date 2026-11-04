@@ -289,7 +289,7 @@
               "name": "Take",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Prendre",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -576,7 +576,7 @@
               "name": "Take",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Prendre",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,
@@ -863,7 +863,7 @@
               "name": "Take",
               "className": "TextButton",
               "properties": {
-                "Text": "",
+                "Text": "Prendre",
                 "Font": "RobotoMono",
                 "TextColor3": [
                   0.9098,

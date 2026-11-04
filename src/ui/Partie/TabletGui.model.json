@@ -1734,7 +1734,7 @@
                       "name": "Send",
                       "className": "TextButton",
                       "properties": {
-                        "Text": "",
+                        "Text": "Envoyer",
                         "Font": "RobotoMono",
                         "TextColor3": [
                           0.6235,
@@ -1875,7 +1875,7 @@
           "name": "Close",
           "className": "TextButton",
           "properties": {
-            "Text": "",
+            "Text": "Fermer",
             "Font": "RobotoMono",
             "TextColor3": [
               0.9098,

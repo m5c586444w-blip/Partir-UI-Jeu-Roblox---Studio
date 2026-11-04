@@ -14,7 +14,7 @@ Ce document est la seule source de vérité du projet PISTE FROIDE. Claude Code 
 4. **Aucun asset gratuit du Marketplace Roblox.** Seules les sources de la section 13 sont autorisées. Chaque asset importé est inscrit dans `ReplicatedStorage/Credits` (nom, auteur, URL, licence).
 5. **Le serveur décide.** Dégâts, inventaire, IA, preuves et morts sont calculés côté serveur. Le client affiche et envoie des intentions.
 6. **Mobile d'abord.** Toute fonctionnalité doit tourner sur un téléphone milieu de gamme (section 17). Une fonctionnalité qui ne passe pas le budget mobile est désactivée sur mobile, jamais supprimée.
-7. **Une session = un jalon.** Chaque session Claude Code traite un seul jalon de la section 18 et ne modifie pas les fichiers des autres jalons, sauf demande explicite.
+7. **Une session = un jalon.** Chaque session Claude Code traite un seul jalon de la section 18 et ne modifie pas les fichiers des autres jalons, sauf demande explicite. Si Gabriel demande d'enchaîner plusieurs phases dans une session, chaque phase se termine quand même par un commit, un push et la mise à jour de SUIVI.md et HANDOFF.md avant de passer à la suivante.
 
 **Questions en attente :** Gabriel veut que Claude Code avance seul. Une question de `SUIVI.md` qui ne touche ni un texte affiché aux joueurs, ni une valeur de gameplay, ni un asset est tranchée par la proposition de Claude Code : il l'applique, la marque `DÉFAUT` dans `SUIVI.md` et continue. Les autres attendent une réponse dans cette bible.
 
@@ -407,7 +407,7 @@ Le panneau M8 porte la mention « Fiction » en petit, pour que la frontière r�
 4. **Armes :** le tableau du van affiche les armes disponibles selon la taille du groupe (section 8). Un joueur clique pour en prendre une ; en cas de conflit, vote à la majorité en 15 s, sinon tirage.
 5. **Votes :** difficulté (Normal, Difficile, Cauchemar si débloquée) et météo (aléatoire ou fixe).
 6. Tous « Prêt » → compte à rebours de 10 s → cinématique CS\_01 (les joueurs montent dans le van) → téléportation vers un serveur réservé de la place « Partie ».
-7. Données transmises : liste des joueurs, rôles, armes, difficulté, météo, départ tiré (S1, S2 ou S3).
+7. Données transmises : liste des joueurs, rôles, armes, difficulté, météo, départ tiré (S1, S2 ou S3, une chance sur trois chacun).
 8. **Retour :** après la fin, retour au lobby, écran de résultats (fin obtenue, survivants, preuves sorties, XP), puis apparition en L01.
 
 ### 4.5 Ce qu'il y a à faire entre deux parties
@@ -445,6 +445,8 @@ Textes définitifs, affichés par `NotificationGui`. `{player}` et `{n}` sont re
 | MSG\_VersionMismatch | Une mise à jour est en cours. Retour en ville. |
 | MSG\_ReturnToLobby | Retour en ville… |
 | MSG\_DataLoadFailed | Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session. |
+
+Cas ajouté : configuration de partie introuvable dans la Partie → **MSG\_LaunchConfigMissing** : « La partie n'a pas pu être préparée. Retour en ville. » (remplace l'usage provisoire de MSG\_ReturnToLobby).
 
 ## 5. Déroulé d'une partie
 
@@ -521,6 +523,8 @@ Plusieurs fins peuvent se cumuler (ex. La vérité + Preuve). Ordonnance 69-01 r
 | Boîte de munitions de secours | Oui | Oui | Non |
 | Indications d'objectif à l'écran | Oui | Oui | Non (tablette seulement) |
 | Déblocage | Dès le début | Dès le début | Après une première survie |
+
+**Sans vote :** difficulté Normal, météo aléatoire. **Égalité :** la difficulté la plus basse l'emporte ; pour la météo, aléatoire.
 
 ### 5.5 Taille du groupe
 
@@ -1242,6 +1246,16 @@ Tout est à créer par Gabriel (ou en Blender), jamais à partir de photos réel
 | Img\_DOC06, Img\_DOC16, Img\_News\_CS14 | Photo d'empreinte, photo de groupe fictive, une de journal fictive |
 | Img\_Museum\_M1–M8 | Illustrations des panneaux du musée |
 
+**Images d'interface (ajout) :**
+
+| ID | Contenu | Qui le fait |
+| --- | --- | --- |
+| Img\_FearVignette | Dégradé radial noir, transparent au centre, 1 024 × 1 024 | Claude Code, par script (Python), pas par IA générative |
+| Portraits des rôles | Pas d'image : `Portrait` est un `ViewportFrame` qui affiche le modèle `Skin_A` du rôle | Claude Code |
+| Icon\_\<ID objet ou arme> | Phase A : icônes simples à traits blancs (SVG exporté en PNG 256 × 256), dessinées par script. Phase B : rendu des vrais modèles 3D sur fond transparent | A : Claude Code ; B : session Studio ou Gabriel |
+
+Aucune image du jeu ni des miniatures n'est produite par une IA générative d'images.
+
 ### 13.6 Effets
 
 `FX_Rain`, `FX_Snow`, `FX_Ash` (P08), `FX_Breath` (buée devant la bouche par froid), `FX_Flare`, `FX_Campfire`, `FX_Blood_Burst`, `FX_EyeShine` (deux points rouges, 4 s), `FX_Dust_Roof` (siège), `FX_Waterfall_Mist`, `FX_Leaves` (rafales).
@@ -1412,6 +1426,43 @@ Polices : vérifier dans Studio qu'elles existent sous ces noms ; sinon, choisir
 Les repères de ping et les noms au-dessus des têtes sont des `BillboardGui` modèles rangés dans `ReplicatedStorage/UITemplates`, faits à la main de la même façon.
 
 À la fin du jalon UI, Claude Code livre `UI_MAP.md` : chaque élément, son chemin, et s'il est lu par un script ou purement décoratif.
+
+### 15.6 Libellés des boutons et aides
+
+| Élément | Texte |
+| --- | --- |
+| `Close` (partout) | Fermer |
+| `Confirm` | Confirmer |
+| `Take` | Prendre |
+| `Equip` | Équiper |
+| `Continue` | Continuer |
+| `Apply`, `Reset` | Appliquer, Réinitialiser |
+| `Skip` | Passer |
+| `Send` (tablette) | Envoyer |
+| `Play` (cassette) | Lire |
+| `Drop` (sac) | Jeter |
+| `Prev`, `Next` (spectateur) | Précédent, Suivant |
+| `CreatePublic`, `CreatePrivate` | Groupe public, Groupe privé |
+| `JoinCode`, `QuickJoin` | Rejoindre avec un code, Partie rapide |
+| `Ready`, `Leave` | Prêt, Quitter le groupe |
+| `CodeInput` (texte d'attente) | Code à 4 chiffres |
+| `TakenBy` | Pris par {player} |
+| `Lock` | Verrouillé |
+| `Requirement` (skins B, C) | 5 parties jouées ; 1 survie |
+| Difficulté | Normal, Difficile, Cauchemar |
+| Météo | Aléatoire, Nuit claire, Brouillard, Pluie, Première neige |
+| Onglets des records | Survivants, Preuves A, Fins |
+| Onglets des réglages | Audio, Contrôles, Graphismes, Accessibilité |
+| Applis de la tablette | Carte, Objectifs, Journal, Preuves, Réseau |
+| `NoSignal` | Pas de signal GPS |
+| `Page_Network` > `Message` (sans réseau) | Aucun réseau |
+| `HelpHint` (à terre) | Appelle à l'aide : un coéquipier peut te relever. |
+| `Watching` (spectateur) | Tu regardes {player} |
+| `Note` (spectateur) | Tu es mort. Tu peux encore suivre ton groupe. |
+| `MobileControlsGui` | Courir, Accroupi, Couché, Utiliser, Viser, Tirer, Recharger, Lampe, Tablette, Signaler, ← Pencher, Pencher → |
+| `LoadingGui` > `Tip` (tiré au hasard) | « Une lampe allumée se voit de très loin. » ; « Le bruit de l'eau couvre tes pas. » ; « Seul, tu es discret. Seul, tu es une proie. » |
+
+Un libellé court (bouton, onglet, aide d'un mot ou deux) encore absent de ce tableau prend la proposition de Claude Code dans `UI_MAP.md`, marquée `DÉFAUT`. Les textes plus longs restent un `TODO(BIBLE)`.
 
 ## 16. Architecture des scripts
 

@@ -117,8 +117,8 @@ local function load()
 		return
 	end
 	if launchMap == nil then
-		-- DÉFAUT : configuration illisible → retour au Lobby avec MSG_ReturnToLobby
-		reject("MSG_ReturnToLobby", "MemoryStore inaccessible")
+		-- 4.6 : configuration introuvable → MSG_LaunchConfigMissing
+		reject("MSG_LaunchConfigMissing", "MemoryStore inaccessible")
 		return
 	end
 
@@ -127,11 +127,11 @@ local function load()
 		return launchMap:GetAsync(key)
 	end)
 	if not ok then
-		reject("MSG_ReturnToLobby", "lecture de la configuration impossible : " .. tostring(data))
+		reject("MSG_LaunchConfigMissing", "lecture de la configuration impossible : " .. tostring(data))
 		return
 	end
 	if type(data) ~= "table" then
-		reject("MSG_ReturnToLobby", "configuration de partie introuvable (" .. key .. ")")
+		reject("MSG_LaunchConfigMissing", "configuration de partie introuvable (" .. key .. ")")
 		return
 	end
 	if data.version ~= Version.Number then

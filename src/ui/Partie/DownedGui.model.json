@@ -64,7 +64,7 @@
       "name": "HelpHint",
       "className": "TextLabel",
       "properties": {
-        "Text": "",
+        "Text": "Appelle à l'aide : un coéquipier peut te relever.",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,

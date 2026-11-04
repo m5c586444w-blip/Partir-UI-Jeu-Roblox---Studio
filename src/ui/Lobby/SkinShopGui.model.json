@@ -321,15 +321,20 @@
             },
             {
               "name": "Lock",
-              "className": "Frame",
+              "className": "TextLabel",
               "properties": {
+                "Text": "Verrouillé",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
                 "BackgroundTransparency": 0.3,
                 "BorderSizePixel": 0,
-                "BackgroundColor3": [
-                  0.0549,
-                  0.0588,
-                  0.051
-                ],
                 "Position": {
                   "UDim2": [
                     [
@@ -354,9 +359,22 @@
                     ]
                   ]
                 },
-                "Visible": false
+                "Visible": false,
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ]
               },
               "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
                 {
                   "name": "UICorner",
                   "className": "UICorner",
@@ -485,15 +503,20 @@
             },
             {
               "name": "Lock",
-              "className": "Frame",
+              "className": "TextLabel",
               "properties": {
+                "Text": "Verrouillé",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
                 "BackgroundTransparency": 0.3,
                 "BorderSizePixel": 0,
-                "BackgroundColor3": [
-                  0.0549,
-                  0.0588,
-                  0.051
-                ],
                 "Position": {
                   "UDim2": [
                     [
@@ -517,9 +540,22 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ]
               },
               "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
                 {
                   "name": "UICorner",
                   "className": "UICorner",
@@ -648,15 +684,20 @@
             },
             {
               "name": "Lock",
-              "className": "Frame",
+              "className": "TextLabel",
               "properties": {
+                "Text": "Verrouillé",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
                 "BackgroundTransparency": 0.3,
                 "BorderSizePixel": 0,
-                "BackgroundColor3": [
-                  0.0549,
-                  0.0588,
-                  0.051
-                ],
                 "Position": {
                   "UDim2": [
                     [
@@ -680,9 +721,22 @@
                       0
                     ]
                   ]
-                }
+                },
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ]
               },
               "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
                 {
                   "name": "UICorner",
                   "className": "UICorner",
@@ -820,7 +874,7 @@
       "name": "Equip",
       "className": "TextButton",
       "properties": {
-        "Text": "",
+        "Text": "Équiper",
         "Font": "RobotoMono",
         "TextColor3": [
           0.9098,

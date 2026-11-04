@@ -29,6 +29,21 @@ LoreConfig.Messages = {
 	MSG_VersionMismatch = "Une mise à jour est en cours. Retour en ville.",
 	MSG_ReturnToLobby = "Retour en ville…",
 	MSG_DataLoadFailed = "Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session.",
+	MSG_LaunchConfigMissing = "La partie n'a pas pu être préparée. Retour en ville.",
+}
+
+-- 15.6 : textes d'interface remplis par les scripts ({player} remplacé par le code)
+LoreConfig.UI = {
+	TakenBy = "Pris par {player}",
+	Watching = "Tu regardes {player}",
+	Lock = "Verrouillé",
+}
+
+-- 15.6 : astuces de LoadingGui > Tip, tirées au hasard
+LoreConfig.LoadingTips = {
+	"Une lampe allumée se voit de très loin.",
+	"Le bruit de l'eau couvre tes pas.",
+	"Seul, tu es discret. Seul, tu es une proie.",
 }
 
 return LoreConfig
