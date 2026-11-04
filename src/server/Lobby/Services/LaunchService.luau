@@ -1,0 +1,143 @@
+-- ServerScriptService/Services/LaunchService (Lobby)
+-- Sections 4.4 et 16.2 : écrit la configuration de partie dans MemoryStore, réserve un
+-- serveur de la place « Partie », téléporte le groupe.
+-- Données transmises (4.4, 16.4) : joueurs, rôles, armes, difficulté, météo, départ tiré, graine.
+local MemoryStoreService = game:GetService("MemoryStoreService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
+
+local Config = ReplicatedStorage:WaitForChild("Config")
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local LaunchConfig = require(Config:WaitForChild("LaunchConfig"))
+local MapConfig = require(Config:WaitForChild("MapConfig"))
+local Util = require(Shared:WaitForChild("Util"))
+local Version = require(Shared:WaitForChild("Version"))
+
+local LaunchService = {}
+
+local services = nil
+local memory = LaunchConfig.MemoryStore
+local launchMap = nil
+
+local function buildLaunchData(party, members)
+	-- 3.4 : graine = os.time(), écrite dans la console pour rejouer un bug.
+	-- La bible dit « au lancement du serveur » ; elle est tirée ici, au départ du groupe,
+	-- puisque 16.4 la range dans la configuration transmise.
+	local seed = os.time()
+	local random = Random.new(seed)
+
+	-- 4.4 : départ tiré parmi S1, S2, S3
+	-- TODO(BIBLE): tirage équiprobable supposé (la bible ne donne pas de poids)
+	local starts = Util.sortedKeys(MapConfig.Spawns)
+	local start = starts[random:NextInteger(1, #starts)]
+
+	local playersData = {}
+	for _, member in members do
+		table.insert(playersData, {
+			userId = member.UserId,
+			role = party.roles and party.roles[member] or nil, -- RoleService (J9)
+			weapon = party.weapons and party.weapons[member] or nil, -- WeaponBoardService (J9)
+		})
+	end
+
+	return {
+		version = Version.Number,
+		players = playersData,
+		-- TODO(BIBLE): difficulté à transmettre si personne n'a voté (VoteService, J9)
+		difficulty = party.difficulty,
+		-- 12.3 : météo tirée à chaque partie sauf vote « fixe » (VoteService, J9)
+		weather = party.weather,
+		start = start,
+		seed = seed,
+	}
+end
+
+-- lance la partie pour le groupe ; renvoie false si le départ a échoué
+function LaunchService:Launch(party)
+	local placeId = LaunchConfig.PlaceIds.Partie
+	if placeId == 0 then
+		warn(
+			"LaunchService : LaunchConfig.PlaceIds.Partie vaut 0 — TODO(BIBLE) : PlaceId de la place Partie à renseigner"
+		)
+		return false
+	end
+	if launchMap == nil then
+		warn("LaunchService : MemoryStore inaccessible, départ impossible")
+		return false
+	end
+
+	local members = {}
+	for _, member in party.members do
+		if member.Parent ~= nil then
+			table.insert(members, member)
+		end
+	end
+	if #members < LaunchConfig.Party.MinSize then
+		return false
+	end
+
+	-- réserve le serveur : ReserveServer renvoie le code d'accès et le PrivateServerId
+	local okReserve, accessCode, privateServerId = pcall(function()
+		return TeleportService:ReserveServer(placeId)
+	end)
+	if not okReserve then
+		warn("LaunchService : réservation impossible (normal en Studio) : " .. tostring(accessCode))
+		return false
+	end
+
+	-- 16.4 : Launch_<code d'accès>, 600 s.
+	-- TODO(BIBLE): la Partie ne peut pas lire son code d'accès, seulement game.PrivateServerId.
+	-- La clé utilise donc le PrivateServerId renvoyé par ReserveServer.
+	local launchData = buildLaunchData(party, members)
+	local key = memory.LaunchKeyPrefix .. privateServerId
+	local okWrite, writeErr = Util.retry(memory.Attempts, memory.RetryDelay, function()
+		launchMap:SetAsync(key, launchData, memory.LaunchTTL)
+	end)
+	if not okWrite then
+		warn("LaunchService : écriture de la configuration impossible : " .. tostring(writeErr))
+		return false
+	end
+	print(("LaunchService : départ %s, graine %d, %d joueur(s)"):format(launchData.start, launchData.seed, #members))
+
+	local options = Instance.new("TeleportOptions")
+	options.ReservedServerAccessCode = accessCode
+	local okTeleport, teleportErr = pcall(function()
+		return TeleportService:TeleportAsync(placeId, members, options)
+	end)
+	if not okTeleport then
+		warn("LaunchService : téléportation impossible : " .. tostring(teleportErr))
+		return false
+	end
+	return true
+end
+
+function LaunchService:Init(allServices)
+	services = allServices
+	local ok, result = pcall(function()
+		return MemoryStoreService:GetHashMap(memory.LaunchMapName)
+	end)
+	if ok then
+		launchMap = result
+	else
+		warn("LaunchService : MemoryStore inaccessible : " .. tostring(result))
+	end
+end
+
+function LaunchService:Start()
+	-- échec de téléportation signalé après coup : le groupe redevient ouvert
+	TeleportService.TeleportInitFailed:Connect(function(player, teleportResult, errorMessage)
+		warn(
+			("LaunchService : téléportation échouée pour %s (%s) : %s"):format(
+				player.Name,
+				tostring(teleportResult),
+				tostring(errorMessage)
+			)
+		)
+		local party = services.PartyService:GetParty(player)
+		if party ~= nil then
+			services.PartyService:LaunchFailed(party)
+		end
+	end)
+end
+
+return LaunchService

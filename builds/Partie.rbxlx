@@ -1,0 +1,1407 @@
+<roblox version="4">
+  <Item class="ReplicatedStorage" referent="0">
+    <Properties>
+      <string name="Name">ReplicatedStorage</string>
+    </Properties>
+    <Item class="Folder" referent="1">
+      <Properties>
+        <string name="Name">Animations</string>
+      </Properties>
+      <Item class="Folder" referent="2">
+        <Properties>
+          <string name="Name">Creature</string>
+        </Properties>
+      </Item>
+      <Item class="Folder" referent="3">
+        <Properties>
+          <string name="Name">Player</string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="4">
+      <Properties>
+        <string name="Name">Characters</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="5">
+      <Properties>
+        <string name="Name">Config</string>
+      </Properties>
+      <Item class="ModuleScript" referent="6">
+        <Properties>
+          <string name="Name">ActConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/ActConfig
+-- Valeurs de la bible, section 5. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J9 (phase A4).
+local ActConfig = {}
+
+return ActConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="7">
+        <Properties>
+          <string name="Name">AmbienceConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/AmbienceConfig
+-- Valeurs de la bible, sections 12.1 à 12.4. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J4 (phase B2).
+local AmbienceConfig = {}
+
+return AmbienceConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="8">
+        <Properties>
+          <string name="Name">AudioConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/AudioConfig
+-- Valeurs de la bible, sections 12.5, 12.6 et 13.7. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J4 (phase B2).
+local AudioConfig = {}
+
+return AudioConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="9">
+        <Properties>
+          <string name="Name">CinematicConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/CinematicConfig
+-- Valeurs de la bible, section 6. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J9 (phase A4).
+local CinematicConfig = {}
+
+return CinematicConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="10">
+        <Properties>
+          <string name="Name">CreatureConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/CreatureConfig
+-- Valeurs de la bible, section 9. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J10 et J11 (phase A5).
+local CreatureConfig = {}
+
+return CreatureConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="11">
+        <Properties>
+          <string name="Name">DirectorConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/DirectorConfig
+-- Valeurs de la bible, sections 9.12 et 10. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J12 (phase A5).
+local DirectorConfig = {}
+
+return DirectorConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="12">
+        <Properties>
+          <string name="Name">GoreConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/GoreConfig
+-- Valeurs de la bible, section 11. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J13 (phase A6).
+local GoreConfig = {}
+
+return GoreConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="13">
+        <Properties>
+          <string name="Name">ItemConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/ItemConfig
+-- Valeurs de la bible, sections 8.1, 8.3 et 8.4. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J7 (phase A3).
+local ItemConfig = {}
+
+return ItemConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="14">
+        <Properties>
+          <string name="Name">LaunchConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LaunchConfig
+-- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.2, 16.3 et 16.4.
+-- Ne rien ajouter ici sans la bible.
+-- TODO(BIBLE): la section 16.1 ne liste aucun module Config pour ces valeurs.
+-- Ce module a été ajouté au jalon J1 pour respecter « aucune valeur hors Config ». À valider.
+local LaunchConfig = {}
+
+-- Identifiants des deux places de l'expérience. Absents de la bible : connus seulement
+-- après publication. Tant qu'ils valent 0, aucune téléportation n'est tentée (avertissement).
+LaunchConfig.PlaceIds = {
+	Lobby = 0, -- TODO(BIBLE): PlaceId de la place « Lobby » (à remplir par Gabriel après publication)
+	Partie = 0, -- TODO(BIBLE): PlaceId de la place « Partie » (à remplir par Gabriel après publication)
+}
+
+-- 4.4 : groupe
+LaunchConfig.Party = {
+	MinSize = 1, -- capacité 1 à 10
+	MaxSize = 10,
+	PrivateCodeDigits = 4, -- groupe privé : code à 4 chiffres
+	ReadyCountdown = 10, -- tous « Prêt » → compte à rebours de 10 s
+}
+
+-- 16.4 : MemoryStore
+LaunchConfig.MemoryStore = {
+	-- « Parties » : carte triée des groupes du lobby, durée de vie 900 s
+	PartiesMapName = "Parties",
+	PartiesTTL = 900,
+	-- Limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
+	PartiesScanCount = 200,
+	-- « Launch_<code> » : configuration de partie lue par la Partie, durée de vie 600 s
+	-- TODO(BIBLE): la bible ne nomme pas la structure qui contient les clés Launch_ ; carte de hachage « Launch » choisie.
+	LaunchMapName = "Launch",
+	LaunchKeyPrefix = "Launch_",
+	LaunchTTL = 600,
+	-- TODO(BIBLE): PROPOSITION — essais et délai (s) en cas d'échec d'un appel MemoryStore
+	Attempts = 3,
+	RetryDelay = 2,
+}
+
+-- 16.2 : PartyLoaderService attend les joueurs 60 s au plus
+LaunchConfig.ArrivalTimeout = 60
+
+-- 16.3 : toutes les remotes client → serveur sont limitées à 10 appels par seconde ;
+-- RE_Ping : 1 toutes les 2 s
+LaunchConfig.RateLimits = {
+	Default = { calls = 10, per = 1 },
+	RE_Ping = { calls = 1, per = 2 },
+}
+
+return LaunchConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="15">
+        <Properties>
+          <string name="Name">LoreConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LoreConfig
+-- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2).
+-- Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
+-- Squelette créé au jalon J1 : les textes sont recopiés aux jalons J7 (documents) et J14 (musée, dialogues).
+local LoreConfig = {}
+
+-- Clés de texte envoyées par le serveur avec RE_Notify (16.3 : « clé de texte »).
+-- TODO(BIBLE): aucun de ces textes n'est écrit dans la bible. Chaîne vide = rien d'affiché.
+LoreConfig.Notifications = {
+	PartyFull = "", -- TODO(BIBLE): texte « groupe complet »
+	PartyNotFound = "", -- TODO(BIBLE): texte « aucun groupe avec ce code »
+	NoPublicParty = "", -- TODO(BIBLE): texte « aucun groupe public à rejoindre »
+	AlreadyInParty = "", -- TODO(BIBLE): texte « tu es déjà dans un groupe »
+	LaunchFailed = "", -- TODO(BIBLE): texte « le départ a échoué »
+	VersionMismatch = "", -- TODO(BIBLE): texte « versions Lobby / Partie différentes »
+	LaunchDataMissing = "", -- TODO(BIBLE): texte « configuration de partie introuvable »
+}
+
+return LoreConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="16">
+        <Properties>
+          <string name="Name">MapConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/MapConfig
+-- Toutes les positions viennent de la section 3 de la bible. Ne rien ajouter ici sans la bible.
+-- Jalon J1 : seulement les départs S1 à S3 (tirés au lancement, section 4.4).
+-- Les lieux Pxx, extractions, points tirés et tracés sont remplis au jalon J2 (phase A7).
+local MapConfig = {}
+
+-- 3.3 : départs (X, Y, Z)
+MapConfig.Spawns = {
+	S1 = Vector3.new(2780, 120, 3220), -- autour du van ; 10 points espacés de 6 studs
+	S2 = Vector3.new(-1380, 70, 3290), -- autour du bulldozer
+	S3 = Vector3.new(-820, 230, 640), -- dans le camp, corps visibles
+}
+
+return MapConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="17">
+        <Properties>
+          <string name="Name">PlayerConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/PlayerConfig
+-- Valeurs de la bible, sections 2.5 et 7. Ne rien ajouter ici sans la bible.
+-- Jalon J1 : seulement la liste des rôles (nécessaire aux données de 16.4).
+-- Le reste de la section 7 (vitesses, santé, endurance, peur...) est rempli au jalon J6 (phase A3).
+local PlayerConfig = {}
+
+-- 2.5 : les 10 rôles jouables, dans l'ordre de la bible.
+-- id = identifiant anglais utilisé dans les noms (RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*)
+-- et comme clé dans les données (skins, equipped, section 16.4).
+-- Seul « Leader » est donné par la bible (16.4, VO_Leader_Order).
+-- Un rôle sans id est ignoré par les scripts tant que la bible ne le donne pas.
+PlayerConfig.Roles = {
+	{ id = "Leader", title = "Meneur" },
+	{ id = nil, title = "Médecin" }, -- TODO(BIBLE): identifiant anglais du rôle Médecin
+	{ id = nil, title = "Pisteur" }, -- TODO(BIBLE): identifiant anglais du rôle Pisteur
+	{ id = nil, title = "Caméraman" }, -- TODO(BIBLE): identifiant anglais du rôle Caméraman
+	{ id = nil, title = "Mécanicienne" }, -- TODO(BIBLE): identifiant anglais du rôle Mécanicienne
+	{ id = nil, title = "Descendante" }, -- TODO(BIBLE): identifiant anglais du rôle Descendante
+	{ id = nil, title = "Géologue" }, -- TODO(BIBLE): identifiant anglais du rôle Géologue
+	{ id = nil, title = "Sportif" }, -- TODO(BIBLE): identifiant anglais du rôle Sportif
+	{ id = nil, title = "Opératrice radio" }, -- TODO(BIBLE): identifiant anglais du rôle Opératrice radio
+	{ id = nil, title = "Pyrotechnicien" }, -- TODO(BIBLE): identifiant anglais du rôle Pyrotechnicien
+}
+
+return PlayerConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="18">
+        <Properties>
+          <string name="Name">ProgressionConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/ProgressionConfig
+-- Valeurs de la bible, section 16.4 (données, XP) et 16.2 (DataService).
+-- Ne rien ajouter ici sans la bible.
+-- Les règles de déblocage des skins (7.1) et de Cauchemar (5.4) sont ajoutées au jalon J14.
+local ProgressionConfig = {}
+
+-- 16.4 : DataStore PisteFroide_v1, clé player_<UserId>
+ProgressionConfig.DataStoreName = "PisteFroide_v1"
+ProgressionConfig.KeyPrefix = "player_"
+
+-- 16.4 : champ « version » des données
+ProgressionConfig.DataVersion = 1
+
+-- 16.2 : sauvegarde toutes les 120 s et à la fermeture
+ProgressionConfig.AutosaveInterval = 120
+
+-- 16.4 : liste des preuves, 200 au plus
+ProgressionConfig.MaxEvidence = 200
+
+-- 16.4 : clés des fins (5.3)
+ProgressionConfig.EndingIds = { "Survie", "Preuve", "Verite", "Ordonnance", "Silence" }
+
+-- 16.4 et 4.3 : panneaux du musée M1 à M8
+ProgressionConfig.MuseumPanelIds = { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8" }
+
+-- 16.4 : pages du carnet Halvorsen (DOC_12) ; la page 1 est débloquée au départ
+ProgressionConfig.DefaultNotebookPages = { true, false, false }
+
+-- 7.1 : 3 skins par personnage, A dès le début
+ProgressionConfig.SkinIds = { "A", "B", "C" }
+ProgressionConfig.DefaultSkin = "A"
+
+-- 16.4 : niveau = partie entière de la racine de (XP ÷ 100)
+ProgressionConfig.XPPerLevelDivisor = 100
+
+-- 16.4 : gains d'XP ; preuves selon 8.4
+ProgressionConfig.XPGains = {
+	MuseumPanel = 5, -- panneau de musée lu (première fois, 4.2)
+	GamePlayed = 50, -- partie jouée
+	Survival = 200, -- survie
+	EvidenceA = 500, -- 8.4 : vidéo du Caméraman
+	EvidenceB = 150, -- 8.4 : moulage, cri, poils, photo
+	EvidenceC = 50, -- 8.4 : document, photo du charnier
+}
+
+-- 16.2 : verrouillage de session. Ces trois valeurs ne sont pas dans la bible.
+ProgressionConfig.SessionLock = {
+	-- TODO(BIBLE): PROPOSITION — un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
+	StaleAfter = 360,
+	-- TODO(BIBLE): PROPOSITION — nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
+	LoadAttempts = 6,
+	-- TODO(BIBLE): PROPOSITION — secondes entre deux essais de chargement
+	LoadRetryDelay = 5,
+}
+
+return ProgressionConfig
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="19">
+        <Properties>
+          <string name="Name">WeaponConfig</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Config/WeaponConfig
+-- Valeurs de la bible, section 8.2. Ne rien ajouter ici sans la bible.
+-- Squelette créé au jalon J1 (phase A1) : rempli au jalon J8 (phase A3).
+local WeaponConfig = {}
+
+return WeaponConfig
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="20">
+      <Properties>
+        <string name="Name">Items</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="21">
+      <Properties>
+        <string name="Name">Remotes</string>
+      </Properties>
+      <Item class="RemoteEvent" referent="22">
+        <Properties>
+          <string name="Name">RE_CinematicSkipVote</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="23">
+        <Properties>
+          <string name="Name">RE_DropItem</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="24">
+        <Properties>
+          <string name="Name">RE_EndGame</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="25">
+        <Properties>
+          <string name="Name">RE_EquipSlot</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="26">
+        <Properties>
+          <string name="Name">RE_FireWeapon</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="27">
+        <Properties>
+          <string name="Name">RE_Objective</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="28">
+        <Properties>
+          <string name="Name">RE_OpenDocument</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="29">
+        <Properties>
+          <string name="Name">RE_PickupItem</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="30">
+        <Properties>
+          <string name="Name">RE_Ping</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="31">
+        <Properties>
+          <string name="Name">RE_Reload</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="32">
+        <Properties>
+          <string name="Name">RE_SetStance</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="33">
+        <Properties>
+          <string name="Name">RE_Spectate</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="34">
+        <Properties>
+          <string name="Name">RE_TabletAction</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="35">
+        <Properties>
+          <string name="Name">RE_ToggleLight</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="36">
+        <Properties>
+          <string name="Name">RE_UseItem</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="37">
+        <Properties>
+          <string name="Name">RE_Notify</string>
+        </Properties>
+      </Item>
+      <Item class="RemoteEvent" referent="38">
+        <Properties>
+          <string name="Name">RE_PlayCinematic</string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="39">
+      <Properties>
+        <string name="Name">Shared</string>
+      </Properties>
+      <Item class="ModuleScript" referent="40">
+        <Properties>
+          <string name="Name">NoiseTypes</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/NoiseTypes
+-- Types d'événements de bruit {position, rayon, type} reçus par NoiseService (sections 7, 8 et 9.4).
+-- Squelette créé au jalon J1 : rempli au jalon J6 (phase A3).
+local NoiseTypes = {}
+
+return NoiseTypes
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="41">
+        <Properties>
+          <string name="Name">RateLimiter</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/RateLimiter
+-- Limite d'appels des remotes client → serveur (section 16.3).
+-- Fenêtre fixe : au plus `calls` appels par joueur toutes les `per` secondes, par remote.
+-- Les limites viennent de Config/LaunchConfig.RateLimits.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LaunchConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("LaunchConfig"))
+
+local RateLimiter = {}
+RateLimiter.__index = RateLimiter
+
+local allLimiters = {}
+
+function RateLimiter.new(calls, per)
+	local limiter = setmetatable({ _calls = calls, _per = per, _windows = {} }, RateLimiter)
+	table.insert(allLimiters, limiter)
+	return limiter
+end
+
+-- limiteur réglé pour une remote donnée (valeur propre ou valeur par défaut de 16.3)
+function RateLimiter.forRemote(remoteName)
+	local limits = LaunchConfig.RateLimits[remoteName] or LaunchConfig.RateLimits.Default
+	return RateLimiter.new(limits.calls, limits.per)
+end
+
+-- vrai si l'appel est autorisé pour cette clé (en général le joueur)
+function RateLimiter:Allow(key)
+	local now = os.clock()
+	local window = self._windows[key]
+	if window == nil or now - window.start >= self._per then
+		window = { start = now, count = 0 }
+		self._windows[key] = window
+	end
+	if window.count >= self._calls then
+		return false
+	end
+	window.count += 1
+	return true
+end
+
+function RateLimiter:Forget(key)
+	self._windows[key] = nil
+end
+
+-- côté serveur : branche un handler sur une remote, derrière sa limite d'appels.
+-- Les appels en trop sont ignorés sans réponse.
+function RateLimiter.connect(remote, handler)
+	local limiter = RateLimiter.forRemote(remote.Name)
+	return remote.OnServerEvent:Connect(function(player, ...)
+		if limiter:Allow(player) then
+			handler(player, ...)
+		end
+	end)
+end
+
+-- un joueur qui part libère ses fenêtres dans tous les limiteurs
+Players.PlayerRemoving:Connect(function(player)
+	for _, limiter in allLimiters do
+		limiter:Forget(player)
+	end
+end)
+
+return RateLimiter
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="42">
+        <Properties>
+          <string name="Name">Signal</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/Signal
+-- Signal minimal en Luau pur : Connect, Once, Fire, Wait, DisconnectAll.
+-- Les fonctions connectées tournent chacune dans leur propre fil (task.spawn).
+local Signal = {}
+Signal.__index = Signal
+
+local Connection = {}
+Connection.__index = Connection
+
+function Connection:Disconnect()
+	if not self.Connected then
+		return
+	end
+	self.Connected = false
+	local connections = self._signal._connections
+	local index = table.find(connections, self)
+	if index then
+		table.remove(connections, index)
+	end
+end
+
+function Signal.new()
+	return setmetatable({ _connections = {} }, Signal)
+end
+
+function Signal:Connect(handler)
+	local connection = setmetatable({
+		Connected = true,
+		_signal = self,
+		_handler = handler,
+	}, Connection)
+	table.insert(self._connections, connection)
+	return connection
+end
+
+function Signal:Once(handler)
+	local connection
+	connection = self:Connect(function(...)
+		connection:Disconnect()
+		handler(...)
+	end)
+	return connection
+end
+
+function Signal:Fire(...)
+	-- copie : un handler peut se déconnecter pendant l'appel
+	for _, connection in table.clone(self._connections) do
+		if connection.Connected then
+			task.spawn(connection._handler, ...)
+		end
+	end
+end
+
+function Signal:Wait()
+	local thread = coroutine.running()
+	self:Once(function(...)
+		task.spawn(thread, ...)
+	end)
+	return coroutine.yield()
+end
+
+function Signal:DisconnectAll()
+	for _, connection in table.clone(self._connections) do
+		connection:Disconnect()
+	end
+end
+
+return Signal
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="43">
+        <Properties>
+          <string name="Name">Types</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/Types
+-- Types Luau partagés (documentation du format des données ; aucun code).
+
+-- 16.4 : données d'un joueur (DataStore PisteFroide_v1, clé player_<UserId>)
+export type EvidenceEntry = {
+	class: string, -- "A", "B" ou "C" (8.4)
+	kind: string, -- ex. "Video"
+	date: number,
+}
+
+export type PlayerData = {
+	version: number,
+	xp: number,
+	plays: number,
+	survivals: number,
+	endings: { [string]: boolean },
+	evidence: { EvidenceEntry }, -- 200 au plus
+	skins: { [string]: { [string]: boolean } }, -- skins[role][skin]
+	equipped: { [string]: string }, -- equipped[role] = skin
+	notebookPages: { boolean },
+	museumRead: { [string]: boolean },
+	nightmareUnlocked: boolean,
+	settings: { [string]: any },
+}
+
+-- 4.4 et 16.4 : configuration de partie écrite par LaunchService, lue par PartyLoaderService
+export type LaunchPlayer = {
+	userId: number,
+	role: string?, -- rempli par RoleService (J9)
+	weapon: string?, -- rempli par WeaponBoardService (J9)
+}
+
+export type LaunchData = {
+	version: number, -- Shared/Version du Lobby
+	players: { LaunchPlayer },
+	difficulty: string?, -- rempli par VoteService (J9)
+	weather: string?, -- rempli par VoteService (J9)
+	start: string, -- "S1", "S2" ou "S3"
+	seed: number, -- os.time() au lancement (3.4)
+}
+
+return {}
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="44">
+        <Properties>
+          <string name="Name">Util</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/Util
+-- Fonctions utilitaires partagées par les deux places.
+local Util = {}
+
+-- copie profonde d'une table (sans métatables)
+function Util.deepCopy(value)
+	if type(value) ~= "table" then
+		return value
+	end
+	local copy = {}
+	for key, child in value do
+		copy[key] = Util.deepCopy(child)
+	end
+	return copy
+end
+
+-- ajoute à `target` les clés de `template` qui lui manquent (récursif).
+-- Les valeurs déjà présentes ne sont jamais écrasées.
+function Util.reconcile(target, template)
+	for key, templateValue in template do
+		local current = target[key]
+		if current == nil then
+			target[key] = Util.deepCopy(templateValue)
+		elseif type(current) == "table" and type(templateValue) == "table" then
+			Util.reconcile(current, templateValue)
+		end
+	end
+	return target
+end
+
+-- clés d'une table, triées
+function Util.sortedKeys(dictionary)
+	local keys = {}
+	for key in dictionary do
+		table.insert(keys, key)
+	end
+	table.sort(keys)
+	return keys
+end
+
+-- appelle `fn` jusqu'à `attempts` fois, avec `delay` secondes entre deux échecs.
+-- Renvoie ok, puis le résultat (ou le dernier message d'erreur).
+function Util.retry(attempts, delay, fn, ...)
+	local ok, result
+	for attempt = 1, attempts do
+		ok, result = pcall(fn, ...)
+		if ok then
+			return true, result
+		end
+		if attempt < attempts then
+			task.wait(delay)
+		end
+	end
+	return false, result
+end
+
+-- cherche une remote dans ReplicatedStorage/Remotes ; avertissement clair si elle manque
+function Util.getRemote(name)
+	local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+	local remote = remotes and remotes:FindFirstChild(name)
+	if remote == nil then
+		warn("Remote manquante : Remotes/" .. name)
+	end
+	return remote
+end
+
+return Util
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="45">
+        <Properties>
+          <string name="Name">Version</string>
+          <string name="Source"><![CDATA[-- ReplicatedStorage/Shared/Version
+-- Numéro de version commun aux deux places (section 16.1) : le Lobby l'écrit dans la
+-- configuration de partie, la Partie le compare au sien.
+-- À augmenter de 1 à chaque publication qui change Config, Shared ou les remotes,
+-- et publier alors les deux places ensemble.
+local Version = {}
+
+Version.Number = 1
+
+return Version
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Folder" referent="46">
+      <Properties>
+        <string name="Name">UITemplates</string>
+      </Properties>
+    </Item>
+  </Item>
+  <Item class="ServerScriptService" referent="47">
+    <Properties>
+      <string name="Name">ServerScriptService</string>
+    </Properties>
+    <Item class="Folder" referent="48">
+      <Properties>
+        <string name="Name">AI</string>
+      </Properties>
+      <Item class="Folder" referent="49">
+        <Properties>
+          <string name="Name">Attacks</string>
+        </Properties>
+      </Item>
+      <Item class="Folder" referent="50">
+        <Properties>
+          <string name="Name">Behaviors</string>
+        </Properties>
+      </Item>
+    </Item>
+    <Item class="Script" referent="51">
+      <Properties>
+        <string name="Name">Bootstrap</string>
+        <token name="RunContext">0</token>
+        <string name="Source"><![CDATA[-- ServerScriptService/Bootstrap (Partie)
+-- Section 16.1 : charge les services dans l'ordre. Chaque service reçoit Init(services)
+-- (références entre services, aucune attente), puis Start() une fois tous initialisés.
+local ServerScriptService = game:GetService("ServerScriptService")
+
+local servicesFolder = ServerScriptService:WaitForChild("Services")
+
+-- ordre de chargement : DataService d'abord, les autres en dépendent
+local ORDER = { "DataService", "ReturnService", "PartyLoaderService" }
+
+local services = {}
+for _, name in ORDER do
+	local module = servicesFolder:FindFirstChild(name)
+	if module == nil then
+		warn("Bootstrap : service manquant : Services/" .. name)
+	else
+		services[name] = require(module)
+	end
+end
+
+for _, name in ORDER do
+	local service = services[name]
+	if service ~= nil and service.Init ~= nil then
+		local ok, err = pcall(service.Init, service, services)
+		if not ok then
+			warn("Bootstrap : échec de " .. name .. ".Init : " .. tostring(err))
+		end
+	end
+end
+
+for _, name in ORDER do
+	local service = services[name]
+	if service ~= nil and service.Start ~= nil then
+		local ok, err = pcall(service.Start, service)
+		if not ok then
+			warn("Bootstrap : échec de " .. name .. ".Start : " .. tostring(err))
+		end
+	end
+end
+
+print("Bootstrap (Partie) : services démarrés")
+]]></string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="52">
+      <Properties>
+        <string name="Name">Services</string>
+      </Properties>
+      <Item class="ModuleScript" referent="53">
+        <Properties>
+          <string name="Name">PartyLoaderService</string>
+          <string name="Source"><![CDATA[-- ServerScriptService/Services/PartyLoaderService (Partie)
+-- Section 16.2 : lit la configuration de partie écrite par le Lobby (MemoryStore,
+-- clé Launch_<id>, 16.4), puis attend les joueurs, 60 s au plus.
+-- Section 16.1 : si la version du Lobby diffère de celle de la Partie, la partie n'a pas lieu.
+local MemoryStoreService = game:GetService("MemoryStoreService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LaunchConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("LaunchConfig"))
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Signal = require(Shared:WaitForChild("Signal"))
+local Util = require(Shared:WaitForChild("Util"))
+local Version = require(Shared:WaitForChild("Version"))
+
+local PartyLoaderService = {}
+
+-- (launchData, players) : configuration lue et joueurs présents à la fin de l'attente.
+-- launchData vaut nil hors serveur réservé (test dans Studio).
+PartyLoaderService.Loaded = Signal.new()
+
+local services = nil
+local memory = LaunchConfig.MemoryStore
+local launchMap = nil
+local state = "loading" -- "loading", "ready" ou "rejecting"
+local rejectKey = nil
+local launchData = nil
+local presentPlayers = {}
+local notifyRemote = nil
+
+local function sendBack(player)
+	if notifyRemote ~= nil then
+		notifyRemote:FireClient(player, rejectKey)
+	end
+	services.ReturnService:ReturnPlayers({ player }, nil)
+end
+
+-- la partie ne peut pas avoir lieu : chaque joueur présent ou à venir repart au Lobby
+local function reject(textKey, reason)
+	warn("PartyLoaderService : " .. reason)
+	state = "rejecting"
+	rejectKey = textKey
+	for _, player in Players:GetPlayers() do
+		task.spawn(sendBack, player)
+	end
+end
+
+local function finish(data, players)
+	state = "ready"
+	launchData = data
+	presentPlayers = players
+	PartyLoaderService.Loaded:Fire(data, players)
+end
+
+-- attend les joueurs annoncés dans la configuration, ArrivalTimeout secondes au plus
+local function waitForPlayers(data)
+	local expected = {}
+	local expectedCount = 0
+	for _, entry in data.players do
+		expected[entry.userId] = true
+		expectedCount += 1
+	end
+
+	local done = false
+	local connection = nil
+
+	local function complete()
+		if done then
+			return
+		end
+		done = true
+		if connection ~= nil then
+			connection:Disconnect()
+		end
+		local present = {}
+		for userId in expected do
+			local player = Players:GetPlayerByUserId(userId)
+			if player ~= nil then
+				table.insert(present, player)
+			end
+		end
+		-- TODO(J9): un joueur absent après 60 s — son rôle n'existe pas dans la partie (4.4, étape 3)
+		print(("PartyLoaderService : %d/%d joueur(s) arrivé(s)"):format(#present, expectedCount))
+		finish(data, present)
+	end
+
+	local function check()
+		for userId in expected do
+			if Players:GetPlayerByUserId(userId) == nil then
+				return
+			end
+		end
+		complete()
+	end
+
+	connection = Players.PlayerAdded:Connect(check)
+	task.delay(LaunchConfig.ArrivalTimeout, complete)
+	check()
+end
+
+local function load()
+	if game.PrivateServerId == "" then
+		-- TODO(BIBLE): hors serveur réservé (test dans Studio), faut-il une configuration de test ?
+		warn("PartyLoaderService : pas de serveur réservé (Studio ?), aucune configuration de partie")
+		finish(nil, Players:GetPlayers())
+		return
+	end
+	if launchMap == nil then
+		reject("LaunchDataMissing", "MemoryStore inaccessible")
+		return
+	end
+
+	local key = memory.LaunchKeyPrefix .. game.PrivateServerId
+	local ok, data = Util.retry(memory.Attempts, memory.RetryDelay, function()
+		return launchMap:GetAsync(key)
+	end)
+	if not ok then
+		reject("LaunchDataMissing", "lecture de la configuration impossible : " .. tostring(data))
+		return
+	end
+	if type(data) ~= "table" then
+		reject("LaunchDataMissing", "configuration de partie introuvable (" .. key .. ")")
+		return
+	end
+	if data.version ~= Version.Number then
+		-- TODO(BIBLE): 16.1 dit que le Lobby refuse le départ ; le Lobby ne peut pas lire la version
+		-- de la Partie avant d'y envoyer le groupe, la Partie renvoie donc le groupe au Lobby.
+		reject(
+			"VersionMismatch",
+			("version du Lobby %s, version de la Partie %d"):format(tostring(data.version), Version.Number)
+		)
+		return
+	end
+
+	-- 3.4 : graine écrite dans la console pour rejouer un bug
+	print(("PartyLoaderService : graine %s, départ %s"):format(tostring(data.seed), tostring(data.start)))
+	waitForPlayers(data)
+end
+
+-- configuration de la partie (nil tant qu'elle n'est pas lue, ou hors serveur réservé)
+function PartyLoaderService:GetLaunchData()
+	return launchData
+end
+
+-- attend la fin du chargement ; renvoie la configuration et les joueurs présents
+function PartyLoaderService:WaitUntilLoaded()
+	if state ~= "ready" then
+		self.Loaded:Wait()
+	end
+	return launchData, presentPlayers
+end
+
+function PartyLoaderService:Init(allServices)
+	services = allServices
+	local ok, result = pcall(function()
+		return MemoryStoreService:GetHashMap(memory.LaunchMapName)
+	end)
+	if ok then
+		launchMap = result
+	else
+		warn("PartyLoaderService : MemoryStore inaccessible : " .. tostring(result))
+	end
+end
+
+function PartyLoaderService:Start()
+	notifyRemote = Util.getRemote("RE_Notify")
+
+	Players.PlayerAdded:Connect(function(player)
+		if state == "rejecting" then
+			sendBack(player)
+		end
+		-- TODO(BIBLE): un joueur absent de la configuration (ou arrivé après les 60 s) peut-il rester ?
+	end)
+
+	task.spawn(load)
+end
+
+return PartyLoaderService
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="54">
+        <Properties>
+          <string name="Name">ReturnService</string>
+          <string name="Source"><![CDATA[-- ServerScriptService/Services/ReturnService (Partie)
+-- Section 16.2 : téléportation vers le Lobby avec les résultats.
+-- Les résultats (fin obtenue, survivants, preuves sorties, XP : 4.4 étape 8) sont calculés au jalon J9.
+-- Ils voyagent dans les données de téléportation pour l'affichage seulement (ResultsGui) :
+-- les gains sont sauvegardés par DataService ici (au départ du joueur), jamais relus depuis ces données.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
+
+local LaunchConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("LaunchConfig"))
+local Version = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Version"))
+
+local ReturnService = {}
+
+-- renvoie les joueurs au Lobby ; `results` = table affichée à l'arrivée (peut être nil)
+function ReturnService:ReturnPlayers(players, results)
+	local placeId = LaunchConfig.PlaceIds.Lobby
+	if placeId == 0 then
+		warn(
+			"ReturnService : LaunchConfig.PlaceIds.Lobby vaut 0 — TODO(BIBLE) : PlaceId de la place Lobby à renseigner"
+		)
+		return false
+	end
+
+	local travellers = {}
+	for _, player in players do
+		if player.Parent ~= nil then
+			table.insert(travellers, player)
+		end
+	end
+	if #travellers == 0 then
+		return true
+	end
+
+	local options = Instance.new("TeleportOptions")
+	options:SetTeleportData({ version = Version.Number, results = results })
+	local ok, err = pcall(function()
+		return TeleportService:TeleportAsync(placeId, travellers, options)
+	end)
+	if not ok then
+		-- TODO(BIBLE): que faire si le retour au Lobby échoue (nouvel essai, délai) ?
+		warn("ReturnService : retour au Lobby impossible (normal en Studio) : " .. tostring(err))
+		return false
+	end
+	return true
+end
+
+function ReturnService:ReturnAll(results)
+	return self:ReturnPlayers(Players:GetPlayers(), results)
+end
+
+function ReturnService:Init() end
+
+function ReturnService:Start()
+	TeleportService.TeleportInitFailed:Connect(function(player, teleportResult, errorMessage)
+		warn(
+			("ReturnService : téléportation échouée pour %s (%s) : %s"):format(
+				player.Name,
+				tostring(teleportResult),
+				tostring(errorMessage)
+			)
+		)
+	end)
+end
+
+return ReturnService
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="55">
+        <Properties>
+          <string name="Name">DataService</string>
+          <string name="Source"><![CDATA[-- ServerScriptService/Services/DataService (les deux places)
+-- Section 16.2 et 16.4 : DataStore PisteFroide_v1, clé player_<UserId>,
+-- verrouillage de session, sauvegarde toutes les 120 s et à la fermeture.
+-- Le verrou est rangé dans les métadonnées de la clé : la valeur garde exactement le format de 16.4.
+local DataStoreService = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = ReplicatedStorage:WaitForChild("Config")
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
+local ProgressionConfig = require(Config:WaitForChild("ProgressionConfig"))
+local Signal = require(Shared:WaitForChild("Signal"))
+local Util = require(Shared:WaitForChild("Util"))
+
+local DataService = {}
+
+-- (player, data) : données chargées et prêtes
+DataService.Loaded = Signal.new()
+
+local store = nil -- nil si les API DataStore sont inaccessibles (Studio sans accès)
+local sessions = {} -- [Player] = { data = table, released = bool }
+
+local function keyFor(userId)
+	return ProgressionConfig.KeyPrefix .. tostring(userId)
+end
+
+-- données par défaut d'un nouveau joueur (16.4)
+local function buildDefaultData()
+	local endings = {}
+	for _, endingId in ProgressionConfig.EndingIds do
+		endings[endingId] = false
+	end
+
+	local skins = {}
+	local equipped = {}
+	for _, role in PlayerConfig.Roles do
+		-- un rôle sans identifiant (TODO(BIBLE) dans PlayerConfig) n'a pas encore de clé
+		if role.id ~= nil then
+			local owned = {}
+			for _, skinId in ProgressionConfig.SkinIds do
+				owned[skinId] = skinId == ProgressionConfig.DefaultSkin
+			end
+			skins[role.id] = owned
+			equipped[role.id] = ProgressionConfig.DefaultSkin
+		end
+	end
+
+	local museumRead = {}
+	for _, panelId in ProgressionConfig.MuseumPanelIds do
+		museumRead[panelId] = false
+	end
+
+	return {
+		version = ProgressionConfig.DataVersion,
+		xp = 0,
+		plays = 0,
+		survivals = 0,
+		endings = endings,
+		evidence = {},
+		skins = skins,
+		equipped = equipped,
+		notebookPages = Util.deepCopy(ProgressionConfig.DefaultNotebookPages),
+		museumRead = museumRead,
+		nightmareUnlocked = false,
+		-- TODO(J15): valeurs par défaut des réglages de la section 17.2 (Défaut PC / mobile)
+		settings = {},
+	}
+end
+
+-- vrai si une autre session (autre serveur) tient un verrou encore frais
+local function isLockedByOther(metadata)
+	if metadata == nil or metadata.lockJobId == nil then
+		return false
+	end
+	if metadata.lockJobId == game.JobId then
+		return false
+	end
+	local age = os.time() - (metadata.lockTime or 0)
+	return age < ProgressionConfig.SessionLock.StaleAfter
+end
+
+local function lockMetadata()
+	return { lockJobId = game.JobId, lockTime = os.time() }
+end
+
+-- une tentative : prend le verrou et lit les données.
+-- Renvoie "ok" + données, ou "locked" si une autre session tient le verrou.
+local function tryAcquire(userId)
+	local status = "ok"
+	local loaded = nil
+	store:UpdateAsync(keyFor(userId), function(current, keyInfo)
+		local metadata = keyInfo and keyInfo:GetMetadata() or nil
+		if isLockedByOther(metadata) then
+			status = "locked"
+			return nil -- annule l'écriture
+		end
+		status = "ok"
+		loaded = current or buildDefaultData()
+		return loaded, { userId }, lockMetadata()
+	end)
+	return status, loaded
+end
+
+-- écrit les données ; `release` libère le verrou (départ du joueur, fermeture)
+local function writeSession(player, session, release)
+	if store == nil then
+		return
+	end
+	local userId = player.UserId
+	local stolen = false
+	local ok, err = pcall(function()
+		store:UpdateAsync(keyFor(userId), function(_current, keyInfo)
+			local metadata = keyInfo and keyInfo:GetMetadata() or nil
+			if isLockedByOther(metadata) then
+				stolen = true
+				return nil -- une autre session a repris la clé : ne pas l'écraser
+			end
+			stolen = false
+			local newMetadata = if release then {} else lockMetadata()
+			return session.data, { userId }, newMetadata
+		end)
+	end)
+	if not ok then
+		warn(("DataService : échec de sauvegarde pour %d : %s"):format(userId, tostring(err)))
+	elseif stolen then
+		warn(("DataService : verrou repris par une autre session pour %d, sauvegarde annulée"):format(userId))
+	end
+end
+
+local function onPlayerAdded(player)
+	if sessions[player] ~= nil then
+		return
+	end
+
+	if store == nil then
+		-- Studio sans accès aux API : données par défaut, jamais sauvegardées
+		sessions[player] = { data = buildDefaultData(), released = true }
+		player:SetAttribute("dataLoaded", true)
+		DataService.Loaded:Fire(player, sessions[player].data)
+		return
+	end
+
+	local lock = ProgressionConfig.SessionLock
+	for attempt = 1, lock.LoadAttempts do
+		if player.Parent == nil then
+			return -- le joueur est parti pendant le chargement
+		end
+		local ok, status, data = pcall(tryAcquire, player.UserId)
+		if ok and status == "ok" then
+			local session = { data = Util.reconcile(data, buildDefaultData()), released = false }
+			if player.Parent == nil then
+				-- parti entre-temps : on rend le verrou tout de suite
+				writeSession(player, session, true)
+				return
+			end
+			sessions[player] = session
+			player:SetAttribute("dataLoaded", true)
+			DataService.Loaded:Fire(player, session.data)
+			return
+		end
+		if not ok then
+			warn(
+				("DataService : échec de chargement pour %d (essai %d) : %s"):format(
+					player.UserId,
+					attempt,
+					tostring(status)
+				)
+			)
+		end
+		if attempt < lock.LoadAttempts then
+			task.wait(lock.LoadRetryDelay)
+		end
+	end
+
+	-- TODO(BIBLE): que faire d'un joueur dont les données restent verrouillées ou illisibles ?
+	-- En attendant : il joue sans données, et rien n'est sauvegardé pour lui.
+	warn(
+		("DataService : données indisponibles pour %d, aucune sauvegarde pendant cette session"):format(player.UserId)
+	)
+	player:SetAttribute("dataLoaded", false)
+end
+
+local function releaseSession(player)
+	local session = sessions[player]
+	if session == nil then
+		return
+	end
+	sessions[player] = nil
+	if session.released then
+		return
+	end
+	session.released = true
+	writeSession(player, session, true)
+end
+
+-- données du joueur, ou nil si pas (encore) chargées
+function DataService:GetData(player)
+	local session = sessions[player]
+	return session and session.data or nil
+end
+
+function DataService:IsLoaded(player)
+	return sessions[player] ~= nil
+end
+
+-- attend les données du joueur ; nil si le joueur part ou si le chargement échoue
+function DataService:WaitForData(player)
+	while player.Parent ~= nil and sessions[player] == nil and player:GetAttribute("dataLoaded") ~= false do
+		task.wait()
+	end
+	return self:GetData(player)
+end
+
+-- sauvegarde immédiate en gardant le verrou
+function DataService:Save(player)
+	local session = sessions[player]
+	if session ~= nil and not session.released then
+		writeSession(player, session, false)
+	end
+end
+
+function DataService:Init()
+	local ok, result = pcall(function()
+		return DataStoreService:GetDataStore(ProgressionConfig.DataStoreName)
+	end)
+	if ok then
+		store = result
+	else
+		warn(
+			"DataService : DataStore inaccessible (en Studio : activer l'accès aux API). Données non sauvegardées. "
+				.. tostring(result)
+		)
+	end
+end
+
+function DataService:Start()
+	Players.PlayerAdded:Connect(onPlayerAdded)
+	for _, player in Players:GetPlayers() do
+		task.spawn(onPlayerAdded, player)
+	end
+	Players.PlayerRemoving:Connect(releaseSession)
+
+	-- sauvegarde périodique (16.2 : toutes les 120 s)
+	task.spawn(function()
+		while true do
+			task.wait(ProgressionConfig.AutosaveInterval)
+			for player in table.clone(sessions) do
+				task.spawn(DataService.Save, DataService, player)
+			end
+		end
+	end)
+
+	-- sauvegarde à la fermeture du serveur
+	game:BindToClose(function()
+		local pending = 0
+		for player in table.clone(sessions) do
+			pending += 1
+			task.spawn(function()
+				releaseSession(player)
+				pending -= 1
+			end)
+		end
+		while pending > 0 do
+			task.wait()
+		end
+	end)
+end
+
+return DataService
+]]></string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="ServerStorage" referent="56">
+    <Properties>
+      <string name="Name">ServerStorage</string>
+    </Properties>
+    <Item class="Folder" referent="57">
+      <Properties>
+        <string name="Name">Creatures</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="58">
+      <Properties>
+        <string name="Name">Props</string>
+      </Properties>
+    </Item>
+  </Item>
+  <Item class="StarterPlayer" referent="59">
+    <Properties>
+      <string name="Name">StarterPlayer</string>
+    </Properties>
+    <Item class="StarterPlayerScripts" referent="60">
+      <Properties>
+        <string name="Name">StarterPlayerScripts</string>
+      </Properties>
+      <Item class="Folder" referent="61">
+        <Properties>
+          <string name="Name">Controllers</string>
+        </Properties>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="Workspace" referent="62">
+    <Properties>
+      <string name="Name">Workspace</string>
+      <bool name="NeedsPivotMigration">false</bool>
+    </Properties>
+    <Item class="Folder" referent="63">
+      <Properties>
+        <string name="Name">Cinematics</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="64">
+      <Properties>
+        <string name="Name">ClimbPoints</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="65">
+      <Properties>
+        <string name="Name">CluePoints</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="66">
+      <Properties>
+        <string name="Name">Navigation</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="67">
+      <Properties>
+        <string name="Name">Places</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="68">
+      <Properties>
+        <string name="Name">SpawnPoints</string>
+      </Properties>
+    </Item>
+    <Item class="Folder" referent="69">
+      <Properties>
+        <string name="Name">Vegetation</string>
+      </Properties>
+    </Item>
+  </Item>
+</roblox>

@@ -1,0 +1,5 @@
+# fichiers locaux de Studio et des outils
+*.rbxl.lock
+*.rbxlx.lock
+sourcemap.json
+.DS_Store

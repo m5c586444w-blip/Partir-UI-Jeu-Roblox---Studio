@@ -1,0 +1,23 @@
+# Globales Roblox utilisées par le projet (selene ne peut pas télécharger la liste complète ici).
+base: luau
+name: roblox_min
+globals:
+  game:
+    any: true
+  workspace:
+    any: true
+  script:
+    any: true
+  Enum:
+    any: true
+  Instance:
+    any: true
+  Vector3:
+    any: true
+  Random:
+    any: true
+  task:
+    any: true
+  warn:
+    args:
+      - type: "..."
