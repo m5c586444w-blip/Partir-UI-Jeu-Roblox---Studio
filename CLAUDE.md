@@ -102,8 +102,13 @@ Règles :
 - UI (phase A2) : `python3 tools/ui/build_ui.py` régénère `src/ui/**` et `UI_MAP.md`
   depuis une description unique (noms de la section 15, style 15.2). À ne plus lancer
   pour une place déjà ouverte dans Studio.
-- Vérification de syntaxe (aucun test en jeu possible en phase A) : `stylua --check src`
-  (StyLua lit le Luau ; une erreur de syntaxe fait échouer la commande) et `selene src`.
+- Relecture de fin de phase (aucun test en jeu possible en phase A) : `stylua --check src tools/terrain`,
+  `selene src tools/terrain`, `python3 tools/check_values.py` (aucun nombre hors Config ; une ligne
+  marquée `-- constante` est une unité ou une limite du moteur), `python3 tools/ui/check_ui.py`.
+- Générateurs : `tools/ui/build_ui.py` (UI, `UI_MAP.md`), `tools/animations/build_animations.py` (14),
+  `tools/images/make_images.py` + `rasterize.js` (13.5), `tools/terrain/download_polyhaven.py` (13.4, Credits).
+- `tools/terrain/TerrainBuilder.luau` = `ServerStorage/TerrainBuilder` de la Partie (script d'édition, 3.7).
+- Phrase de reprise : `SUIVI.md`, section « État de reprise ».
 
 Arborescence des sources :
 
@@ -116,6 +121,11 @@ src/shared/Remotes/Partie → ReplicatedStorage/Remotes  (Partie)
 src/server/Common/Services → ServerScriptService/Services (les deux places)
 src/server/<Place>/Bootstrap.server.luau → ServerScriptService/Bootstrap
 src/server/<Place>/Services → ServerScriptService/Services
+src/server/Partie/AI       → ServerScriptService/AI        (IA, 16.1)
+src/client/Common/ClientBootstrap.client.luau → StarterPlayerScripts/ClientBootstrap
+src/client/<Place>/Controllers, src/client/Common/Controllers → StarterPlayerScripts/Controllers
+src/shared/Animations      → ReplicatedStorage/Animations  (objets Animation, 14)
+src/shared/Credits.luau    → ReplicatedStorage/Credits
 src/ui/Lobby, src/ui/Partie → StarterGui                  (ScreenGui, section 15)
 src/ui/Common              → StarterGui                  (les deux places, 15.5)
 src/ui/UITemplates         → ReplicatedStorage/UITemplates (BillboardGui, 15.5)

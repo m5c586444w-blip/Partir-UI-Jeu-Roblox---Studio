@@ -11,7 +11,7 @@ seulement pour que le code tourne : elle attend la bible.
 ## État de reprise (à lire en premier)
 
 - Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- Phases terminées dans cette session : **A3, A4, A5, A6, A7**. En cours : A8.
+- **Phase A terminée** (A1 → A8, 2026-11-04). Prochaine étape : session Studio, phase B1 (voir `HANDOFF.md`).
 - Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
   puis `rojo build` des deux places.
@@ -108,6 +108,11 @@ images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script
 - Non exécuté ici : TerrainBuilder ne tourne que dans Studio (phase B1).
 - Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build réussi.
 
+**Phase A8** — fait : relecture complète (StyLua, selene : 0 erreur, 0 avertissement ; 0 nombre hors
+Config ; aucun `Instance.new` d'UI ; `require`, services et remotes vérifiés ; 268 chemins d'UI), `rojo build`
+des deux places et des deux projets de synchronisation, `HANDOFF.md` réécrit avec la liste ordonnée de ce
+qui reste à faire dans Studio. Bilan : environ 15 600 lignes de Luau, 42 `TODO(BIBLE)`, 117 marques `DÉFAUT`.
+
 Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
 décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
 caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
@@ -135,7 +140,7 @@ sont pas encore importés.
 | A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | Fait (code) — à tester et régler en B |
 | A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | Fait (code) — à tester en B |
 | A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | Fait — à lancer en B1 |
-| A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | En cours |
+| A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | Fait |
 | B1 | Studio | J2, J3 | Lancer `TerrainBuilder`, vérifier les positions, poser la végétation | À faire |
 | B2 | Studio | J4 | Lumière, brouillard, météo, sons : réglage à l'œil, captures | À faire |
 | B3 | Studio | J0, J15 | Import des modèles 3D et animations, tests en jeu, mobile, équilibrage | À faire |
