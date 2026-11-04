@@ -21,11 +21,11 @@
         "Position": {
           "UDim2": [
             [
-              0.5,
+              0.31,
               0
             ],
             [
-              0.43,
+              0.26,
               0
             ]
           ]
@@ -33,11 +33,11 @@
         "Size": {
           "UDim2": [
             [
-              0.6,
+              0.56,
               0
             ],
             [
-              0.62,
+              0.42,
               0
             ]
           ]
@@ -68,7 +68,7 @@
           "name": "UIAspectRatioConstraint",
           "className": "UIAspectRatioConstraint",
           "properties": {
-            "AspectRatio": 1.72
+            "AspectRatio": 2.37
           }
         },
         {
@@ -960,11 +960,11 @@
         "Position": {
           "UDim2": [
             [
-              0.5,
+              0.31,
               0
             ],
             [
-              0.47,
+              0.26,
               0
             ]
           ]
@@ -972,11 +972,11 @@
         "Size": {
           "UDim2": [
             [
-              0.36,
+              0.32,
               0
             ],
             [
-              0.34,
+              0.32,
               0
             ]
           ]
@@ -1262,7 +1262,7 @@
           "name": "UIAspectRatioConstraint",
           "className": "UIAspectRatioConstraint",
           "properties": {
-            "AspectRatio": 1.882
+            "AspectRatio": 1.778
           }
         },
         {

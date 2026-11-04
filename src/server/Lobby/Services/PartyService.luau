@@ -16,8 +16,13 @@ local LaunchConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChi
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local RateLimiter = require(Shared:WaitForChild("RateLimiter"))
 local Util = require(Shared:WaitForChild("Util"))
+local Signal = require(Shared:WaitForChild("Signal"))
+local CinematicConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("CinematicConfig"))
 
 local PartyService = {}
+
+PartyService.MembersChanged = Signal.new() -- (party) : arrivée, départ, rôle
+PartyService.MemberLeft = Signal.new() -- (party, player)
 
 local services = nil
 local parties = {} -- [partyId] = party
@@ -104,7 +109,16 @@ local function launch(party)
 	party.launching = true
 	refreshAll(party)
 	publish(party)
-	-- TODO(J9): cinématique CS_01 (les joueurs montent dans le van) avant la téléportation (4.4, étape 6)
+	-- 4.4 : votes résolus (5.4 : sans vote Normal / aléatoire ; égalité : la plus basse / aléatoire)
+	services.VoteService:Resolve(party)
+	-- 4.4, étape 6 : cinématique CS_01 (les joueurs montent dans le van), puis téléportation
+	local cinematic = Util.getRemote("RE_PlayCinematic")
+	if cinematic then
+		for _, member in party.members do
+			cinematic:FireClient(member, "Play", "CS_01")
+		end
+	end
+	task.wait(CinematicConfig.Cinematics.CS_01.duration)
 	local ok = services.LaunchService:Launch(party)
 	if not ok then
 		PartyService:LaunchFailed(party)
@@ -132,6 +146,7 @@ end
 local function addMember(party, player)
 	table.insert(party.members, player)
 	partyOf[player] = party.id
+	PartyService.MembersChanged:Fire(party)
 	-- un nouveau membre n'est pas prêt : le compte à rebours s'arrête
 	updateCountdown(party)
 	publish(party)
@@ -152,6 +167,8 @@ local function removeMember(player)
 		table.remove(party.members, index)
 	end
 	party.ready[player] = nil
+	PartyService.MemberLeft:Fire(party, player)
+	PartyService.MembersChanged:Fire(party)
 	if #party.members == 0 then
 		if party.countdownThread ~= nil then
 			task.cancel(party.countdownThread)
@@ -189,6 +206,9 @@ local function onCreate(player, isPrivate)
 		host = player,
 		members = {},
 		ready = {},
+		roles = {}, -- [Player] = id de rôle (RoleService)
+		weapons = {}, -- [Player] = id d'arme (WeaponBoardService)
+		votes = {}, -- [Player] = { difficulty, weather } (VoteService)
 		launching = false,
 		countdownThread = nil,
 		countdownEnd = nil,
@@ -255,7 +275,11 @@ local function onReady(player, isReady)
 	if party == nil or party.launching then
 		return
 	end
-	-- TODO(J9): refuser « Prêt » sans rôle choisi (MSG_RoleRequired, RoleService)
+	-- 4.6 : un rôle est obligatoire avant d'être prêt
+	if isReady and (party.roles == nil or party.roles[player] == nil) then
+		Util.notify(player, "MSG_RoleRequired")
+		return
+	end
 	party.ready[player] = if isReady then true else nil
 	updateCountdown(party)
 	local waiting = notReadyCount(party)

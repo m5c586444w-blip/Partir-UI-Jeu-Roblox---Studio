@@ -132,6 +132,23 @@ LoreConfig.Prompts = {
 	Open = "Ouvrir", -- DÉFAUT (sac d'un mort)
 }
 
+-- 5.3 : fins (titres de la colonne « Fin » ; texte : colonne « Récompense » quand elle est rédigée)
+-- TODO(BIBLE): textes de fin affichés dans ResultsGui > EndingText (seul « Silence » en a un)
+LoreConfig.Endings = {
+	Survie = { title = "Survie", text = "" },
+	Preuve = { title = "Preuve", text = "" },
+	Verite = { title = "La vérité", text = "" },
+	Ordonnance = { title = "Ordonnance 69-01", text = "" },
+	Silence = { title = "Silence", text = "Le podcast est publié… incomplet" },
+}
+
+-- 15.6 : libellés courts absents du tableau → DÉFAUT (statuts de ResultsGui > Survivors)
+LoreConfig.Status = {
+	Extracted = "Extrait", -- DÉFAUT
+	Dead = "Mort", -- DÉFAUT
+	Missing = "Disparu", -- 5.1 : « disparus »
+}
+
 -- 15.6 : astuces de LoadingGui > Tip, tirées au hasard
 LoreConfig.LoadingTips = {
 	"Une lampe allumée se voit de très loin.",

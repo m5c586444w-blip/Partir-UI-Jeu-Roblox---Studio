@@ -10,6 +10,8 @@ Section 18.1 ter de la bible.
 - A2 : les 24 ScreenGui de la section 15 et `PingMarker` / `NameTag` ; libellés de 15.6 ; `UI_MAP.md`.
 - A3 : joueur (santé par membre, sang, à terre, mort, spectateur, endurance, postures, peur, bruits),
   objets, inventaire, lampes, tablette, documents, preuves, armes ; contrôleurs client de la Partie.
+- A4 : actes, horloge, siège, extractions E1–E4, fins, cinématiques, météo, ambiance ;
+  lobby complet côté scripts (groupe, rôles, armes, votes, CS_01, résultats).
 - Images d'interface dans `assets/ui/png` (vignettage de peur, 41 icônes) : à importer.
 
 ## Ce que la phase A n'a pas pu vérifier
@@ -79,6 +81,15 @@ dans l'ordre de 2.5. Sans terrain, poser d'abord la plaque provisoire sous S1 (�
   → boiterie (vitesse ×0,6) ; `Damage(..., "Torso", 100, ...)` → à terre, invite « Relever » pour l'autre joueur.
 - Armes : donner un fusil (`require(game.ServerScriptService.Services.InventoryService):Add(game.Players.Player1, "WPN_Rifle", 1)`),
   tirer 5 fois puis vérifier que le 6e tir est refusé ; en Normal, aucun dégât à un coéquipier.
+
+## Tests de J9 (partie sans créature)
+
+- Poser dans `Workspace/Cinematics` des Part invisibles `CS_02a_Shot_1`, `CS_04_Shot_1`… (6.2) ;
+  sans elles, seules les bandes noires et les sous-titres s'affichent (avertissement console).
+- Poser au besoin les ancres `Workspace/Places/E1_Van`, `E2_Radio`, `E3_Bulldozer`, `E4_Plug`,
+  `P05c/Door`, `P05c/Window`, `P05c/RoofHole` (sinon ancres invisibles aux coordonnées de la bible).
+- Accélérer un test : réduire temporairement les durées dans `Config/ActConfig.Acts` (ne pas commit).
+- Fin attendue : cinématique de fin, `RE_EndGame`, retour au Lobby et `ResultsGui`.
 
 ## Commandes
 

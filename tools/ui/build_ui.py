@@ -356,7 +356,7 @@ WEAPONS = [("Slot_Rifle", "Fusil à verrou"), ("Slot_Revolver", "Revolver"), ("S
 
 
 def weapon_board_gui():
-    board = panel("Board", (0.2, 0.12, 0.6, 0.62), children=[list_layout(vertical=False, padding=0.02)])
+    board = panel("Board", (0.03, 0.05, 0.56, 0.42), children=[list_layout(vertical=False, padding=0.02)])
     for i, (slot, weapon_name) in enumerate(WEAPONS, start=1):
         board.add(frame(slot, (0, 0, 0.31, 0.92), order=i, panel=False, bg=PANEL, bg_t=PANEL_T, children=[
             corner(), stroke(),
@@ -365,7 +365,7 @@ def weapon_board_gui():
             label("Holder", (0.05, 0.66, 0.9, 0.1), color=TEXT2, align="Center"),
             button("Take", (0.15, 0.8, 0.7, 0.14), text="Prendre"),
         ]))
-    popup = panel("VotePopup", (0.32, 0.3, 0.36, 0.34), children=[
+    popup = panel("VotePopup", (0.15, 0.1, 0.32, 0.32), children=[
         label("Question", (0.05, 0.05, 0.9, 0.35), align="Center"),
         button("Option_1", (0.05, 0.45, 0.42, 0.25)),
         button("Option_2", (0.53, 0.45, 0.42, 0.25)),
@@ -375,8 +375,9 @@ def weapon_board_gui():
 
 
 def vote_gui():
+    # DÉFAUT : disposition du lobby — armes en haut à gauche, votes en bas à gauche, groupe à droite
     # 15.3 : Difficulty > Normal, Hard, Nightmare (> Lock) ; Weather > Random, Clear, Fog, Rain, Snow
-    difficulty = panel("Difficulty", (0.05, 0.15, 0.42, 0.55), children=[
+    difficulty = panel("Difficulty", (0.03, 0.5, 0.27, 0.45), children=[
         title("Title", (0.05, 0.03, 0.9, 0.14), text="Difficulté", read=False),  # 4.4 : votes : difficulté
         button("Normal", (0.05, 0.22, 0.9, 0.2), order=1, text="Normal"),  # 4.4, 5.4
         button("Hard", (0.05, 0.47, 0.9, 0.2), order=2, text="Difficile"),
@@ -386,14 +387,14 @@ def vote_gui():
     ])
     weather_options = [("Random", "Aléatoire"), ("Clear", "Nuit claire"), ("Fog", "Brouillard"),
                        ("Rain", "Pluie"), ("Snow", "Première neige")]  # 4.4 : aléatoire ou fixe ; 12.3
-    weather = panel("Weather", (0.53, 0.15, 0.42, 0.55), children=[
+    weather = panel("Weather", (0.32, 0.5, 0.27, 0.45), children=[
         title("Title", (0.05, 0.03, 0.9, 0.14), text="Météo", read=False),  # 4.4 : et météo
     ])
     for i, (name, text) in enumerate(weather_options):
         weather.add(button(name, (0.05, 0.21 + i * 0.155, 0.9, 0.13), order=i + 1, text=text))
     gui = screen_gui("VoteGui", "VoteController", [
         difficulty, weather,
-        title("Countdown", (0.3, 0.75, 0.4, 0.1), align="Center"),
+        title("Countdown", (0.62, 0.02, 0.35, 0.07), align="Center"),
     ])
     return _hide_roots(gui)
 

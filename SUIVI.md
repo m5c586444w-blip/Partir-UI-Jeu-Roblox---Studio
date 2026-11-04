@@ -11,7 +11,7 @@ seulement pour que le code tourne : elle attend la bible.
 ## État de reprise (à lire en premier)
 
 - Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- Phases terminées dans cette session : **A3**. En cours : A4. Restent : A5, A6, A7, A8.
+- Phases terminées dans cette session : **A3, A4**. En cours : A5. Restent : A6, A7, A8.
 - Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
   puis `rojo build` des deux places.
@@ -47,6 +47,24 @@ images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script
 - Relecture : StyLua et selene sans erreur ; `tools/check_values.py` : 0 nombre hors Config ;
   chemins d'UI tous présents ; `rojo build` des deux places réussi.
 
+**Phase A4 (J9)** — fait :
+- Config : `CinematicConfig` (section 6, textes des 17 cinématiques), `LaunchConfig.Votes`,
+  `LoreConfig.Endings` et `LoreConfig.Status`.
+- Partie (serveur) : `GameStateService` (actes 0–4, horloge 5.1 avec saut de 10 s, objectifs,
+  siège : barricades, 6 min, silence 20 s, page 2 du carnet ; voie d'extraction tirée ; aube ;
+  fins 5.3 et récompenses ; fin à 06 h 00), `ExtractionService` (E1–E4), `CinematicService`
+  (portée, invulnérabilité + 3 s, vote pour passer), `WeatherService` (12.3, vent 12.4).
+- Partie (client) : `ObjectiveController` ; les deux places : `CinematicController` (plans
+  `CS_xx_Shot_n`, bandes, sous-titres, CS_00 à la première connexion), `AmbienceController`
+  (lumière 12.1 interpolée sur l'heure, brouillard 12.2 par zone, réverbération 12.5).
+- Lobby (serveur) : `RoleService`, `WeaponBoardService` (armes selon la taille, fusil au Pisteur,
+  Opératrice sans arme, vote de conflit en 15 s), `VoteService` (5.4 : défauts et égalités) ;
+  `PartyService` : rôle obligatoire avant « Prêt », CS_01 avant la téléportation.
+- Lobby (client) : `PartyController`, `RoleController` (portraits en ViewportFrame),
+  `WeaponBoardController`, `VoteController`, `ResultsController`, `TeleportController`.
+- `Lighting.Technology = Future` dans le projet Partie (12.1).
+- Relecture : StyLua et selene sans erreur ; 0 nombre hors Config ; build des deux places réussi.
+
 Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
 décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
 caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
@@ -70,8 +88,8 @@ sont pas encore importés.
 | A1 | Cloud | J1 | Arborescence Rojo, Config, Shared, remotes, DataService, téléportation Lobby ↔ Partie | Fait (code) — à tester en B |
 | A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | Fait — à tester en B |
 | A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | Fait (code) — à tester en B |
-| A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | En cours |
-| A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | À faire |
+| A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | Fait (code) — à tester en B |
+| A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | En cours |
 | A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | À faire |
 | A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | À faire |
 | A8 | Cloud | — | `rojo build` des deux places, liste de ce qui reste à faire dans Studio | À faire |
@@ -88,6 +106,7 @@ En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié 
 - J6 : [ ] chaque valeur de la section 7 vérifiable dans `CreatureDebug` ou la console — les valeurs sont toutes dans `PlayerConfig` et lisibles en attributs du joueur ; `CreatureDebug` vient en A5
 - J7 : [ ] 6 indices sur 12 tirés (code) · [ ] graine affichée (code : console de `ItemSpawnService`) · [ ] preuves sauvegardées après extraction (code : `EvidenceService:CommitForSurvivor`, appelé par l'extraction en A4)
 - J8 : [ ] tir impossible sans munitions (code) · [ ] cadence respectée (code) · [ ] tir allié seulement en Difficile et Cauchemar (code)
+- J9 : [ ] une partie complète jouable sans créature, de CS_02 à l'écran de résultats (code ; plans de caméra à poser dans Studio, sinon bandes et texte seuls)
 
 ## Questions encore ouvertes (TODO(BIBLE))
 
@@ -118,9 +137,17 @@ phases A ; ces points bloquent le réglage final.
 | C20 | Cadence des pierres pendant le siège. | `ActConfig.Siege.StoneInterval` | Réglée avec l'IA (A5) |
 | C21 | Période du cycle en sinus des rafales de pluie ; intervalle des rafales de neige. | `AmbienceConfig` | — |
 | C22 | Ce qui allume l'indicateur `RadioGui/Talking` (dépend du chat vocal, 19.4). | `RadioController` | Caché |
+| C23 | CS_05 dure 25 s, mais « en partie, elles durent 12 s au plus » (6) : exception pour la vidéo ? | `CinematicConfig` | 25 s |
+| C24 | Texte du « message radio » entendu hors du rayon d'une cinématique de lieu (6.1). | `CinematicConfig` | Rien |
+| C25 | Textes de fin pour `ResultsGui > EndingText` (seul Silence en a un). | `LoreConfig.Endings` | Vides |
+| C26 | Rayon du bruit du démarrage du van (E1, « démarrage bruyant »). | `ActConfig.Routes.E1` | Pas de bruit |
+| C27 | Durée d'une rafale de vent. | `AmbienceConfig.GustDuration` | PROVISOIRE : 1 s |
 
 Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
-bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite.
+bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
+un acte ne s'achève pas avant sa durée minimale même si sa condition est remplie (5.1) ;
+« conditions d'extraction réunies » (fin de l'acte 3) = la voie principale est préparée
+(roue changée, radio réparée, bulldozer réparé) ; l'extraction se déclenche à l'acte 4.
 
 ## Décisions DÉFAUT (section 0)
 
@@ -145,6 +172,18 @@ Joueur, objets, armes (A3) :
 - Personnage absent : mannequin Roblox neutre (`HumanoidDescription` vide) nommé `MANQUANT_CHR_<ROLE>_Skin_<n>`.
 - Tablette : « sommet » de P11 / P23 = dans le rayon et au niveau de la cabine ; le Géologue est le seul à voir son point dans les tunnels.
 - Valeurs d'affichage et techniques regroupées dans `PlayerConfig.Interface`, `PlayerConfig.Technical`, `PlayerConfig.Keys`, `ItemConfig` (bloc gris, placement, visuels du feu).
+
+Actes, extractions, lobby (A4) :
+- Une extraction termine la partie pour tout le monde : les joueurs dans la zone sont extraits, les autres restent (disparus ou morts) ; tous morts → fin immédiate (Silence).
+- Zones d'extraction : E1 = rayon de P01 (60) ; E2 = aire de 60 × 60 ; E3 = portée d'interaction du bulldozer à l'arrivée ; E4 = portée d'interaction de la sortie P07c.
+- E2 : les objets demandés peuvent être portés par le joueur ou par un coéquipier tout près ; ils sont consommés à la réparation. L'appel ne se fait qu'à l'acte 4.
+- Ancres d'interaction : Part de `Workspace/Places` (`E1_Van`, `E2_Radio`, `E3_Bulldozer`, `E4_Plug`, `P05c/Door`, `Window`, `RoofHole`) si posées à la main, sinon ancres invisibles aux coordonnées de la bible ; une planche par ouverture.
+- La Mécanicienne répare ×2 plus vite sur E2 et E3 (7.7) ; 10 s pour la roue (5.2) ; sans caisse à outils, ×2 plus long (8.1).
+- XP : partie jouée 50 pour tous, survie 200 pour les extraits, preuves selon 8.4 ; fins, Cauchemar débloqué et pages du carnet enregistrés pour tous les participants.
+- Lobby : `PartyFrame` visible dès l'arrivée ; grille des rôles ouverte à l'entrée dans un groupe, fermée par Confirmer ; armes et votes visibles ensuite ; nombre de votes affiché dans le texte des boutons (« Normal (2) ») ; disposition : armes en haut à gauche, votes en bas à gauche.
+- Cauchemar : seul un joueur qui l'a débloqué peut voter pour.
+- CS_00 joue tant que le joueur n'a joué aucune partie (`plays = 0`) ; compteurs `xp`, `plays`, `survivals`, `nightmareUnlocked` publiés en attributs.
+- Formats : heure « 19 h 00 », XP « +250 XP », preuve « A · Carte mémoire · Theo » ; statuts « Extrait », « Mort », « Disparu » (5.1).
 
 ## Assets MANQUANT_
 

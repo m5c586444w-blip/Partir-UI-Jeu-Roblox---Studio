@@ -189,6 +189,7 @@ PlayerConfig.Interface = {
 	LowBloodSaturation = -1, -- DÉFAUT : saturation à sang 0 (désaturation progressive sous 40)
 	LowHeadBlur = 8, -- DÉFAUT : flou (BlurEffect.Size) tête sous 30 %
 	LampFlickerChance = 0.15, -- DÉFAUT : chance par image qu'une lampe faible s'éteigne
+	PortraitDistance = 6, -- DÉFAUT : distance de la caméra du portrait (RoleSelectGui, studs)
 }
 
 -- DÉFAUT : touches (clavier, positions physiques : Q = A sur un clavier AZERTY, 7.2 « A/E »)

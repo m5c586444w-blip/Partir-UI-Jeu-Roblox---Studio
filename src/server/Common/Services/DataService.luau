@@ -128,6 +128,14 @@ local function writeSession(player, session, release)
 	end
 end
 
+-- DÉFAUT : quelques compteurs publiés en attributs pour l'interface (lecture seule côté client)
+local PUBLISHED = { "xp", "plays", "survivals", "nightmareUnlocked" }
+local function publishAttributes(player, data)
+	for _, key in PUBLISHED do
+		player:SetAttribute(key, data[key])
+	end
+end
+
 local function onPlayerAdded(player)
 	if sessions[player] ~= nil then
 		return
@@ -155,6 +163,7 @@ local function onPlayerAdded(player)
 				return
 			end
 			sessions[player] = session
+			publishAttributes(player, session.data)
 			player:SetAttribute("dataLoaded", true)
 			DataService.Loaded:Fire(player, session.data)
 			return
@@ -216,6 +225,7 @@ end
 function DataService:Save(player)
 	local session = sessions[player]
 	if session ~= nil and not session.released then
+		publishAttributes(player, session.data)
 		writeSession(player, session, false)
 	end
 end

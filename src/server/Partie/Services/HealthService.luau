@@ -258,6 +258,10 @@ function HealthService:Damage(player, limb, amount, source, bleed)
 	if not self:IsAlive(player) or amount <= 0 then
 		return
 	end
+	-- 6.1 : invulnérable pendant une cinématique, plus 3 s
+	if services.CinematicService and services.CinematicService:IsProtected(player) then
+		return
+	end
 	if player:GetAttribute("isDowned") then
 		if PlayerConfig.Technical.DownedDamageKills then
 			self:Kill(player, source)

@@ -107,6 +107,8 @@ AmbienceConfig.Wind = {
 }
 -- TODO(BIBLE): période du cycle en sinus des rafales de pluie, et intervalle des rafales de neige
 AmbienceConfig.WindSinePeriod = nil
+-- TODO(BIBLE): durée d'une rafale. PROVISOIRE : 1 s
+AmbienceConfig.GustDuration = 1
 AmbienceConfig.TreeWindRange = 120 -- 12.4 : arbres animés par leurs os à moins de 120 studs (réglage Élevé)
 
 -- 12.5 : réverbération par zone (SoundService.AmbientReverb)

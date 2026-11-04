@@ -52,6 +52,12 @@
         },
         "Controllers": {
           "$path": "src/client/Lobby/Controllers",
+          "AmbienceController": {
+            "$path": "src/client/Common/Controllers/AmbienceController.luau"
+          },
+          "CinematicController": {
+            "$path": "src/client/Common/Controllers/CinematicController.luau"
+          },
           "NotificationController": {
             "$path": "src/client/Common/Controllers/NotificationController.luau"
           }

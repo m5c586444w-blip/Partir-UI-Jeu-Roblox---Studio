@@ -64,6 +64,8 @@ ActConfig.Routes = {
 		repairTime = 20,
 		roleRepairTime = { Mechanic = 10 },
 		cinematic = "CS_10",
+		-- TODO(BIBLE): rayon du bruit du « démarrage bruyant » du van (sans valeur : pas de bruit émis)
+		startNoise = nil,
 	},
 	E2 = {
 		place = "P11",
