@@ -35,6 +35,7 @@ local function buildLaunchData(party, members)
 	for _, member in members do
 		table.insert(playersData, {
 			userId = member.UserId,
+			name = member.DisplayName, -- pour MSG_PlayerMissing (4.6) dans la Partie
 			role = party.roles and party.roles[member] or nil, -- RoleService (J9)
 			weapon = party.weapons and party.weapons[member] or nil, -- WeaponBoardService (J9)
 		})
@@ -52,20 +53,8 @@ local function buildLaunchData(party, members)
 	}
 end
 
--- lance la partie pour le groupe ; renvoie false si le départ a échoué
-function LaunchService:Launch(party)
-	local placeId = LaunchConfig.PlaceIds.Partie
-	if placeId == 0 then
-		warn(
-			"LaunchService : LaunchConfig.PlaceIds.Partie vaut 0 — TODO(BIBLE) : PlaceId de la place Partie à renseigner"
-		)
-		return false
-	end
-	if launchMap == nil then
-		warn("LaunchService : MemoryStore inaccessible, départ impossible")
-		return false
-	end
-
+-- une tentative de départ ; renvoie true si la téléportation est lancée
+local function tryLaunch(party, placeId)
 	local members = {}
 	for _, member in party.members do
 		if member.Parent ~= nil then
@@ -85,9 +74,7 @@ function LaunchService:Launch(party)
 		return false
 	end
 
-	-- 16.4 : Launch_<code d'accès>, 600 s.
-	-- TODO(BIBLE): la Partie ne peut pas lire son code d'accès, seulement game.PrivateServerId.
-	-- La clé utilise donc le PrivateServerId renvoyé par ReserveServer.
+	-- 16.4 : clé Launch_<PrivateServerId>, 600 s (la Partie lit game.PrivateServerId)
 	local launchData = buildLaunchData(party, members)
 	local key = memory.LaunchKeyPrefix .. privateServerId
 	local okWrite, writeErr = Util.retry(memory.Attempts, memory.RetryDelay, function()
@@ -109,6 +96,34 @@ function LaunchService:Launch(party)
 		return false
 	end
 	return true
+end
+
+-- lance la partie pour le groupe, avec nouvel essai (MSG_TeleportRetry, 4.6) ;
+-- renvoie false si tous les essais ont échoué (PartyService envoie alors MSG_TeleportAbort)
+function LaunchService:Launch(party)
+	local placeId = LaunchConfig.PlaceIds.Partie
+	if launchMap == nil then
+		warn("LaunchService : MemoryStore inaccessible, départ impossible")
+		return false
+	end
+
+	for _, member in party.members do
+		Util.notify(member, "MSG_Teleporting")
+	end
+
+	local teleport = LaunchConfig.Teleport
+	for attempt = 1, teleport.Attempts do
+		if tryLaunch(party, placeId) then
+			return true
+		end
+		if attempt < teleport.Attempts then
+			for _, member in party.members do
+				Util.notify(member, "MSG_TeleportRetry")
+			end
+			task.wait(teleport.RetryDelay)
+		end
+	end
+	return false
 end
 
 function LaunchService:Init(allServices)

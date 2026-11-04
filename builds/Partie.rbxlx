@@ -127,17 +127,15 @@ return ItemConfig
         <Properties>
           <string name="Name">LaunchConfig</string>
           <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LaunchConfig
--- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.2, 16.3 et 16.4.
+-- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.1, 16.3 et 16.4.
 -- Ne rien ajouter ici sans la bible.
--- TODO(BIBLE): la section 16.1 ne liste aucun module Config pour ces valeurs.
--- Ce module a été ajouté au jalon J1 pour respecter « aucune valeur hors Config ». À valider.
 local LaunchConfig = {}
 
--- Identifiants des deux places de l'expérience. Absents de la bible : connus seulement
--- après publication. Tant qu'ils valent 0, aucune téléportation n'est tentée (avertissement).
+-- 16.4 : expérience « PISTE FROIDE (test) » (relevés le 22 octobre 2026 ;
+-- à reconfirmer dans le Creator Dashboard si l'expérience a été recréée)
 LaunchConfig.PlaceIds = {
-	Lobby = 0, -- TODO(BIBLE): PlaceId de la place « Lobby » (à remplir par Gabriel après publication)
-	Partie = 0, -- TODO(BIBLE): PlaceId de la place « Partie » (à remplir par Gabriel après publication)
+	Lobby = 77677833738174,
+	Partie = 103506696801797,
 }
 
 -- 4.4 : groupe
@@ -153,16 +151,22 @@ LaunchConfig.MemoryStore = {
 	-- « Parties » : carte triée des groupes du lobby, durée de vie 900 s
 	PartiesMapName = "Parties",
 	PartiesTTL = 900,
-	-- Limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
+	-- limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
 	PartiesScanCount = 200,
-	-- « Launch_<code> » : configuration de partie lue par la Partie, durée de vie 600 s
-	-- TODO(BIBLE): la bible ne nomme pas la structure qui contient les clés Launch_ ; carte de hachage « Launch » choisie.
-	LaunchMapName = "Launch",
+	-- « Launch_<PrivateServerId> » : configuration de partie lue par la Partie, durée de vie 600 s
+	LaunchMapName = "Launch", -- DÉFAUT : carte de hachage qui contient les clés Launch_
 	LaunchKeyPrefix = "Launch_",
 	LaunchTTL = 600,
-	-- TODO(BIBLE): PROPOSITION — essais et délai (s) en cas d'échec d'un appel MemoryStore
+	-- valeurs techniques acceptées le 4 novembre 2026 (16.4) : essais et délai (s) par appel MemoryStore
 	Attempts = 3,
 	RetryDelay = 2,
+}
+
+-- DÉFAUT (valeurs techniques) : essais et délai (s) d'une téléportation ratée
+-- (départ : MSG_TeleportRetry puis MSG_TeleportAbort, 4.6 ; retour au Lobby)
+LaunchConfig.Teleport = {
+	Attempts = 3,
+	RetryDelay = 5,
 }
 
 -- 16.2 : PartyLoaderService attend les joueurs 60 s au plus
@@ -183,21 +187,36 @@ return LaunchConfig
         <Properties>
           <string name="Name">LoreConfig</string>
           <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LoreConfig
--- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2).
--- Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
--- Squelette créé au jalon J1 : les textes sont recopiés aux jalons J7 (documents) et J14 (musée, dialogues).
+-- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2),
+-- messages système (4.6). Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
+-- Les documents sont recopiés au jalon J7, le musée et les dialogues au jalon J14.
 local LoreConfig = {}
 
--- Clés de texte envoyées par le serveur avec RE_Notify (16.3 : « clé de texte »).
--- TODO(BIBLE): aucun de ces textes n'est écrit dans la bible. Chaîne vide = rien d'affiché.
-LoreConfig.Notifications = {
-	PartyFull = "", -- TODO(BIBLE): texte « groupe complet »
-	PartyNotFound = "", -- TODO(BIBLE): texte « aucun groupe avec ce code »
-	NoPublicParty = "", -- TODO(BIBLE): texte « aucun groupe public à rejoindre »
-	AlreadyInParty = "", -- TODO(BIBLE): texte « tu es déjà dans un groupe »
-	LaunchFailed = "", -- TODO(BIBLE): texte « le départ a échoué »
-	VersionMismatch = "", -- TODO(BIBLE): texte « versions Lobby / Partie différentes »
-	LaunchDataMissing = "", -- TODO(BIBLE): texte « configuration de partie introuvable »
+-- 4.6 : messages système, affichés par NotificationGui.
+-- Le serveur envoie la clé avec RE_Notify ; {player} et {n} sont remplacés par le code.
+LoreConfig.Messages = {
+	MSG_PartyFull = "Ce groupe est complet (10 joueurs).",
+	MSG_CodeInvalid = "Aucun groupe ne correspond à ce code.",
+	MSG_QuickJoinNone = "Aucun groupe public disponible. Crée le tien.",
+	MSG_PartyLeft = "Tu as quitté le groupe.",
+	MSG_HostLeft = "Le créateur du groupe est parti. {player} prend sa place.",
+	MSG_RoleTaken = "Ce rôle est déjà pris par {player}.",
+	MSG_RoleRequired = "Choisis un rôle avant d'être prêt.",
+	MSG_WeaponTaken = "Cette arme est déjà attribuée à {player}.",
+	MSG_WeaponNotAllowed = "L'opératrice radio ne peut pas porter d'arme à feu.",
+	MSG_WeaponVote = "Deux joueurs veulent la même arme. Votez : 15 secondes.",
+	MSG_NightmareLocked = "Cauchemar se débloque après une première survie.",
+	MSG_WaitingReady = "En attente : {n} joueur(s) pas encore prêt(s).",
+	MSG_Countdown = "Départ dans {n} s.",
+	MSG_CountdownCancelled = "Départ annulé : un joueur n'est plus prêt.",
+	MSG_Teleporting = "En route vers la forêt…",
+	MSG_TeleportRetry = "Le départ a échoué. Nouvel essai…",
+	MSG_TeleportAbort = "Impossible de partir pour l'instant. Réessayez dans un moment.",
+	MSG_WaitingPlayers = "En attente des autres membres du groupe…",
+	MSG_PlayerMissing = "{player} n'a pas rejoint la forêt.",
+	MSG_VersionMismatch = "Une mise à jour est en cours. Retour en ville.",
+	MSG_ReturnToLobby = "Retour en ville…",
+	MSG_DataLoadFailed = "Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session.",
 }
 
 return LoreConfig
@@ -234,21 +253,19 @@ return MapConfig
 local PlayerConfig = {}
 
 -- 2.5 : les 10 rôles jouables, dans l'ordre de la bible.
--- id = identifiant anglais utilisé dans les noms (RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*)
--- et comme clé dans les données (skins, equipped, section 16.4).
--- Seul « Leader » est donné par la bible (16.4, VO_Leader_Order).
--- Un rôle sans id est ignoré par les scripts tant que la bible ne le donne pas.
+-- id = identifiant de code (2.5) : RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*,
+-- et clé des données skins / equipped (16.4).
 PlayerConfig.Roles = {
 	{ id = "Leader", title = "Meneur" },
-	{ id = nil, title = "Médecin" }, -- TODO(BIBLE): identifiant anglais du rôle Médecin
-	{ id = nil, title = "Pisteur" }, -- TODO(BIBLE): identifiant anglais du rôle Pisteur
-	{ id = nil, title = "Caméraman" }, -- TODO(BIBLE): identifiant anglais du rôle Caméraman
-	{ id = nil, title = "Mécanicienne" }, -- TODO(BIBLE): identifiant anglais du rôle Mécanicienne
-	{ id = nil, title = "Descendante" }, -- TODO(BIBLE): identifiant anglais du rôle Descendante
-	{ id = nil, title = "Géologue" }, -- TODO(BIBLE): identifiant anglais du rôle Géologue
-	{ id = nil, title = "Sportif" }, -- TODO(BIBLE): identifiant anglais du rôle Sportif
-	{ id = nil, title = "Opératrice radio" }, -- TODO(BIBLE): identifiant anglais du rôle Opératrice radio
-	{ id = nil, title = "Pyrotechnicien" }, -- TODO(BIBLE): identifiant anglais du rôle Pyrotechnicien
+	{ id = "Medic", title = "Médecin" },
+	{ id = "Tracker", title = "Pisteur" },
+	{ id = "Cameraman", title = "Caméraman" },
+	{ id = "Mechanic", title = "Mécanicienne" },
+	{ id = "Descendant", title = "Descendante" },
+	{ id = "Geologist", title = "Géologue" },
+	{ id = "Athlete", title = "Sportif" },
+	{ id = "RadioOperator", title = "Opératrice radio" },
+	{ id = "Pyrotechnician", title = "Pyrotechnicien" },
 }
 
 return PlayerConfig
@@ -303,13 +320,13 @@ ProgressionConfig.XPGains = {
 	EvidenceC = 50, -- 8.4 : document, photo du charnier
 }
 
--- 16.2 : verrouillage de session. Ces trois valeurs ne sont pas dans la bible.
+-- 16.2 : verrouillage de session (valeurs techniques acceptées le 4 novembre 2026, 16.4)
 ProgressionConfig.SessionLock = {
-	-- TODO(BIBLE): PROPOSITION — un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
+	-- un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
 	StaleAfter = 360,
-	-- TODO(BIBLE): PROPOSITION — nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
+	-- nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
 	LoadAttempts = 6,
-	-- TODO(BIBLE): PROPOSITION — secondes entre deux essais de chargement
+	-- secondes entre deux essais de chargement
 	LoadRetryDelay = 5,
 }
 
@@ -616,6 +633,7 @@ export type PlayerData = {
 -- 4.4 et 16.4 : configuration de partie écrite par LaunchService, lue par PartyLoaderService
 export type LaunchPlayer = {
 	userId: number,
+	name: string, -- DisplayName, pour MSG_PlayerMissing (4.6)
 	role: string?, -- rempli par RoleService (J9)
 	weapon: string?, -- rempli par WeaponBoardService (J9)
 }
@@ -700,6 +718,26 @@ function Util.getRemote(name)
 		warn("Remote manquante : Remotes/" .. name)
 	end
 	return remote
+end
+
+-- côté serveur : envoie un message système de LoreConfig.Messages (4.6) à un joueur.
+-- `params` remplace {player} et {n} côté client (ex. { player = "Nora", n = 3 }).
+function Util.notify(player, messageKey, params)
+	local remote = Util.getRemote("RE_Notify")
+	if remote ~= nil and player.Parent ~= nil then
+		remote:FireClient(player, messageKey, params)
+	end
+end
+
+-- côté client : texte final d'un message système, {player} et {n} remplacés
+function Util.formatMessage(template, params)
+	params = params or {}
+	return (
+		template:gsub("{(%w+)}", function(name)
+			local value = params[name]
+			return if value ~= nil then tostring(value) else "{" .. name .. "}"
+		end)
+	)
 end
 
 return Util
@@ -830,20 +868,18 @@ local state = "loading" -- "loading", "ready" ou "rejecting"
 local rejectKey = nil
 local launchData = nil
 local presentPlayers = {}
-local notifyRemote = nil
+local waitingFor = nil -- [userId] = true pendant l'attente des joueurs
 
 local function sendBack(player)
-	if notifyRemote ~= nil then
-		notifyRemote:FireClient(player, rejectKey)
-	end
-	services.ReturnService:ReturnPlayers({ player }, nil)
+	services.ReturnService:ReturnPlayers({ player }, nil, rejectKey)
 end
 
 -- la partie ne peut pas avoir lieu : chaque joueur présent ou à venir repart au Lobby
-local function reject(textKey, reason)
+-- avec le message `messageKey` (4.6)
+local function reject(messageKey, reason)
 	warn("PartyLoaderService : " .. reason)
 	state = "rejecting"
-	rejectKey = textKey
+	rejectKey = messageKey
 	for _, player in Players:GetPlayers() do
 		task.spawn(sendBack, player)
 	end
@@ -864,6 +900,11 @@ local function waitForPlayers(data)
 		expected[entry.userId] = true
 		expectedCount += 1
 	end
+	waitingFor = expected
+	-- 4.6 : MSG_WaitingPlayers aux joueurs déjà là (les suivants le reçoivent à l'arrivée)
+	for _, player in Players:GetPlayers() do
+		Util.notify(player, "MSG_WaitingPlayers")
+	end
 
 	local done = false
 	local connection = nil
@@ -873,6 +914,7 @@ local function waitForPlayers(data)
 			return
 		end
 		done = true
+		waitingFor = nil
 		if connection ~= nil then
 			connection:Disconnect()
 		end
@@ -881,6 +923,14 @@ local function waitForPlayers(data)
 			local player = Players:GetPlayerByUserId(userId)
 			if player ~= nil then
 				table.insert(present, player)
+			end
+		end
+		-- 4.6 : MSG_PlayerMissing pour chaque absent, envoyé aux présents
+		for _, entry in data.players do
+			if Players:GetPlayerByUserId(entry.userId) == nil then
+				for _, player in present do
+					Util.notify(player, "MSG_PlayerMissing", { player = entry.name })
+				end
 			end
 		end
 		-- TODO(J9): un joueur absent après 60 s — son rôle n'existe pas dans la partie (4.4, étape 3)
@@ -904,13 +954,14 @@ end
 
 local function load()
 	if game.PrivateServerId == "" then
-		-- TODO(BIBLE): hors serveur réservé (test dans Studio), faut-il une configuration de test ?
+		-- DÉFAUT : hors serveur réservé (test dans Studio), aucune configuration de partie
 		warn("PartyLoaderService : pas de serveur réservé (Studio ?), aucune configuration de partie")
 		finish(nil, Players:GetPlayers())
 		return
 	end
 	if launchMap == nil then
-		reject("LaunchDataMissing", "MemoryStore inaccessible")
+		-- DÉFAUT : configuration illisible → retour au Lobby avec MSG_ReturnToLobby
+		reject("MSG_ReturnToLobby", "MemoryStore inaccessible")
 		return
 	end
 
@@ -919,18 +970,17 @@ local function load()
 		return launchMap:GetAsync(key)
 	end)
 	if not ok then
-		reject("LaunchDataMissing", "lecture de la configuration impossible : " .. tostring(data))
+		reject("MSG_ReturnToLobby", "lecture de la configuration impossible : " .. tostring(data))
 		return
 	end
 	if type(data) ~= "table" then
-		reject("LaunchDataMissing", "configuration de partie introuvable (" .. key .. ")")
+		reject("MSG_ReturnToLobby", "configuration de partie introuvable (" .. key .. ")")
 		return
 	end
 	if data.version ~= Version.Number then
-		-- TODO(BIBLE): 16.1 dit que le Lobby refuse le départ ; le Lobby ne peut pas lire la version
-		-- de la Partie avant d'y envoyer le groupe, la Partie renvoie donc le groupe au Lobby.
+		-- 16.1 : la Partie compare les versions et renvoie le groupe au Lobby
 		reject(
-			"VersionMismatch",
+			"MSG_VersionMismatch",
 			("version du Lobby %s, version de la Partie %d"):format(tostring(data.version), Version.Number)
 		)
 		return
@@ -967,13 +1017,13 @@ function PartyLoaderService:Init(allServices)
 end
 
 function PartyLoaderService:Start()
-	notifyRemote = Util.getRemote("RE_Notify")
-
 	Players.PlayerAdded:Connect(function(player)
 		if state == "rejecting" then
 			sendBack(player)
+		elseif waitingFor ~= nil then
+			Util.notify(player, "MSG_WaitingPlayers")
 		end
-		-- TODO(BIBLE): un joueur absent de la configuration (ou arrivé après les 60 s) peut-il rester ?
+		-- DÉFAUT : un joueur absent de la configuration, ou arrivé après les 60 s, peut rester
 	end)
 
 	task.spawn(load)
@@ -996,24 +1046,20 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 
 local LaunchConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("LaunchConfig"))
-local Version = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Version"))
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Util = require(Shared:WaitForChild("Util"))
+local Version = require(Shared:WaitForChild("Version"))
 
 local ReturnService = {}
 
--- renvoie les joueurs au Lobby ; `results` = table affichée à l'arrivée (peut être nil)
-function ReturnService:ReturnPlayers(players, results)
+-- renvoie les joueurs au Lobby (MSG_ReturnToLobby, 4.6) ; `results` = table affichée à l'arrivée (peut être nil)
+function ReturnService:ReturnPlayers(players, results, messageKey)
 	local placeId = LaunchConfig.PlaceIds.Lobby
-	if placeId == 0 then
-		warn(
-			"ReturnService : LaunchConfig.PlaceIds.Lobby vaut 0 — TODO(BIBLE) : PlaceId de la place Lobby à renseigner"
-		)
-		return false
-	end
-
 	local travellers = {}
 	for _, player in players do
 		if player.Parent ~= nil then
 			table.insert(travellers, player)
+			Util.notify(player, messageKey or "MSG_ReturnToLobby")
 		end
 	end
 	if #travellers == 0 then
@@ -1022,15 +1068,27 @@ function ReturnService:ReturnPlayers(players, results)
 
 	local options = Instance.new("TeleportOptions")
 	options:SetTeleportData({ version = Version.Number, results = results })
-	local ok, err = pcall(function()
-		return TeleportService:TeleportAsync(placeId, travellers, options)
-	end)
-	if not ok then
-		-- TODO(BIBLE): que faire si le retour au Lobby échoue (nouvel essai, délai) ?
-		warn("ReturnService : retour au Lobby impossible (normal en Studio) : " .. tostring(err))
-		return false
+
+	-- DÉFAUT : nouvel essai après un échec, comme au départ (LaunchConfig.Teleport)
+	local teleport = LaunchConfig.Teleport
+	for attempt = 1, teleport.Attempts do
+		local ok, err = pcall(function()
+			return TeleportService:TeleportAsync(placeId, travellers, options)
+		end)
+		if ok then
+			return true
+		end
+		warn(
+			("ReturnService : retour au Lobby impossible (essai %d, normal en Studio) : %s"):format(
+				attempt,
+				tostring(err)
+			)
+		)
+		if attempt < teleport.Attempts then
+			task.wait(teleport.RetryDelay)
+		end
 	end
-	return true
+	return false
 end
 
 function ReturnService:ReturnAll(results)
@@ -1095,7 +1153,7 @@ local function buildDefaultData()
 	local skins = {}
 	local equipped = {}
 	for _, role in PlayerConfig.Roles do
-		-- un rôle sans identifiant (TODO(BIBLE) dans PlayerConfig) n'a pas encore de clé
+		-- un rôle sans identifiant n'a pas de clé de données
 		if role.id ~= nil then
 			local owned = {}
 			for _, skinId in ProgressionConfig.SkinIds do
@@ -1233,11 +1291,11 @@ local function onPlayerAdded(player)
 		end
 	end
 
-	-- TODO(BIBLE): que faire d'un joueur dont les données restent verrouillées ou illisibles ?
-	-- En attendant : il joue sans données, et rien n'est sauvegardé pour lui.
+	-- 4.6 : le joueur joue sans données, rien n'est sauvegardé pour lui (MSG_DataLoadFailed)
 	warn(
 		("DataService : données indisponibles pour %d, aucune sauvegarde pendant cette session"):format(player.UserId)
 	)
+	Util.notify(player, "MSG_DataLoadFailed")
 	player:SetAttribute("dataLoaded", false)
 end
 

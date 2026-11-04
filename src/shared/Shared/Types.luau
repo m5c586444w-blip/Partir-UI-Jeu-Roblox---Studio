@@ -26,6 +26,7 @@ export type PlayerData = {
 -- 4.4 et 16.4 : configuration de partie écrite par LaunchService, lue par PartyLoaderService
 export type LaunchPlayer = {
 	userId: number,
+	name: string, -- DisplayName, pour MSG_PlayerMissing (4.6)
 	role: string?, -- rempli par RoleService (J9)
 	weapon: string?, -- rempli par WeaponBoardService (J9)
 }

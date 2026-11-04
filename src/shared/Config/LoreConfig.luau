@@ -1,19 +1,34 @@
 -- ReplicatedStorage/Config/LoreConfig
--- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2).
--- Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
--- Squelette créé au jalon J1 : les textes sont recopiés aux jalons J7 (documents) et J14 (musée, dialogues).
+-- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2),
+-- messages système (4.6). Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
+-- Les documents sont recopiés au jalon J7, le musée et les dialogues au jalon J14.
 local LoreConfig = {}
 
--- Clés de texte envoyées par le serveur avec RE_Notify (16.3 : « clé de texte »).
--- TODO(BIBLE): aucun de ces textes n'est écrit dans la bible. Chaîne vide = rien d'affiché.
-LoreConfig.Notifications = {
-	PartyFull = "", -- TODO(BIBLE): texte « groupe complet »
-	PartyNotFound = "", -- TODO(BIBLE): texte « aucun groupe avec ce code »
-	NoPublicParty = "", -- TODO(BIBLE): texte « aucun groupe public à rejoindre »
-	AlreadyInParty = "", -- TODO(BIBLE): texte « tu es déjà dans un groupe »
-	LaunchFailed = "", -- TODO(BIBLE): texte « le départ a échoué »
-	VersionMismatch = "", -- TODO(BIBLE): texte « versions Lobby / Partie différentes »
-	LaunchDataMissing = "", -- TODO(BIBLE): texte « configuration de partie introuvable »
+-- 4.6 : messages système, affichés par NotificationGui.
+-- Le serveur envoie la clé avec RE_Notify ; {player} et {n} sont remplacés par le code.
+LoreConfig.Messages = {
+	MSG_PartyFull = "Ce groupe est complet (10 joueurs).",
+	MSG_CodeInvalid = "Aucun groupe ne correspond à ce code.",
+	MSG_QuickJoinNone = "Aucun groupe public disponible. Crée le tien.",
+	MSG_PartyLeft = "Tu as quitté le groupe.",
+	MSG_HostLeft = "Le créateur du groupe est parti. {player} prend sa place.",
+	MSG_RoleTaken = "Ce rôle est déjà pris par {player}.",
+	MSG_RoleRequired = "Choisis un rôle avant d'être prêt.",
+	MSG_WeaponTaken = "Cette arme est déjà attribuée à {player}.",
+	MSG_WeaponNotAllowed = "L'opératrice radio ne peut pas porter d'arme à feu.",
+	MSG_WeaponVote = "Deux joueurs veulent la même arme. Votez : 15 secondes.",
+	MSG_NightmareLocked = "Cauchemar se débloque après une première survie.",
+	MSG_WaitingReady = "En attente : {n} joueur(s) pas encore prêt(s).",
+	MSG_Countdown = "Départ dans {n} s.",
+	MSG_CountdownCancelled = "Départ annulé : un joueur n'est plus prêt.",
+	MSG_Teleporting = "En route vers la forêt…",
+	MSG_TeleportRetry = "Le départ a échoué. Nouvel essai…",
+	MSG_TeleportAbort = "Impossible de partir pour l'instant. Réessayez dans un moment.",
+	MSG_WaitingPlayers = "En attente des autres membres du groupe…",
+	MSG_PlayerMissing = "{player} n'a pas rejoint la forêt.",
+	MSG_VersionMismatch = "Une mise à jour est en cours. Retour en ville.",
+	MSG_ReturnToLobby = "Retour en ville…",
+	MSG_DataLoadFailed = "Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session.",
 }
 
 return LoreConfig

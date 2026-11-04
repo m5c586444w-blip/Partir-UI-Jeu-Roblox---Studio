@@ -5,21 +5,19 @@
 local PlayerConfig = {}
 
 -- 2.5 : les 10 rôles jouables, dans l'ordre de la bible.
--- id = identifiant anglais utilisé dans les noms (RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*)
--- et comme clé dans les données (skins, equipped, section 16.4).
--- Seul « Leader » est donné par la bible (16.4, VO_Leader_Order).
--- Un rôle sans id est ignoré par les scripts tant que la bible ne le donne pas.
+-- id = identifiant de code (2.5) : RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*,
+-- et clé des données skins / equipped (16.4).
 PlayerConfig.Roles = {
 	{ id = "Leader", title = "Meneur" },
-	{ id = nil, title = "Médecin" }, -- TODO(BIBLE): identifiant anglais du rôle Médecin
-	{ id = nil, title = "Pisteur" }, -- TODO(BIBLE): identifiant anglais du rôle Pisteur
-	{ id = nil, title = "Caméraman" }, -- TODO(BIBLE): identifiant anglais du rôle Caméraman
-	{ id = nil, title = "Mécanicienne" }, -- TODO(BIBLE): identifiant anglais du rôle Mécanicienne
-	{ id = nil, title = "Descendante" }, -- TODO(BIBLE): identifiant anglais du rôle Descendante
-	{ id = nil, title = "Géologue" }, -- TODO(BIBLE): identifiant anglais du rôle Géologue
-	{ id = nil, title = "Sportif" }, -- TODO(BIBLE): identifiant anglais du rôle Sportif
-	{ id = nil, title = "Opératrice radio" }, -- TODO(BIBLE): identifiant anglais du rôle Opératrice radio
-	{ id = nil, title = "Pyrotechnicien" }, -- TODO(BIBLE): identifiant anglais du rôle Pyrotechnicien
+	{ id = "Medic", title = "Médecin" },
+	{ id = "Tracker", title = "Pisteur" },
+	{ id = "Cameraman", title = "Caméraman" },
+	{ id = "Mechanic", title = "Mécanicienne" },
+	{ id = "Descendant", title = "Descendante" },
+	{ id = "Geologist", title = "Géologue" },
+	{ id = "Athlete", title = "Sportif" },
+	{ id = "RadioOperator", title = "Opératrice radio" },
+	{ id = "Pyrotechnician", title = "Pyrotechnicien" },
 }
 
 return PlayerConfig

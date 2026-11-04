@@ -43,13 +43,13 @@ ProgressionConfig.XPGains = {
 	EvidenceC = 50, -- 8.4 : document, photo du charnier
 }
 
--- 16.2 : verrouillage de session. Ces trois valeurs ne sont pas dans la bible.
+-- 16.2 : verrouillage de session (valeurs techniques acceptées le 4 novembre 2026, 16.4)
 ProgressionConfig.SessionLock = {
-	-- TODO(BIBLE): PROPOSITION — un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
+	-- un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
 	StaleAfter = 360,
-	-- TODO(BIBLE): PROPOSITION — nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
+	-- nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
 	LoadAttempts = 6,
-	-- TODO(BIBLE): PROPOSITION — secondes entre deux essais de chargement
+	-- secondes entre deux essais de chargement
 	LoadRetryDelay = 5,
 }
 

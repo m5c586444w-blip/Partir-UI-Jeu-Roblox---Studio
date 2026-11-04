@@ -64,4 +64,24 @@ function Util.getRemote(name)
 	return remote
 end
 
+-- côté serveur : envoie un message système de LoreConfig.Messages (4.6) à un joueur.
+-- `params` remplace {player} et {n} côté client (ex. { player = "Nora", n = 3 }).
+function Util.notify(player, messageKey, params)
+	local remote = Util.getRemote("RE_Notify")
+	if remote ~= nil and player.Parent ~= nil then
+		remote:FireClient(player, messageKey, params)
+	end
+end
+
+-- côté client : texte final d'un message système, {player} et {n} remplacés
+function Util.formatMessage(template, params)
+	params = params or {}
+	return (
+		template:gsub("{(%w+)}", function(name)
+			local value = params[name]
+			return if value ~= nil then tostring(value) else "{" .. name .. "}"
+		end)
+	)
+end
+
 return Util

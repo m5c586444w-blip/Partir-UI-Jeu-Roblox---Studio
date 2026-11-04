@@ -1,12 +1,13 @@
 -- ServerScriptService/Services/PartyService (Lobby)
 -- Section 4.4 : créer un groupe public ou privé (code à 4 chiffres), le rejoindre par code
 -- ou par la file rapide, le quitter, se déclarer prêt. Tous « Prêt » → compte à rebours
--- de 10 s → départ (LaunchService).
+-- de 10 s → départ (LaunchService). Messages : section 4.6.
 -- Jalon J1 : le groupe et le départ. Rôles, armes et votes viennent au jalon J9.
 --
 -- L'état du groupe est publié en attributs du joueur (répliqués automatiquement, 16.3) :
---   partyId (string), partyCode (string, groupe privé), isReady (bool),
---   partyCountdownEnd (number : heure serveur de fin du compte à rebours, workspace:GetServerTimeNow()).
+--   partyId (string), partyCode (string, groupe privé), partyHostId (number : UserId du créateur),
+--   isReady (bool), partyCountdownEnd (number : heure serveur de fin du compte à rebours,
+--   comparable à workspace:GetServerTimeNow()).
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -22,11 +23,10 @@ local services = nil
 local parties = {} -- [partyId] = party
 local partyOf = {} -- [Player] = partyId
 local random = Random.new()
-local notifyRemote = nil
 
-local function notify(player, textKey)
-	if notifyRemote ~= nil then
-		notifyRemote:FireClient(player, textKey)
+local function notifyParty(party, messageKey, params)
+	for _, member in party.members do
+		Util.notify(member, messageKey, params)
 	end
 end
 
@@ -52,10 +52,11 @@ local function newCode()
 end
 
 local function setAttributes(player, party)
-	player:SetAttribute("partyId", party and party.id or nil)
-	player:SetAttribute("partyCode", party and party.code or nil)
+	player:SetAttribute("partyId", if party then party.id else nil)
+	player:SetAttribute("partyCode", if party then party.code else nil)
+	player:SetAttribute("partyHostId", if party and party.host then party.host.UserId else nil)
 	player:SetAttribute("isReady", if party then party.ready[player] == true else nil)
-	player:SetAttribute("partyCountdownEnd", party and party.countdownEnd or nil)
+	player:SetAttribute("partyCountdownEnd", if party then party.countdownEnd else nil)
 end
 
 local function refreshAll(party)
@@ -68,24 +69,29 @@ local function publish(party)
 	task.spawn(services.MatchmakingService.Publish, services.MatchmakingService, party)
 end
 
-local function cancelCountdown(party)
-	if party.countdownThread ~= nil then
-		task.cancel(party.countdownThread)
-		party.countdownThread = nil
-		party.countdownEnd = nil
+local function notReadyCount(party)
+	local count = 0
+	for _, member in party.members do
+		if party.ready[member] ~= true then
+			count += 1
+		end
 	end
+	return count
 end
 
 local function allReady(party)
-	if #party.members < LaunchConfig.Party.MinSize then
-		return false
+	return #party.members >= LaunchConfig.Party.MinSize and notReadyCount(party) == 0
+end
+
+-- arrête le compte à rebours en cours ; MSG_CountdownCancelled aux membres restants
+local function cancelCountdown(party)
+	if party.countdownThread == nil then
+		return
 	end
-	for _, member in party.members do
-		if party.ready[member] ~= true then
-			return false
-		end
-	end
-	return true
+	task.cancel(party.countdownThread)
+	party.countdownThread = nil
+	party.countdownEnd = nil
+	notifyParty(party, "MSG_CountdownCancelled")
 end
 
 local function launch(party)
@@ -115,6 +121,7 @@ local function updateCountdown(party)
 			local duration = LaunchConfig.Party.ReadyCountdown
 			party.countdownEnd = workspace:GetServerTimeNow() + duration
 			party.countdownThread = task.delay(duration, launch, party)
+			notifyParty(party, "MSG_Countdown", { n = duration })
 		end
 	else
 		cancelCountdown(party)
@@ -146,10 +153,18 @@ local function removeMember(player)
 	end
 	party.ready[player] = nil
 	if #party.members == 0 then
-		cancelCountdown(party)
+		if party.countdownThread ~= nil then
+			task.cancel(party.countdownThread)
+			party.countdownThread = nil
+		end
 		parties[party.id] = nil
 		task.spawn(services.MatchmakingService.Remove, services.MatchmakingService, party.id)
 		return
+	end
+	if party.host == player then
+		-- DÉFAUT : le plus ancien membre restant devient créateur du groupe
+		party.host = party.members[1]
+		notifyParty(party, "MSG_HostLeft", { player = party.host.DisplayName })
 	end
 	updateCountdown(party)
 	publish(party)
@@ -159,19 +174,19 @@ local function canJoin(party)
 	return party ~= nil and not party.launching and #party.members < LaunchConfig.Party.MaxSize
 end
 
+-- DÉFAUT : un joueur déjà dans un groupe ne peut ni créer ni rejoindre ; la demande est ignorée
+-- (l'interface masque ces boutons quand il a un groupe)
+
 local function onCreate(player, isPrivate)
-	if type(isPrivate) ~= "boolean" then
-		return
-	end
-	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
+	if type(isPrivate) ~= "boolean" or partyOf[player] ~= nil then
 		return
 	end
 	local party = {
 		id = HttpService:GenerateGUID(false),
 		isPrivate = isPrivate,
-		-- TODO(BIBLE): un groupe public a-t-il aussi un code ? (4.4 ne cite le code que pour le privé)
+		-- DÉFAUT : seul le groupe privé a un code (4.4)
 		code = if isPrivate then newCode() else nil,
+		host = player,
 		members = {},
 		ready = {},
 		launching = false,
@@ -183,21 +198,21 @@ local function onCreate(player, isPrivate)
 end
 
 local function onJoin(player, code)
-	if type(code) ~= "string" or #code ~= LaunchConfig.Party.PrivateCodeDigits or code:match("^%d+$") == nil then
+	if type(code) ~= "string" or partyOf[player] ~= nil then
 		return
 	end
-	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
+	if #code ~= LaunchConfig.Party.PrivateCodeDigits or code:match("^%d+$") == nil then
+		Util.notify(player, "MSG_CodeInvalid")
 		return
 	end
-	-- TODO(BIBLE): un code ne trouve que les groupes de ce serveur du lobby
+	-- DÉFAUT : un code ne trouve que les groupes de ce serveur du lobby
 	local party = findByCode(code)
 	if party == nil then
-		notify(player, "PartyNotFound")
+		Util.notify(player, "MSG_CodeInvalid")
 		return
 	end
 	if not canJoin(party) then
-		notify(player, "PartyFull")
+		Util.notify(player, "MSG_PartyFull")
 		return
 	end
 	addMember(party, player)
@@ -205,7 +220,6 @@ end
 
 local function onQuickJoin(player)
 	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
 		return
 	end
 	local partyId = services.MatchmakingService:FindPublicParty(function(candidateId)
@@ -218,8 +232,7 @@ local function onQuickJoin(player)
 	end
 	local party = partyId and parties[partyId]
 	if party == nil or not canJoin(party) then
-		-- TODO(BIBLE): sans groupe public disponible, la file doit-elle créer un groupe ?
-		notify(player, "NoPublicParty")
+		Util.notify(player, "MSG_QuickJoinNone")
 		return
 	end
 	addMember(party, player)
@@ -227,10 +240,11 @@ end
 
 local function onLeave(player)
 	local party = parties[partyOf[player] or ""]
-	if party ~= nil and party.launching then
+	if party == nil or party.launching then
 		return
 	end
 	removeMember(player)
+	Util.notify(player, "MSG_PartyLeft")
 end
 
 local function onReady(player, isReady)
@@ -241,12 +255,16 @@ local function onReady(player, isReady)
 	if party == nil or party.launching then
 		return
 	end
+	-- TODO(J9): refuser « Prêt » sans rôle choisi (MSG_RoleRequired, RoleService)
 	party.ready[player] = if isReady then true else nil
 	updateCountdown(party)
+	local waiting = notReadyCount(party)
+	if waiting > 0 then
+		notifyParty(party, "MSG_WaitingReady", { n = waiting })
+	end
 end
 
--- départ raté (réservation, MemoryStore ou téléportation) : le groupe reste ouvert,
--- chacun doit se redéclarer prêt
+-- départ raté après tous les essais : le groupe reste ouvert, chacun doit se redéclarer prêt
 function PartyService:LaunchFailed(party)
 	if parties[party.id] ~= party or not party.launching then
 		return
@@ -254,8 +272,8 @@ function PartyService:LaunchFailed(party)
 	party.launching = false
 	for _, member in party.members do
 		party.ready[member] = nil
-		notify(member, "LaunchFailed")
 	end
+	notifyParty(party, "MSG_TeleportAbort")
 	refreshAll(party)
 	publish(party)
 end
@@ -271,8 +289,6 @@ function PartyService:Init(allServices)
 end
 
 function PartyService:Start()
-	notifyRemote = Util.getRemote("RE_Notify")
-
 	local handlers = {
 		RE_PartyCreate = onCreate,
 		RE_PartyJoin = onJoin,

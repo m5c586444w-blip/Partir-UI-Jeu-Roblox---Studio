@@ -127,17 +127,15 @@ return ItemConfig
         <Properties>
           <string name="Name">LaunchConfig</string>
           <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LaunchConfig
--- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.2, 16.3 et 16.4.
+-- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.1, 16.3 et 16.4.
 -- Ne rien ajouter ici sans la bible.
--- TODO(BIBLE): la section 16.1 ne liste aucun module Config pour ces valeurs.
--- Ce module a été ajouté au jalon J1 pour respecter « aucune valeur hors Config ». À valider.
 local LaunchConfig = {}
 
--- Identifiants des deux places de l'expérience. Absents de la bible : connus seulement
--- après publication. Tant qu'ils valent 0, aucune téléportation n'est tentée (avertissement).
+-- 16.4 : expérience « PISTE FROIDE (test) » (relevés le 22 octobre 2026 ;
+-- à reconfirmer dans le Creator Dashboard si l'expérience a été recréée)
 LaunchConfig.PlaceIds = {
-	Lobby = 0, -- TODO(BIBLE): PlaceId de la place « Lobby » (à remplir par Gabriel après publication)
-	Partie = 0, -- TODO(BIBLE): PlaceId de la place « Partie » (à remplir par Gabriel après publication)
+	Lobby = 77677833738174,
+	Partie = 103506696801797,
 }
 
 -- 4.4 : groupe
@@ -153,16 +151,22 @@ LaunchConfig.MemoryStore = {
 	-- « Parties » : carte triée des groupes du lobby, durée de vie 900 s
 	PartiesMapName = "Parties",
 	PartiesTTL = 900,
-	-- Limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
+	-- limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
 	PartiesScanCount = 200,
-	-- « Launch_<code> » : configuration de partie lue par la Partie, durée de vie 600 s
-	-- TODO(BIBLE): la bible ne nomme pas la structure qui contient les clés Launch_ ; carte de hachage « Launch » choisie.
-	LaunchMapName = "Launch",
+	-- « Launch_<PrivateServerId> » : configuration de partie lue par la Partie, durée de vie 600 s
+	LaunchMapName = "Launch", -- DÉFAUT : carte de hachage qui contient les clés Launch_
 	LaunchKeyPrefix = "Launch_",
 	LaunchTTL = 600,
-	-- TODO(BIBLE): PROPOSITION — essais et délai (s) en cas d'échec d'un appel MemoryStore
+	-- valeurs techniques acceptées le 4 novembre 2026 (16.4) : essais et délai (s) par appel MemoryStore
 	Attempts = 3,
 	RetryDelay = 2,
+}
+
+-- DÉFAUT (valeurs techniques) : essais et délai (s) d'une téléportation ratée
+-- (départ : MSG_TeleportRetry puis MSG_TeleportAbort, 4.6 ; retour au Lobby)
+LaunchConfig.Teleport = {
+	Attempts = 3,
+	RetryDelay = 5,
 }
 
 -- 16.2 : PartyLoaderService attend les joueurs 60 s au plus
@@ -183,21 +187,36 @@ return LaunchConfig
         <Properties>
           <string name="Name">LoreConfig</string>
           <string name="Source"><![CDATA[-- ReplicatedStorage/Config/LoreConfig
--- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2).
--- Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
--- Squelette créé au jalon J1 : les textes sont recopiés aux jalons J7 (documents) et J14 (musée, dialogues).
+-- Textes de la bible : documents DOC_xx (2.7), panneaux M1-M8 (4.3), dialogues (4.2),
+-- messages système (4.6). Claude Code recopie ces textes, il n'en rédige pas d'autre (section 2).
+-- Les documents sont recopiés au jalon J7, le musée et les dialogues au jalon J14.
 local LoreConfig = {}
 
--- Clés de texte envoyées par le serveur avec RE_Notify (16.3 : « clé de texte »).
--- TODO(BIBLE): aucun de ces textes n'est écrit dans la bible. Chaîne vide = rien d'affiché.
-LoreConfig.Notifications = {
-	PartyFull = "", -- TODO(BIBLE): texte « groupe complet »
-	PartyNotFound = "", -- TODO(BIBLE): texte « aucun groupe avec ce code »
-	NoPublicParty = "", -- TODO(BIBLE): texte « aucun groupe public à rejoindre »
-	AlreadyInParty = "", -- TODO(BIBLE): texte « tu es déjà dans un groupe »
-	LaunchFailed = "", -- TODO(BIBLE): texte « le départ a échoué »
-	VersionMismatch = "", -- TODO(BIBLE): texte « versions Lobby / Partie différentes »
-	LaunchDataMissing = "", -- TODO(BIBLE): texte « configuration de partie introuvable »
+-- 4.6 : messages système, affichés par NotificationGui.
+-- Le serveur envoie la clé avec RE_Notify ; {player} et {n} sont remplacés par le code.
+LoreConfig.Messages = {
+	MSG_PartyFull = "Ce groupe est complet (10 joueurs).",
+	MSG_CodeInvalid = "Aucun groupe ne correspond à ce code.",
+	MSG_QuickJoinNone = "Aucun groupe public disponible. Crée le tien.",
+	MSG_PartyLeft = "Tu as quitté le groupe.",
+	MSG_HostLeft = "Le créateur du groupe est parti. {player} prend sa place.",
+	MSG_RoleTaken = "Ce rôle est déjà pris par {player}.",
+	MSG_RoleRequired = "Choisis un rôle avant d'être prêt.",
+	MSG_WeaponTaken = "Cette arme est déjà attribuée à {player}.",
+	MSG_WeaponNotAllowed = "L'opératrice radio ne peut pas porter d'arme à feu.",
+	MSG_WeaponVote = "Deux joueurs veulent la même arme. Votez : 15 secondes.",
+	MSG_NightmareLocked = "Cauchemar se débloque après une première survie.",
+	MSG_WaitingReady = "En attente : {n} joueur(s) pas encore prêt(s).",
+	MSG_Countdown = "Départ dans {n} s.",
+	MSG_CountdownCancelled = "Départ annulé : un joueur n'est plus prêt.",
+	MSG_Teleporting = "En route vers la forêt…",
+	MSG_TeleportRetry = "Le départ a échoué. Nouvel essai…",
+	MSG_TeleportAbort = "Impossible de partir pour l'instant. Réessayez dans un moment.",
+	MSG_WaitingPlayers = "En attente des autres membres du groupe…",
+	MSG_PlayerMissing = "{player} n'a pas rejoint la forêt.",
+	MSG_VersionMismatch = "Une mise à jour est en cours. Retour en ville.",
+	MSG_ReturnToLobby = "Retour en ville…",
+	MSG_DataLoadFailed = "Ta progression n'a pas pu être chargée. Elle ne sera pas sauvegardée pendant cette session.",
 }
 
 return LoreConfig
@@ -234,21 +253,19 @@ return MapConfig
 local PlayerConfig = {}
 
 -- 2.5 : les 10 rôles jouables, dans l'ordre de la bible.
--- id = identifiant anglais utilisé dans les noms (RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*)
--- et comme clé dans les données (skins, equipped, section 16.4).
--- Seul « Leader » est donné par la bible (16.4, VO_Leader_Order).
--- Un rôle sans id est ignoré par les scripts tant que la bible ne le donne pas.
+-- id = identifiant de code (2.5) : RoleCard_<ROLE>, Characters/<ROLE>, VO_<ROLE>_*,
+-- et clé des données skins / equipped (16.4).
 PlayerConfig.Roles = {
 	{ id = "Leader", title = "Meneur" },
-	{ id = nil, title = "Médecin" }, -- TODO(BIBLE): identifiant anglais du rôle Médecin
-	{ id = nil, title = "Pisteur" }, -- TODO(BIBLE): identifiant anglais du rôle Pisteur
-	{ id = nil, title = "Caméraman" }, -- TODO(BIBLE): identifiant anglais du rôle Caméraman
-	{ id = nil, title = "Mécanicienne" }, -- TODO(BIBLE): identifiant anglais du rôle Mécanicienne
-	{ id = nil, title = "Descendante" }, -- TODO(BIBLE): identifiant anglais du rôle Descendante
-	{ id = nil, title = "Géologue" }, -- TODO(BIBLE): identifiant anglais du rôle Géologue
-	{ id = nil, title = "Sportif" }, -- TODO(BIBLE): identifiant anglais du rôle Sportif
-	{ id = nil, title = "Opératrice radio" }, -- TODO(BIBLE): identifiant anglais du rôle Opératrice radio
-	{ id = nil, title = "Pyrotechnicien" }, -- TODO(BIBLE): identifiant anglais du rôle Pyrotechnicien
+	{ id = "Medic", title = "Médecin" },
+	{ id = "Tracker", title = "Pisteur" },
+	{ id = "Cameraman", title = "Caméraman" },
+	{ id = "Mechanic", title = "Mécanicienne" },
+	{ id = "Descendant", title = "Descendante" },
+	{ id = "Geologist", title = "Géologue" },
+	{ id = "Athlete", title = "Sportif" },
+	{ id = "RadioOperator", title = "Opératrice radio" },
+	{ id = "Pyrotechnician", title = "Pyrotechnicien" },
 }
 
 return PlayerConfig
@@ -303,13 +320,13 @@ ProgressionConfig.XPGains = {
 	EvidenceC = 50, -- 8.4 : document, photo du charnier
 }
 
--- 16.2 : verrouillage de session. Ces trois valeurs ne sont pas dans la bible.
+-- 16.2 : verrouillage de session (valeurs techniques acceptées le 4 novembre 2026, 16.4)
 ProgressionConfig.SessionLock = {
-	-- TODO(BIBLE): PROPOSITION — un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
+	-- un verrou non rafraîchi depuis 360 s (3 sauvegardes manquées) est considéré abandonné
 	StaleAfter = 360,
-	-- TODO(BIBLE): PROPOSITION — nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
+	-- nombre d'essais de chargement si une autre place tient encore le verrou (téléportation)
 	LoadAttempts = 6,
-	-- TODO(BIBLE): PROPOSITION — secondes entre deux essais de chargement
+	-- secondes entre deux essais de chargement
 	LoadRetryDelay = 5,
 }
 
@@ -596,6 +613,7 @@ export type PlayerData = {
 -- 4.4 et 16.4 : configuration de partie écrite par LaunchService, lue par PartyLoaderService
 export type LaunchPlayer = {
 	userId: number,
+	name: string, -- DisplayName, pour MSG_PlayerMissing (4.6)
 	role: string?, -- rempli par RoleService (J9)
 	weapon: string?, -- rempli par WeaponBoardService (J9)
 }
@@ -680,6 +698,26 @@ function Util.getRemote(name)
 		warn("Remote manquante : Remotes/" .. name)
 	end
 	return remote
+end
+
+-- côté serveur : envoie un message système de LoreConfig.Messages (4.6) à un joueur.
+-- `params` remplace {player} et {n} côté client (ex. { player = "Nora", n = 3 }).
+function Util.notify(player, messageKey, params)
+	local remote = Util.getRemote("RE_Notify")
+	if remote ~= nil and player.Parent ~= nil then
+		remote:FireClient(player, messageKey, params)
+	end
+end
+
+-- côté client : texte final d'un message système, {player} et {n} remplacés
+function Util.formatMessage(template, params)
+	params = params or {}
+	return (
+		template:gsub("{(%w+)}", function(name)
+			local value = params[name]
+			return if value ~= nil then tostring(value) else "{" .. name .. "}"
+		end)
+	)
 end
 
 return Util
@@ -805,6 +843,7 @@ local function buildLaunchData(party, members)
 	for _, member in members do
 		table.insert(playersData, {
 			userId = member.UserId,
+			name = member.DisplayName, -- pour MSG_PlayerMissing (4.6) dans la Partie
 			role = party.roles and party.roles[member] or nil, -- RoleService (J9)
 			weapon = party.weapons and party.weapons[member] or nil, -- WeaponBoardService (J9)
 		})
@@ -822,20 +861,8 @@ local function buildLaunchData(party, members)
 	}
 end
 
--- lance la partie pour le groupe ; renvoie false si le départ a échoué
-function LaunchService:Launch(party)
-	local placeId = LaunchConfig.PlaceIds.Partie
-	if placeId == 0 then
-		warn(
-			"LaunchService : LaunchConfig.PlaceIds.Partie vaut 0 — TODO(BIBLE) : PlaceId de la place Partie à renseigner"
-		)
-		return false
-	end
-	if launchMap == nil then
-		warn("LaunchService : MemoryStore inaccessible, départ impossible")
-		return false
-	end
-
+-- une tentative de départ ; renvoie true si la téléportation est lancée
+local function tryLaunch(party, placeId)
 	local members = {}
 	for _, member in party.members do
 		if member.Parent ~= nil then
@@ -855,9 +882,7 @@ function LaunchService:Launch(party)
 		return false
 	end
 
-	-- 16.4 : Launch_<code d'accès>, 600 s.
-	-- TODO(BIBLE): la Partie ne peut pas lire son code d'accès, seulement game.PrivateServerId.
-	-- La clé utilise donc le PrivateServerId renvoyé par ReserveServer.
+	-- 16.4 : clé Launch_<PrivateServerId>, 600 s (la Partie lit game.PrivateServerId)
 	local launchData = buildLaunchData(party, members)
 	local key = memory.LaunchKeyPrefix .. privateServerId
 	local okWrite, writeErr = Util.retry(memory.Attempts, memory.RetryDelay, function()
@@ -879,6 +904,34 @@ function LaunchService:Launch(party)
 		return false
 	end
 	return true
+end
+
+-- lance la partie pour le groupe, avec nouvel essai (MSG_TeleportRetry, 4.6) ;
+-- renvoie false si tous les essais ont échoué (PartyService envoie alors MSG_TeleportAbort)
+function LaunchService:Launch(party)
+	local placeId = LaunchConfig.PlaceIds.Partie
+	if launchMap == nil then
+		warn("LaunchService : MemoryStore inaccessible, départ impossible")
+		return false
+	end
+
+	for _, member in party.members do
+		Util.notify(member, "MSG_Teleporting")
+	end
+
+	local teleport = LaunchConfig.Teleport
+	for attempt = 1, teleport.Attempts do
+		if tryLaunch(party, placeId) then
+			return true
+		end
+		if attempt < teleport.Attempts then
+			for _, member in party.members do
+				Util.notify(member, "MSG_TeleportRetry")
+			end
+			task.wait(teleport.RetryDelay)
+		end
+	end
+	return false
 end
 
 function LaunchService:Init(allServices)
@@ -984,8 +1037,8 @@ function MatchmakingService:FindPublicParty(isLocalJoinable)
 		if type(entry) == "table" and entry.jobId == game.JobId and isLocalJoinable(item.key) then
 			return item.key
 		end
-		-- TODO(BIBLE): un groupe public ouvert sur un AUTRE serveur du lobby est ignoré.
-		-- Faut-il téléporter le joueur vers ce serveur (TeleportToPlaceInstance) pour qu'il le rejoigne ?
+		-- DÉFAUT : un groupe public ouvert sur un AUTRE serveur du lobby est ignoré
+		-- (le rejoindre demanderait de téléporter le joueur vers ce serveur)
 	end
 	return nil
 end
@@ -1013,12 +1066,13 @@ return MatchmakingService
           <string name="Source"><![CDATA[-- ServerScriptService/Services/PartyService (Lobby)
 -- Section 4.4 : créer un groupe public ou privé (code à 4 chiffres), le rejoindre par code
 -- ou par la file rapide, le quitter, se déclarer prêt. Tous « Prêt » → compte à rebours
--- de 10 s → départ (LaunchService).
+-- de 10 s → départ (LaunchService). Messages : section 4.6.
 -- Jalon J1 : le groupe et le départ. Rôles, armes et votes viennent au jalon J9.
 --
 -- L'état du groupe est publié en attributs du joueur (répliqués automatiquement, 16.3) :
---   partyId (string), partyCode (string, groupe privé), isReady (bool),
---   partyCountdownEnd (number : heure serveur de fin du compte à rebours, workspace:GetServerTimeNow()).
+--   partyId (string), partyCode (string, groupe privé), partyHostId (number : UserId du créateur),
+--   isReady (bool), partyCountdownEnd (number : heure serveur de fin du compte à rebours,
+--   comparable à workspace:GetServerTimeNow()).
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -1034,11 +1088,10 @@ local services = nil
 local parties = {} -- [partyId] = party
 local partyOf = {} -- [Player] = partyId
 local random = Random.new()
-local notifyRemote = nil
 
-local function notify(player, textKey)
-	if notifyRemote ~= nil then
-		notifyRemote:FireClient(player, textKey)
+local function notifyParty(party, messageKey, params)
+	for _, member in party.members do
+		Util.notify(member, messageKey, params)
 	end
 end
 
@@ -1064,10 +1117,11 @@ local function newCode()
 end
 
 local function setAttributes(player, party)
-	player:SetAttribute("partyId", party and party.id or nil)
-	player:SetAttribute("partyCode", party and party.code or nil)
+	player:SetAttribute("partyId", if party then party.id else nil)
+	player:SetAttribute("partyCode", if party then party.code else nil)
+	player:SetAttribute("partyHostId", if party and party.host then party.host.UserId else nil)
 	player:SetAttribute("isReady", if party then party.ready[player] == true else nil)
-	player:SetAttribute("partyCountdownEnd", party and party.countdownEnd or nil)
+	player:SetAttribute("partyCountdownEnd", if party then party.countdownEnd else nil)
 end
 
 local function refreshAll(party)
@@ -1080,24 +1134,29 @@ local function publish(party)
 	task.spawn(services.MatchmakingService.Publish, services.MatchmakingService, party)
 end
 
-local function cancelCountdown(party)
-	if party.countdownThread ~= nil then
-		task.cancel(party.countdownThread)
-		party.countdownThread = nil
-		party.countdownEnd = nil
+local function notReadyCount(party)
+	local count = 0
+	for _, member in party.members do
+		if party.ready[member] ~= true then
+			count += 1
+		end
 	end
+	return count
 end
 
 local function allReady(party)
-	if #party.members < LaunchConfig.Party.MinSize then
-		return false
+	return #party.members >= LaunchConfig.Party.MinSize and notReadyCount(party) == 0
+end
+
+-- arrête le compte à rebours en cours ; MSG_CountdownCancelled aux membres restants
+local function cancelCountdown(party)
+	if party.countdownThread == nil then
+		return
 	end
-	for _, member in party.members do
-		if party.ready[member] ~= true then
-			return false
-		end
-	end
-	return true
+	task.cancel(party.countdownThread)
+	party.countdownThread = nil
+	party.countdownEnd = nil
+	notifyParty(party, "MSG_CountdownCancelled")
 end
 
 local function launch(party)
@@ -1127,6 +1186,7 @@ local function updateCountdown(party)
 			local duration = LaunchConfig.Party.ReadyCountdown
 			party.countdownEnd = workspace:GetServerTimeNow() + duration
 			party.countdownThread = task.delay(duration, launch, party)
+			notifyParty(party, "MSG_Countdown", { n = duration })
 		end
 	else
 		cancelCountdown(party)
@@ -1158,10 +1218,18 @@ local function removeMember(player)
 	end
 	party.ready[player] = nil
 	if #party.members == 0 then
-		cancelCountdown(party)
+		if party.countdownThread ~= nil then
+			task.cancel(party.countdownThread)
+			party.countdownThread = nil
+		end
 		parties[party.id] = nil
 		task.spawn(services.MatchmakingService.Remove, services.MatchmakingService, party.id)
 		return
+	end
+	if party.host == player then
+		-- DÉFAUT : le plus ancien membre restant devient créateur du groupe
+		party.host = party.members[1]
+		notifyParty(party, "MSG_HostLeft", { player = party.host.DisplayName })
 	end
 	updateCountdown(party)
 	publish(party)
@@ -1171,19 +1239,19 @@ local function canJoin(party)
 	return party ~= nil and not party.launching and #party.members < LaunchConfig.Party.MaxSize
 end
 
+-- DÉFAUT : un joueur déjà dans un groupe ne peut ni créer ni rejoindre ; la demande est ignorée
+-- (l'interface masque ces boutons quand il a un groupe)
+
 local function onCreate(player, isPrivate)
-	if type(isPrivate) ~= "boolean" then
-		return
-	end
-	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
+	if type(isPrivate) ~= "boolean" or partyOf[player] ~= nil then
 		return
 	end
 	local party = {
 		id = HttpService:GenerateGUID(false),
 		isPrivate = isPrivate,
-		-- TODO(BIBLE): un groupe public a-t-il aussi un code ? (4.4 ne cite le code que pour le privé)
+		-- DÉFAUT : seul le groupe privé a un code (4.4)
 		code = if isPrivate then newCode() else nil,
+		host = player,
 		members = {},
 		ready = {},
 		launching = false,
@@ -1195,21 +1263,21 @@ local function onCreate(player, isPrivate)
 end
 
 local function onJoin(player, code)
-	if type(code) ~= "string" or #code ~= LaunchConfig.Party.PrivateCodeDigits or code:match("^%d+$") == nil then
+	if type(code) ~= "string" or partyOf[player] ~= nil then
 		return
 	end
-	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
+	if #code ~= LaunchConfig.Party.PrivateCodeDigits or code:match("^%d+$") == nil then
+		Util.notify(player, "MSG_CodeInvalid")
 		return
 	end
-	-- TODO(BIBLE): un code ne trouve que les groupes de ce serveur du lobby
+	-- DÉFAUT : un code ne trouve que les groupes de ce serveur du lobby
 	local party = findByCode(code)
 	if party == nil then
-		notify(player, "PartyNotFound")
+		Util.notify(player, "MSG_CodeInvalid")
 		return
 	end
 	if not canJoin(party) then
-		notify(player, "PartyFull")
+		Util.notify(player, "MSG_PartyFull")
 		return
 	end
 	addMember(party, player)
@@ -1217,7 +1285,6 @@ end
 
 local function onQuickJoin(player)
 	if partyOf[player] ~= nil then
-		notify(player, "AlreadyInParty")
 		return
 	end
 	local partyId = services.MatchmakingService:FindPublicParty(function(candidateId)
@@ -1230,8 +1297,7 @@ local function onQuickJoin(player)
 	end
 	local party = partyId and parties[partyId]
 	if party == nil or not canJoin(party) then
-		-- TODO(BIBLE): sans groupe public disponible, la file doit-elle créer un groupe ?
-		notify(player, "NoPublicParty")
+		Util.notify(player, "MSG_QuickJoinNone")
 		return
 	end
 	addMember(party, player)
@@ -1239,10 +1305,11 @@ end
 
 local function onLeave(player)
 	local party = parties[partyOf[player] or ""]
-	if party ~= nil and party.launching then
+	if party == nil or party.launching then
 		return
 	end
 	removeMember(player)
+	Util.notify(player, "MSG_PartyLeft")
 end
 
 local function onReady(player, isReady)
@@ -1253,12 +1320,16 @@ local function onReady(player, isReady)
 	if party == nil or party.launching then
 		return
 	end
+	-- TODO(J9): refuser « Prêt » sans rôle choisi (MSG_RoleRequired, RoleService)
 	party.ready[player] = if isReady then true else nil
 	updateCountdown(party)
+	local waiting = notReadyCount(party)
+	if waiting > 0 then
+		notifyParty(party, "MSG_WaitingReady", { n = waiting })
+	end
 end
 
--- départ raté (réservation, MemoryStore ou téléportation) : le groupe reste ouvert,
--- chacun doit se redéclarer prêt
+-- départ raté après tous les essais : le groupe reste ouvert, chacun doit se redéclarer prêt
 function PartyService:LaunchFailed(party)
 	if parties[party.id] ~= party or not party.launching then
 		return
@@ -1266,8 +1337,8 @@ function PartyService:LaunchFailed(party)
 	party.launching = false
 	for _, member in party.members do
 		party.ready[member] = nil
-		notify(member, "LaunchFailed")
 	end
+	notifyParty(party, "MSG_TeleportAbort")
 	refreshAll(party)
 	publish(party)
 end
@@ -1283,8 +1354,6 @@ function PartyService:Init(allServices)
 end
 
 function PartyService:Start()
-	notifyRemote = Util.getRemote("RE_Notify")
-
 	local handlers = {
 		RE_PartyCreate = onCreate,
 		RE_PartyJoin = onJoin,
@@ -1346,7 +1415,7 @@ local function buildDefaultData()
 	local skins = {}
 	local equipped = {}
 	for _, role in PlayerConfig.Roles do
-		-- un rôle sans identifiant (TODO(BIBLE) dans PlayerConfig) n'a pas encore de clé
+		-- un rôle sans identifiant n'a pas de clé de données
 		if role.id ~= nil then
 			local owned = {}
 			for _, skinId in ProgressionConfig.SkinIds do
@@ -1484,11 +1553,11 @@ local function onPlayerAdded(player)
 		end
 	end
 
-	-- TODO(BIBLE): que faire d'un joueur dont les données restent verrouillées ou illisibles ?
-	-- En attendant : il joue sans données, et rien n'est sauvegardé pour lui.
+	-- 4.6 : le joueur joue sans données, rien n'est sauvegardé pour lui (MSG_DataLoadFailed)
 	warn(
 		("DataService : données indisponibles pour %d, aucune sauvegarde pendant cette session"):format(player.UserId)
 	)
+	Util.notify(player, "MSG_DataLoadFailed")
 	player:SetAttribute("dataLoaded", false)
 end
 

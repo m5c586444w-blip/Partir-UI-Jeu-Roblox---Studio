@@ -65,8 +65,8 @@ function MatchmakingService:FindPublicParty(isLocalJoinable)
 		if type(entry) == "table" and entry.jobId == game.JobId and isLocalJoinable(item.key) then
 			return item.key
 		end
-		-- TODO(BIBLE): un groupe public ouvert sur un AUTRE serveur du lobby est ignoré.
-		-- Faut-il téléporter le joueur vers ce serveur (TeleportToPlaceInstance) pour qu'il le rejoigne ?
+		-- DÉFAUT : un groupe public ouvert sur un AUTRE serveur du lobby est ignoré
+		-- (le rejoindre demanderait de téléporter le joueur vers ce serveur)
 	end
 	return nil
 end

@@ -25,20 +25,18 @@ local state = "loading" -- "loading", "ready" ou "rejecting"
 local rejectKey = nil
 local launchData = nil
 local presentPlayers = {}
-local notifyRemote = nil
+local waitingFor = nil -- [userId] = true pendant l'attente des joueurs
 
 local function sendBack(player)
-	if notifyRemote ~= nil then
-		notifyRemote:FireClient(player, rejectKey)
-	end
-	services.ReturnService:ReturnPlayers({ player }, nil)
+	services.ReturnService:ReturnPlayers({ player }, nil, rejectKey)
 end
 
 -- la partie ne peut pas avoir lieu : chaque joueur présent ou à venir repart au Lobby
-local function reject(textKey, reason)
+-- avec le message `messageKey` (4.6)
+local function reject(messageKey, reason)
 	warn("PartyLoaderService : " .. reason)
 	state = "rejecting"
-	rejectKey = textKey
+	rejectKey = messageKey
 	for _, player in Players:GetPlayers() do
 		task.spawn(sendBack, player)
 	end
@@ -59,6 +57,11 @@ local function waitForPlayers(data)
 		expected[entry.userId] = true
 		expectedCount += 1
 	end
+	waitingFor = expected
+	-- 4.6 : MSG_WaitingPlayers aux joueurs déjà là (les suivants le reçoivent à l'arrivée)
+	for _, player in Players:GetPlayers() do
+		Util.notify(player, "MSG_WaitingPlayers")
+	end
 
 	local done = false
 	local connection = nil
@@ -68,6 +71,7 @@ local function waitForPlayers(data)
 			return
 		end
 		done = true
+		waitingFor = nil
 		if connection ~= nil then
 			connection:Disconnect()
 		end
@@ -76,6 +80,14 @@ local function waitForPlayers(data)
 			local player = Players:GetPlayerByUserId(userId)
 			if player ~= nil then
 				table.insert(present, player)
+			end
+		end
+		-- 4.6 : MSG_PlayerMissing pour chaque absent, envoyé aux présents
+		for _, entry in data.players do
+			if Players:GetPlayerByUserId(entry.userId) == nil then
+				for _, player in present do
+					Util.notify(player, "MSG_PlayerMissing", { player = entry.name })
+				end
 			end
 		end
 		-- TODO(J9): un joueur absent après 60 s — son rôle n'existe pas dans la partie (4.4, étape 3)
@@ -99,13 +111,14 @@ end
 
 local function load()
 	if game.PrivateServerId == "" then
-		-- TODO(BIBLE): hors serveur réservé (test dans Studio), faut-il une configuration de test ?
+		-- DÉFAUT : hors serveur réservé (test dans Studio), aucune configuration de partie
 		warn("PartyLoaderService : pas de serveur réservé (Studio ?), aucune configuration de partie")
 		finish(nil, Players:GetPlayers())
 		return
 	end
 	if launchMap == nil then
-		reject("LaunchDataMissing", "MemoryStore inaccessible")
+		-- DÉFAUT : configuration illisible → retour au Lobby avec MSG_ReturnToLobby
+		reject("MSG_ReturnToLobby", "MemoryStore inaccessible")
 		return
 	end
 
@@ -114,18 +127,17 @@ local function load()
 		return launchMap:GetAsync(key)
 	end)
 	if not ok then
-		reject("LaunchDataMissing", "lecture de la configuration impossible : " .. tostring(data))
+		reject("MSG_ReturnToLobby", "lecture de la configuration impossible : " .. tostring(data))
 		return
 	end
 	if type(data) ~= "table" then
-		reject("LaunchDataMissing", "configuration de partie introuvable (" .. key .. ")")
+		reject("MSG_ReturnToLobby", "configuration de partie introuvable (" .. key .. ")")
 		return
 	end
 	if data.version ~= Version.Number then
-		-- TODO(BIBLE): 16.1 dit que le Lobby refuse le départ ; le Lobby ne peut pas lire la version
-		-- de la Partie avant d'y envoyer le groupe, la Partie renvoie donc le groupe au Lobby.
+		-- 16.1 : la Partie compare les versions et renvoie le groupe au Lobby
 		reject(
-			"VersionMismatch",
+			"MSG_VersionMismatch",
 			("version du Lobby %s, version de la Partie %d"):format(tostring(data.version), Version.Number)
 		)
 		return
@@ -162,13 +174,13 @@ function PartyLoaderService:Init(allServices)
 end
 
 function PartyLoaderService:Start()
-	notifyRemote = Util.getRemote("RE_Notify")
-
 	Players.PlayerAdded:Connect(function(player)
 		if state == "rejecting" then
 			sendBack(player)
+		elseif waitingFor ~= nil then
+			Util.notify(player, "MSG_WaitingPlayers")
 		end
-		-- TODO(BIBLE): un joueur absent de la configuration (ou arrivé après les 60 s) peut-il rester ?
+		-- DÉFAUT : un joueur absent de la configuration, ou arrivé après les 60 s, peut rester
 	end)
 
 	task.spawn(load)

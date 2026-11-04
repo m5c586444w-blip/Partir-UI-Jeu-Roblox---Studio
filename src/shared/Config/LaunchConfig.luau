@@ -1,15 +1,13 @@
 -- ReplicatedStorage/Config/LaunchConfig
--- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.2, 16.3 et 16.4.
+-- Groupe, lancement et téléportation Lobby ↔ Partie : bible, sections 4.4, 16.1, 16.3 et 16.4.
 -- Ne rien ajouter ici sans la bible.
--- TODO(BIBLE): la section 16.1 ne liste aucun module Config pour ces valeurs.
--- Ce module a été ajouté au jalon J1 pour respecter « aucune valeur hors Config ». À valider.
 local LaunchConfig = {}
 
--- Identifiants des deux places de l'expérience. Absents de la bible : connus seulement
--- après publication. Tant qu'ils valent 0, aucune téléportation n'est tentée (avertissement).
+-- 16.4 : expérience « PISTE FROIDE (test) » (relevés le 22 octobre 2026 ;
+-- à reconfirmer dans le Creator Dashboard si l'expérience a été recréée)
 LaunchConfig.PlaceIds = {
-	Lobby = 0, -- TODO(BIBLE): PlaceId de la place « Lobby » (à remplir par Gabriel après publication)
-	Partie = 0, -- TODO(BIBLE): PlaceId de la place « Partie » (à remplir par Gabriel après publication)
+	Lobby = 77677833738174,
+	Partie = 103506696801797,
 }
 
 -- 4.4 : groupe
@@ -25,16 +23,22 @@ LaunchConfig.MemoryStore = {
 	-- « Parties » : carte triée des groupes du lobby, durée de vie 900 s
 	PartiesMapName = "Parties",
 	PartiesTTL = 900,
-	-- Limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
+	-- limite de l'API Roblox (MemoryStoreSortedMap:GetRangeAsync lit 200 entrées au plus)
 	PartiesScanCount = 200,
-	-- « Launch_<code> » : configuration de partie lue par la Partie, durée de vie 600 s
-	-- TODO(BIBLE): la bible ne nomme pas la structure qui contient les clés Launch_ ; carte de hachage « Launch » choisie.
-	LaunchMapName = "Launch",
+	-- « Launch_<PrivateServerId> » : configuration de partie lue par la Partie, durée de vie 600 s
+	LaunchMapName = "Launch", -- DÉFAUT : carte de hachage qui contient les clés Launch_
 	LaunchKeyPrefix = "Launch_",
 	LaunchTTL = 600,
-	-- TODO(BIBLE): PROPOSITION — essais et délai (s) en cas d'échec d'un appel MemoryStore
+	-- valeurs techniques acceptées le 4 novembre 2026 (16.4) : essais et délai (s) par appel MemoryStore
 	Attempts = 3,
 	RetryDelay = 2,
+}
+
+-- DÉFAUT (valeurs techniques) : essais et délai (s) d'une téléportation ratée
+-- (départ : MSG_TeleportRetry puis MSG_TeleportAbort, 4.6 ; retour au Lobby)
+LaunchConfig.Teleport = {
+	Attempts = 3,
+	RetryDelay = 5,
 }
 
 -- 16.2 : PartyLoaderService attend les joueurs 60 s au plus

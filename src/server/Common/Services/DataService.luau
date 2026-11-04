@@ -35,7 +35,7 @@ local function buildDefaultData()
 	local skins = {}
 	local equipped = {}
 	for _, role in PlayerConfig.Roles do
-		-- un rôle sans identifiant (TODO(BIBLE) dans PlayerConfig) n'a pas encore de clé
+		-- un rôle sans identifiant n'a pas de clé de données
 		if role.id ~= nil then
 			local owned = {}
 			for _, skinId in ProgressionConfig.SkinIds do
@@ -173,11 +173,11 @@ local function onPlayerAdded(player)
 		end
 	end
 
-	-- TODO(BIBLE): que faire d'un joueur dont les données restent verrouillées ou illisibles ?
-	-- En attendant : il joue sans données, et rien n'est sauvegardé pour lui.
+	-- 4.6 : le joueur joue sans données, rien n'est sauvegardé pour lui (MSG_DataLoadFailed)
 	warn(
 		("DataService : données indisponibles pour %d, aucune sauvegarde pendant cette session"):format(player.UserId)
 	)
+	Util.notify(player, "MSG_DataLoadFailed")
 	player:SetAttribute("dataLoaded", false)
 end
 
