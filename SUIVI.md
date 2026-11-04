@@ -3,40 +3,55 @@
 Tenu par les deux sessions (cloud et Studio), section 18.1 ter. Chaque session ajoute une
 entrée au journal : date, ce qui est fait, ce qui reste ouvert.
 
+Règle de la section 0 : une question qui ne touche ni un texte affiché aux joueurs, ni une
+valeur de gameplay, ni un asset est tranchée par Claude Code et marquée **DÉFAUT**. Les autres
+restent des `TODO(BIBLE)` jusqu'à une réponse écrite dans la bible.
+
 ## Journal des sessions
 
-### 2026-11-04 — session cloud, phase A1 (jalon J1)
+### 2026-11-04 (2) — session cloud, réponses de Gabriel + phase A2 (jalon J5)
 
 Fait :
-- Dépôt Git et projet Rojo (Rojo 7.7.1, installé ici depuis crates.io) pour deux places,
-  `Lobby` et `Partie`. `rojo build` des deux places réussi : `builds/Lobby.rbxlx`, `builds/Partie.rbxlx`.
-- `CLAUDE.md`, `SUIVI.md`, `HANDOFF.md`.
-- Arborescence de 16.1 (dossiers vides compris).
-- 14 modules `Config` : les 13 de 16.1 (squelettes, sauf ceux dont J1 a besoin) et
-  `LaunchConfig`, ajouté (voir Q1).
-- `Shared` : `Types`, `Util`, `Signal`, `RateLimiter`, `NoiseTypes` (squelette), `Version`.
-- Les 28 RemoteEvents de 16.3, en fichiers d'instances.
-- `DataService` (les deux places) : DataStore `PisteFroide_v1`, clé `player_<UserId>`,
-  verrou de session, sauvegarde toutes les 120 s et à la fermeture.
-- Lobby : `PartyService` (groupes, codes, prêt, compte à rebours de 10 s),
-  `MatchmakingService` (carte triée « Parties », 900 s), `LaunchService` (configuration
-  en MemoryStore, 600 s, serveur réservé, téléportation).
-- Partie : `PartyLoaderService` (lit la configuration, attend les joueurs 60 s au plus,
-  vérifie la version), `ReturnService` (retour au Lobby avec les résultats).
-- Relecture : StyLua lit tous les fichiers Luau sans erreur ; aucune valeur chiffrée hors `Config`.
+- `BIBLE_PISTE_FROIDE.pdf` remplacé par `BIBLE_PISTE_FROIDE.md` (version de Gabriel).
+- A1 mis à jour avec les réponses de la bible : identifiants des rôles (2.5), PlaceId (16.4),
+  `LaunchConfig` (16.1), clé `Launch_<PrivateServerId>` et contrôle de version côté Partie
+  (16.1, 16.4), valeurs techniques acceptées (mention PROPOSITION retirée), messages système
+  `MSG_` de la section 4.6 dans `LoreConfig.Messages`, envoyés par `RE_Notify` (clé + `{player}`/`{n}`).
+- Nouveaux comportements tirés de 4.6 : créateur du groupe et passation (`MSG_HostLeft`),
+  `MSG_PartyLeft`, `MSG_WaitingReady`, `MSG_Countdown`, `MSG_CountdownCancelled`,
+  `MSG_Teleporting`, nouvel essai de départ (`MSG_TeleportRetry` puis `MSG_TeleportAbort`),
+  `MSG_WaitingPlayers`, `MSG_PlayerMissing`, `MSG_VersionMismatch`, `MSG_ReturnToLobby`,
+  `MSG_DataLoadFailed`.
+- **Phase A2** : les 24 ScreenGui de la section 15 (11 Lobby, 10 Partie, 3 dans les deux places)
+  et 2 BillboardGui modèles (`ReplicatedStorage/UITemplates`), en fichiers `.model.json`,
+  générés par `tools/ui/build_ui.py`, avec le style de 15.2. `UI_MAP.md` livré.
+- Projets `Lobby.serve.project.json` et `Partie.serve.project.json` (sans UI) pour `rojo serve`
+  après la première ouverture dans Studio (18.1 ter).
+- `Util.findUI` : un élément d'UI introuvable produit un seul avertissement « UI manquante : … » (15.1).
+- Relecture : StyLua et selene sans erreur ; aucune valeur hors `Config` ; aucun `Instance.new`
+  d'UI (les deux seuls `Instance.new` créent des `TeleportOptions`) ; les 268 chemins de la
+  section 15 sont présents dans les deux builds (vérification automatique) ; `rojo build` des
+  deux places réussi.
 
 Laissé ouvert :
-- Aucun test en jeu possible en phase A : les critères de J1 se testent en phase B (voir `HANDOFF.md`).
-- Les questions Q1 à Q20 ci-dessous.
-- `BIBLE_PISTE_FROIDE.md` n'est pas dans le dépôt : seule la version PDF a été fournie
-  (copiée en `BIBLE_PISTE_FROIDE.pdf`). L'export Markdown est à faire par Gabriel (18.1).
+- 39 textes d'interface absents de la bible (B1 ci-dessous) : les éléments ont un texte vide.
+- Assets d'interface absents de 13.5 (B2).
+- Aucun test dans Studio : affichage PC et mobile à vérifier en phase B (seul un aperçu
+  approximatif a été fait ici, rendu des fichiers en HTML).
+
+### 2026-11-04 (1) — session cloud, phase A1 (jalon J1)
+
+- Dépôt Git et projet Rojo 7.7.1 (installé depuis crates.io) pour les places `Lobby` et `Partie` ;
+  `CLAUDE.md`, `SUIVI.md`, `HANDOFF.md` ; arborescence de 16.1 ; modules `Config` et `Shared` ;
+  28 RemoteEvents de 16.3 ; `DataService` ; `PartyService`, `MatchmakingService`,
+  `LaunchService` ; `PartyLoaderService`, `ReturnService`. Aucun test en jeu possible.
 
 ## Phases
 
 | Phase | Où | Jalons | Contenu | État |
 |---|---|---|---|---|
 | A1 | Cloud | J1 | Arborescence Rojo, Config, Shared, remotes, DataService, téléportation Lobby ↔ Partie | Fait (code) — à tester en phase B |
-| A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | À faire |
+| A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | Fait (fichiers) — textes manquants (B1), à tester en phase B |
 | A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | À faire |
 | A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | À faire |
 | A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | À faire |
@@ -47,64 +62,81 @@ Laissé ouvert :
 | B2 | Studio | J4 | Lumière, brouillard, météo, sons : réglage à l'œil, captures | À faire |
 | B3 | Studio | J0, J15 | Import des modèles 3D et animations, tests en jeu, mobile, équilibrage | À faire |
 
-## Critères d'acceptation de J1 (18.2)
+## Critères d'acceptation
 
-- [ ] Un groupe de 2 part et revient — code écrit, non testé (impossible sans Studio ; la
-      téléportation ne marche que dans l'expérience publiée, et les PlaceId sont à renseigner, Q2).
-- [ ] Données sauvegardées — code écrit, non testé (DataStore indisponible ici).
-- [ ] Zéro erreur console — non vérifiable sans Studio. Vérifié en phase A : zéro erreur de
-      syntaxe (StyLua), aucune valeur hors `Config`.
+J1 (18.2) :
+- [ ] Un groupe de 2 part et revient — code écrit, non testé (téléportation possible seulement dans l'expérience publiée ; il faut aussi le contrôleur de `PartyGui`, A4).
+- [ ] Données sauvegardées — code écrit, non testé.
+- [ ] Zéro erreur console — non vérifiable sans Studio (zéro erreur de syntaxe vérifiée).
 
-## TODO(BIBLE) et questions pour Gabriel
+J5 (18.2) :
+- [x] Aucun `Instance.new` d'UI dans le code.
+- [ ] Affichage correct sur PC et mobile — non vérifiable sans Studio. Fait ici : tout en Scale,
+      contraintes de 15.2, éléments contraints ancrés au centre, listes à hauteur calculée depuis
+      la largeur, aperçu approximatif à 1280 × 720 et 844 × 390. À vérifier dans l'émulateur
+      d'appareils de Studio (17.4).
 
-Chaque question correspond à un marqueur `TODO(BIBLE)` dans le code (fichier indiqué).
-« PROPOSITION » = une valeur provisoire a été mise pour que le code tourne ; elle est à
-confirmer ou à remplacer.
+## Questions encore ouvertes (TODO(BIBLE))
 
-| # | Question | Où | Provisoire |
+| # | Question | Bloque | Où |
 |---|---|---|---|
-| Q1 | 16.1 ne liste aucun module Config pour le groupe, le lancement, MemoryStore et la limite des remotes. J'ai ajouté `Config/LaunchConfig`. D'accord, ou ailleurs ? | `Config/LaunchConfig` | Module ajouté |
-| Q2 | PlaceId des places Lobby et Partie (connus après publication). | `Config/LaunchConfig` | 0 = pas de téléportation |
-| Q3 | Identifiants anglais des 9 rôles autres que `Leader` (utilisés dans `RoleCard_<ROLE>`, `Characters/<ROLE>`, `VO_<ROLE>_*` et les données `skins`/`equipped`). Proposition : `Medic`, `Tracker`, `Cameraman`, `Mechanic`, `Descendant`, `Geologist`, `Athlete`, `RadioOperator`, `Pyrotechnician`. | `Config/PlayerConfig` | Rôles sans id ignorés |
-| Q4 | Verrou de session : au bout de combien de secondes un verrou non rafraîchi est-il abandonné ? | `Config/ProgressionConfig` | PROPOSITION 360 s |
-| Q5 | Verrou tenu par l'autre place pendant une téléportation : combien d'essais de chargement, et à quel intervalle ? | `Config/ProgressionConfig` | PROPOSITION 6 essais, 5 s |
-| Q6 | Que faire d'un joueur dont les données restent verrouillées ou illisibles (l'expulser, le laisser jouer sans sauvegarde) ? | `DataService` | Il joue, rien n'est sauvegardé |
-| Q7 | 16.4 nomme la clé `Launch_<code d'accès>` mais pas la structure MemoryStore qui la contient. | `Config/LaunchConfig` | Carte de hachage « Launch » |
-| Q8 | La Partie ne peut pas lire son code d'accès, seulement `game.PrivateServerId`. La clé devient `Launch_<PrivateServerId>`. D'accord ? | `LaunchService` | `Launch_<PrivateServerId>` |
-| Q9 | Essais et délai en cas d'échec d'un appel MemoryStore. | `Config/LaunchConfig` | PROPOSITION 3 essais, 2 s |
-| Q10 | Le départ S1/S2/S3 est-il tiré de façon équiprobable ? | `LaunchService` | Équiprobable |
-| Q11 | Difficulté transmise si personne n'a voté (J9). | `LaunchService` | Aucune (nil) |
-| Q12 | 16.1 : « le Lobby refuse de téléporter si la Partie n'a pas la même version ». Le Lobby ne peut pas connaître la version de la Partie avant d'y envoyer le groupe. D'accord pour que la Partie compare et renvoie le groupe au Lobby ? | `PartyLoaderService` | La Partie renvoie le groupe |
-| Q13 | File « Rejoindre un groupe » : un groupe public ouvert sur un autre serveur du lobby doit-il être proposé (téléportation vers ce serveur) ? | `MatchmakingService` | Seuls les groupes du même serveur |
-| Q14 | Un code privé doit-il trouver un groupe ouvert sur un autre serveur du lobby ? | `PartyService` | Même serveur seulement |
-| Q15 | Un groupe public a-t-il aussi un code ? | `PartyService` | Non |
-| Q16 | File rapide sans groupe public disponible : créer un groupe, ou rien ? | `PartyService` | Rien + notification |
-| Q17 | Textes des notifications du lobby et de la Partie (groupe complet, code introuvable, aucun groupe public, déjà dans un groupe, départ raté, versions différentes, configuration introuvable). | `Config/LoreConfig` | Chaînes vides |
-| Q18 | Partie hors serveur réservé (test dans Studio) : faut-il une configuration de test ? Et un joueur absent de la configuration, ou arrivé après 60 s, peut-il rester ? | `PartyLoaderService` | Pas de configuration ; il reste |
-| Q19 | Retour au Lobby raté : nouvel essai, après quel délai ? | `ReturnService` | Avertissement seulement |
-| Q20 | Pour tester J1 avant le lobby (J14) et le terrain (J2), les joueurs tombent dans le vide : puis-je poser une plateforme provisoire sous L01 (0, 5, 120) et sous S1–S3, ou Gabriel en pose-t-il une à la main dans Studio ? | `HANDOFF.md` | Rien de posé |
+| B1 | **Textes d'interface absents de la bible.** 39 éléments ont un texte vide : boutons Fermer / Confirmer / Prendre / Équiper / Continuer / Jeter / Envoyer / Lire, boutons du groupe (créer public, créer privé, rejoindre avec le code, quitter), titre « Groupe », texte d'aide du champ de code, aide « à terre », boutons et note du spectateur, 12 boutons mobiles, tailles de sous-titres « petite » et « grande », Appliquer / Réinitialiser. Liste complète avec mes propositions : `UI_MAP.md`, section « Textes absents de la bible ». | A2 complet | `tools/ui/build_ui.py` |
+| B2 | **Images d'interface absentes de 13.5.** Vignettage de peur (`HUDGui/FearVignette`), portraits des 10 rôles (`RoleCard_<ROLE>/Portrait`), icônes des 3 armes (`WeaponBoardGui`), icônes d'objets (`Icon` de l'inventaire). Faut-il les ajouter à 13.5, et qui les crée ? En attendant : `ImageLabel` vides. | Affichage final | `tools/ui/build_ui.py` |
+| B3 | Le départ S1 / S2 / S3 est-il tiré de façon équiprobable ? (valeur de gameplay) | J9 | `LaunchService` (équiprobable en attendant) |
+| B4 | Difficulté transmise si personne n'a voté (valeur de gameplay). | J9 | `LaunchService` (aucune en attendant) |
 
-Choix techniques faits sans la bible (à relire, pas bloquants) :
-- L'état du groupe passe par des attributs du joueur (`partyId`, `partyCode`, `isReady`,
-  `partyCountdownEnd`), comme les jauges (16.3), car 16.3 ne prévoit pas de remote serveur → client pour le groupe.
-- Le verrou de session est rangé dans les métadonnées de la clé DataStore : la valeur garde exactement le format de 16.4.
-- La graine (3.4) est tirée par le Lobby au départ du groupe (16.4 la range dans la configuration) et écrite dans la console des deux places.
-- Les résultats renvoyés au Lobby voyagent dans les données de téléportation, pour l'affichage seulement ; les gains sont sauvegardés par la Partie.
-- Le compte à rebours s'annule si un membre n'est plus prêt, part, ou si un joueur rejoint le groupe.
+## Décisions DÉFAUT (section 0)
+
+Lancement et données (A1) :
+- `LaunchConfig.MemoryStore.LaunchMapName = "Launch"` : carte de hachage qui contient les clés `Launch_`.
+- Téléportation ratée : 3 essais, 5 s d'écart (`LaunchConfig.Teleport`), au départ comme au retour.
+- File rapide et code privé : seulement les groupes du même serveur du lobby.
+- Seul le groupe privé a un code.
+- Un joueur déjà dans un groupe qui demande à créer ou rejoindre : la demande est ignorée sans message (l'interface masque ces boutons).
+- Le créateur qui part est remplacé par le plus ancien membre restant (`MSG_HostLeft`).
+- `MSG_Countdown` est envoyé une fois au début du compte à rebours (n = 10) ; `MSG_CountdownCancelled` à chaque arrêt d'un compte à rebours en cours (membre qui n'est plus prêt, qui part, ou nouveau membre).
+- Partie hors serveur réservé (test dans Studio) : aucune configuration ; un joueur absent de la configuration, ou arrivé après 60 s, peut rester.
+- Configuration de partie illisible : retour au Lobby avec `MSG_ReturnToLobby` (le seul message de 4.6 qui convient ; 4.6 n'en prévoit pas pour ce cas).
+- `{player}` = nom d'affichage Roblox (`DisplayName`), transmis dans la configuration de partie.
+- L'état du groupe passe par des attributs du joueur (`partyId`, `partyCode`, `partyHostId`, `isReady`, `partyCountdownEnd`).
+- Le verrou de session est rangé dans les métadonnées de la clé DataStore.
+- La graine (3.4) est tirée par le Lobby au départ du groupe et écrite dans la console des deux places.
+- Les résultats renvoyés au Lobby voyagent dans les données de téléportation, pour l'affichage seulement.
 - Limite de 16.3 appliquée par joueur et par remote.
-- `RE_Notify` et `RE_PlayCinematic` sont présents dans les deux places (NotificationController et CinematicController existent dans les deux, 16.2) ; les autres remotes sont rangées selon 16.3.
 
-Rappel : les décisions de la section 19.4 restent à trancher (Restricted 18+, langue, voix,
-corrections, nouveautés, noms des personnages, modèles humains, créature, chat vocal, mode
-« La nuit suivante »).
+Interfaces (A2) :
+- Positions, tailles et ordre d'affichage (`DisplayOrder` : notifications 50, cinématiques 60, réglages 70, chargement 100) : réglages de départ, à retoucher à la main.
+- Couleur « Hurt » des membres du HUD : rouge danger à moitié transparent (15.2 ne donne pas de couleur intermédiaire) ; « Ok » : vert mousse ; « Critical » : rouge danger.
+- Menus cachés au départ (`Visible = false`), le contrôleur les montre ; HUD, inventaire rapide, objectifs et notifications visibles.
+- Éléments ajoutés pour la lisibilité, marqués « décoratif » dans `UI_MAP.md` : titres « Difficulté » et « Météo » (4.4), nom de l'arme sur chaque emplacement (8.2), étiquettes des réglages (17.2).
+- `SettingsGui/Window/Pages` : une page par onglet (`Graphics`, `Controls`, `Audio`, `Accessibility`), une ligne par réglage de 17.2 (noms anglais, ex. `Preset`, `FieldOfView`), options `Opt_<valeur>` ou curseur `Slider/Track/Fill` + `Value`. Ordre des onglets : celui du tableau 17.2.
+- Cartes de rôle et tenues : `TextButton` sans texte (cliquables en entier) ; cartes ordonnées Meneur, Caméraman, puis l'ordre de 2.5 (4.4 : proposés en premier).
+- Grille des rôles défilante (sur téléphone, 10 cartes ne tiennent pas avec un texte à 14 au minimum).
+- Listes défilantes : chaque ligne a une hauteur calculée depuis sa largeur (`UIAspectRatioConstraint` en `ScaleWithParentSize`), pour rester tout en Scale.
+- Boutons mobiles regroupés à droite au-dessus du bouton de saut de Roblox ; pencher à gauche et à droite au milieu gauche.
+- Bandes de cinématique : hauteur calculée pour un format 2.35:1 sur un écran 16:9.
+- `UITemplates` : `PingMarker` et `NameTag` (noms choisis).
+- Polices : `SpecialElite` et `RobotoMono` existent dans `Enum.Font` (Rojo refuse un nom de police inconnu et a accepté ces deux) ; rendu à confirmer dans Studio (15.2).
+
+## Questions réglées par la bible (pour mémoire)
+
+Q1 `LaunchConfig` (16.1) · Q2 PlaceId (16.4) · Q3 identifiants des rôles (2.5) · Q4, Q5, Q9 valeurs
+techniques acceptées (16.4) · Q6 et Q17 messages 4.6 · Q8 et Q12 clé `Launch_<PrivateServerId>`
+et contrôle de version côté Partie (16.1, 16.4) · Q7, Q13, Q14, Q15, Q16, Q18, Q19 → DÉFAUT ·
+Q20 (sol provisoire pour les tests) → DÉFAUT : rien dans les fichiers, Gabriel pose une plaque
+provisoire dans Studio pour ses tests et la retire ensuite (voir `HANDOFF.md`).
+
+Rappel : les décisions de la section 19.4 restent à trancher (Restricted 18+, langue, voix, etc.).
 
 ## Assets MANQUANT_
 
-Aucun bloc `MANQUANT_<ID>` n'est encore placé (J1 n'utilise aucun asset).
-Assets marqués MANQUANT dans la section 13.3, à remplacer par un bloc gris le moment venu :
+Aucun bloc `MANQUANT_<ID>` n'est encore placé. Assets marqués MANQUANT dans la section 13.3 :
 
 | ID | Contenu | Jalon qui les place |
 |---|---|---|
 | `CHR_<ROLE>_Skin_A–C` | 10 humains réalistes avec squelette, découpés en 6 | J6 |
 | `WPN_Revolver`, `WPN_Shotgun`, `WPN_FlareGun`, `MEL_Axe`, `MEL_Machete` | Armes | J8 |
 | `Item_Tablet`, `Item_Camcorder`, `Item_Jerrycan`, `Item_CarBattery`, `Item_Jack`, `Item_ToolBox`, `Item_BearSpray`, `Item_Headlamp`, `Item_Flare`, `Item_Bandage`, `Item_Medkit` | Objets | J7 |
+
+Images d'interface encore vides (voir B2) : `Img_TabletMap` et la couche « tunnels » (13.5, à créer),
+illustrations du musée `Img_Museum_M1–M8` (13.5), vignettage de peur, portraits, icônes.

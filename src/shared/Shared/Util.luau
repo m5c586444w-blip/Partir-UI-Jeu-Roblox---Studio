@@ -84,4 +84,19 @@ function Util.formatMessage(template, params)
 	)
 end
 
+-- côté client : élément d'UI par son chemin depuis PlayerGui (ex. "HUDGui/BodyStatus/Head").
+-- 15.1 : un élément introuvable produit un seul avertissement clair, et le jeu continue (renvoie nil).
+local warnedUI = {}
+function Util.findUI(root, path)
+	local node = root
+	for part in string.gmatch(path, "[^/]+") do
+		node = if node ~= nil then node:FindFirstChild(part) else nil
+	end
+	if node == nil and not warnedUI[path] then
+		warnedUI[path] = true
+		warn("UI manquante : " .. path)
+	end
+	return node
+end
+
 return Util

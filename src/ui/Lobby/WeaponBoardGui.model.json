@@ -1,0 +1,1283 @@
+{
+  "className": "ScreenGui",
+  "properties": {
+    "ResetOnSpawn": false,
+    "ZIndexBehavior": "Sibling",
+    "ScreenInsets": "CoreUISafeInsets",
+    "DisplayOrder": 0
+  },
+  "children": [
+    {
+      "name": "Board",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "Position": {
+          "UDim2": [
+            [
+              0.5,
+              0
+            ],
+            [
+              0.43,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.6,
+              0
+            ],
+            [
+              0.62,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UIListLayout",
+          "className": "UIListLayout",
+          "properties": {
+            "SortOrder": "LayoutOrder",
+            "FillDirection": "Horizontal",
+            "Padding": {
+              "UDim": [
+                0.02,
+                0
+              ]
+            },
+            "VerticalAlignment": "Center"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.72
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.0,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "name": "Slot_Rifle",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.31,
+                  0
+                ],
+                [
+                  0.92,
+                  0
+                ]
+              ]
+            },
+            "LayoutOrder": 1
+          },
+          "children": [
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "UIStroke",
+              "className": "UIStroke",
+              "properties": {
+                "Color": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "Thickness": 1,
+                "ApplyStrokeMode": "Border"
+              }
+            },
+            {
+              "name": "Icon",
+              "className": "ImageLabel",
+              "properties": {
+                "Image": "",
+                "ScaleType": "Fit",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "ImageTransparency": 0.0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.1,
+                      0
+                    ],
+                    [
+                      0.05,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.8,
+                      0
+                    ],
+                    [
+                      0.45,
+                      0
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "name": "WeaponName",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "Fusil à verrou",
+                "Font": "SpecialElite",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.52,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.12,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Holder",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.66,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.1,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Take",
+              "className": "TextButton",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 0.35,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.15,
+                      0
+                    ],
+                    [
+                      0.8,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.7,
+                      0
+                    ],
+                    [
+                      0.14,
+                      0
+                    ]
+                  ]
+                },
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ],
+                "AutoButtonColor": true
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
+                {
+                  "name": "UICorner",
+                  "className": "UICorner",
+                  "properties": {
+                    "CornerRadius": {
+                      "UDim": [
+                        0.0,
+                        4
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "UIStroke",
+                  "className": "UIStroke",
+                  "properties": {
+                    "Color": [
+                      0.6039,
+                      0.5882,
+                      0.549
+                    ],
+                    "Thickness": 1,
+                    "ApplyStrokeMode": "Border"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Slot_Revolver",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.31,
+                  0
+                ],
+                [
+                  0.92,
+                  0
+                ]
+              ]
+            },
+            "LayoutOrder": 2
+          },
+          "children": [
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "UIStroke",
+              "className": "UIStroke",
+              "properties": {
+                "Color": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "Thickness": 1,
+                "ApplyStrokeMode": "Border"
+              }
+            },
+            {
+              "name": "Icon",
+              "className": "ImageLabel",
+              "properties": {
+                "Image": "",
+                "ScaleType": "Fit",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "ImageTransparency": 0.0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.1,
+                      0
+                    ],
+                    [
+                      0.05,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.8,
+                      0
+                    ],
+                    [
+                      0.45,
+                      0
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "name": "WeaponName",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "Revolver",
+                "Font": "SpecialElite",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.52,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.12,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Holder",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.66,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.1,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Take",
+              "className": "TextButton",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 0.35,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.15,
+                      0
+                    ],
+                    [
+                      0.8,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.7,
+                      0
+                    ],
+                    [
+                      0.14,
+                      0
+                    ]
+                  ]
+                },
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ],
+                "AutoButtonColor": true
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
+                {
+                  "name": "UICorner",
+                  "className": "UICorner",
+                  "properties": {
+                    "CornerRadius": {
+                      "UDim": [
+                        0.0,
+                        4
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "UIStroke",
+                  "className": "UIStroke",
+                  "properties": {
+                    "Color": [
+                      0.6039,
+                      0.5882,
+                      0.549
+                    ],
+                    "Thickness": 1,
+                    "ApplyStrokeMode": "Border"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Slot_Shotgun",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.31,
+                  0
+                ],
+                [
+                  0.92,
+                  0
+                ]
+              ]
+            },
+            "LayoutOrder": 3
+          },
+          "children": [
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "UIStroke",
+              "className": "UIStroke",
+              "properties": {
+                "Color": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "Thickness": 1,
+                "ApplyStrokeMode": "Border"
+              }
+            },
+            {
+              "name": "Icon",
+              "className": "ImageLabel",
+              "properties": {
+                "Image": "",
+                "ScaleType": "Fit",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "ImageTransparency": 0.0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.1,
+                      0
+                    ],
+                    [
+                      0.05,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.8,
+                      0
+                    ],
+                    [
+                      0.45,
+                      0
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "name": "WeaponName",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "Fusil à pompe",
+                "Font": "SpecialElite",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.52,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.12,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Holder",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.05,
+                      0
+                    ],
+                    [
+                      0.66,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9,
+                      0
+                    ],
+                    [
+                      0.1,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Take",
+              "className": "TextButton",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 0.35,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.15,
+                      0
+                    ],
+                    [
+                      0.8,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.7,
+                      0
+                    ],
+                    [
+                      0.14,
+                      0
+                    ]
+                  ]
+                },
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ],
+                "AutoButtonColor": true
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                },
+                {
+                  "name": "UICorner",
+                  "className": "UICorner",
+                  "properties": {
+                    "CornerRadius": {
+                      "UDim": [
+                        0.0,
+                        4
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "UIStroke",
+                  "className": "UIStroke",
+                  "properties": {
+                    "Color": [
+                      0.6039,
+                      0.5882,
+                      0.549
+                    ],
+                    "Thickness": 1,
+                    "ApplyStrokeMode": "Border"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VotePopup",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "Position": {
+          "UDim2": [
+            [
+              0.5,
+              0
+            ],
+            [
+              0.47,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.36,
+              0
+            ],
+            [
+              0.34,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "Question",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.05,
+                  0
+                ],
+                [
+                  0.05,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.9,
+                  0
+                ],
+                [
+                  0.35,
+                  0
+                ]
+              ]
+            }
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "Option_1",
+          "className": "TextButton",
+          "properties": {
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.05,
+                  0
+                ],
+                [
+                  0.45,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.42,
+                  0
+                ],
+                [
+                  0.25,
+                  0
+                ]
+              ]
+            },
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "AutoButtonColor": true
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            },
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "UIStroke",
+              "className": "UIStroke",
+              "properties": {
+                "Color": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "Thickness": 1,
+                "ApplyStrokeMode": "Border"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Option_2",
+          "className": "TextButton",
+          "properties": {
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.53,
+                  0
+                ],
+                [
+                  0.45,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.42,
+                  0
+                ],
+                [
+                  0.25,
+                  0
+                ]
+              ]
+            },
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "AutoButtonColor": true
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            },
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "UIStroke",
+              "className": "UIStroke",
+              "properties": {
+                "Color": [
+                  0.6039,
+                  0.5882,
+                  0.549
+                ],
+                "Thickness": 1,
+                "ApplyStrokeMode": "Border"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Timer",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.05,
+                  0
+                ],
+                [
+                  0.76,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.9,
+                  0
+                ],
+                [
+                  0.18,
+                  0
+                ]
+              ]
+            }
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.882
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.0,
+                4
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

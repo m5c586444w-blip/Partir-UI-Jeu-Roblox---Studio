@@ -1,0 +1,1151 @@
+{
+  "className": "ScreenGui",
+  "properties": {
+    "ResetOnSpawn": false,
+    "ZIndexBehavior": "Sibling",
+    "ScreenInsets": "CoreUISafeInsets",
+    "DisplayOrder": 0
+  },
+  "children": [
+    {
+      "name": "Tablet",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.925,
+              0
+            ],
+            [
+              0.242,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ping",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.835,
+              0
+            ],
+            [
+              0.242,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Light",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.745,
+              0
+            ],
+            [
+              0.242,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Interact",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.925,
+              0
+            ],
+            [
+              0.382,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reload",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.835,
+              0
+            ],
+            [
+              0.382,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Aim",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.745,
+              0
+            ],
+            [
+              0.382,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fire",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.925,
+              0
+            ],
+            [
+              0.522,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sprint",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.835,
+              0
+            ],
+            [
+              0.522,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crouch",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.745,
+              0
+            ],
+            [
+              0.522,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prone",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.655,
+              0
+            ],
+            [
+              0.522,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "LeanL",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.055,
+              0
+            ],
+            [
+              0.412,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "LeanR",
+      "className": "TextButton",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 0.35,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.135,
+              0
+            ],
+            [
+              0.412,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.07,
+              0
+            ],
+            [
+              0.124,
+              0
+            ]
+          ]
+        },
+        "Visible": false,
+        "BackgroundColor3": [
+          0.0549,
+          0.0588,
+          0.051
+        ],
+        "AutoButtonColor": true,
+        "AnchorPoint": [
+          0.5,
+          0.5
+        ]
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        },
+        {
+          "name": "UIAspectRatioConstraint",
+          "className": "UIAspectRatioConstraint",
+          "properties": {
+            "AspectRatio": 1.004
+          }
+        },
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

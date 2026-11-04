@@ -1,0 +1,56 @@
+{
+  "name": "Lobby",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Config": {
+        "$path": "src/shared/Config"
+      },
+      "Shared": {
+        "$path": "src/shared/Shared"
+      },
+      "Remotes": {
+        "$path": "src/shared/Remotes/Lobby",
+        "RE_Notify": {
+          "$path": "src/shared/Remotes/Common/RE_Notify.model.json"
+        },
+        "RE_PlayCinematic": {
+          "$path": "src/shared/Remotes/Common/RE_PlayCinematic.model.json"
+        }
+      },
+      "Animations": {
+        "$className": "Folder",
+        "Player": {
+          "$className": "Folder"
+        },
+        "Creature": {
+          "$className": "Folder"
+        }
+      },
+      "Characters": {
+        "$className": "Folder"
+      },
+      "Items": {
+        "$className": "Folder"
+      }
+    },
+    "ServerScriptService": {
+      "Bootstrap": {
+        "$path": "src/server/Lobby/Bootstrap.server.luau"
+      },
+      "Services": {
+        "$path": "src/server/Lobby/Services",
+        "DataService": {
+          "$path": "src/server/Common/Services/DataService.luau"
+        }
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Controllers": {
+          "$className": "Folder"
+        }
+      }
+    }
+  }
+}

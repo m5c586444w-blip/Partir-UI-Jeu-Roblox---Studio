@@ -1,0 +1,154 @@
+{
+  "className": "ScreenGui",
+  "properties": {
+    "ResetOnSpawn": false,
+    "ZIndexBehavior": "Sibling",
+    "ScreenInsets": "CoreUISafeInsets",
+    "DisplayOrder": 0
+  },
+  "children": [
+    {
+      "name": "Channel",
+      "className": "TextLabel",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Right",
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0.8,
+              0
+            ],
+            [
+              0.2,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.18,
+              0
+            ],
+            [
+              0.04,
+              0
+            ]
+          ]
+        },
+        "Visible": false
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        }
+      ]
+    },
+    {
+      "name": "Talking",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 0,
+        "BorderSizePixel": 0,
+        "BackgroundColor3": [
+          0.4314,
+          0.5451,
+          0.3686
+        ],
+        "Position": {
+          "UDim2": [
+            [
+              0.955,
+              0
+            ],
+            [
+              0.25,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.015,
+              0
+            ],
+            [
+              0.027,
+              0
+            ]
+          ]
+        },
+        "Visible": false
+      },
+      "children": [
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Static",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 0.4,
+        "BorderSizePixel": 0,
+        "BackgroundColor3": [
+          0.6039,
+          0.5882,
+          0.549
+        ],
+        "Position": {
+          "UDim2": [
+            [
+              0.8,
+              0
+            ],
+            [
+              0.29,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              0.18,
+              0
+            ],
+            [
+              0.01,
+              0
+            ]
+          ]
+        },
+        "Visible": false
+      }
+    }
+  ]
+}

@@ -3,32 +3,68 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
-      "Config": { "$path": "src/shared/Config" },
-      "Shared": { "$path": "src/shared/Shared" },
+      "Config": {
+        "$path": "src/shared/Config"
+      },
+      "Shared": {
+        "$path": "src/shared/Shared"
+      },
       "Remotes": {
         "$path": "src/shared/Remotes/Lobby",
-        "RE_Notify": { "$path": "src/shared/Remotes/Common/RE_Notify.model.json" },
-        "RE_PlayCinematic": { "$path": "src/shared/Remotes/Common/RE_PlayCinematic.model.json" }
+        "RE_Notify": {
+          "$path": "src/shared/Remotes/Common/RE_Notify.model.json"
+        },
+        "RE_PlayCinematic": {
+          "$path": "src/shared/Remotes/Common/RE_PlayCinematic.model.json"
+        }
       },
       "Animations": {
         "$className": "Folder",
-        "Player": { "$className": "Folder" },
-        "Creature": { "$className": "Folder" }
+        "Player": {
+          "$className": "Folder"
+        },
+        "Creature": {
+          "$className": "Folder"
+        }
       },
-      "Characters": { "$className": "Folder" },
-      "Items": { "$className": "Folder" },
-      "UITemplates": { "$className": "Folder" }
+      "Characters": {
+        "$className": "Folder"
+      },
+      "Items": {
+        "$className": "Folder"
+      },
+      "UITemplates": {
+        "$path": "src/ui/UITemplates"
+      }
     },
     "ServerScriptService": {
-      "Bootstrap": { "$path": "src/server/Lobby/Bootstrap.server.luau" },
+      "Bootstrap": {
+        "$path": "src/server/Lobby/Bootstrap.server.luau"
+      },
       "Services": {
         "$path": "src/server/Lobby/Services",
-        "DataService": { "$path": "src/server/Common/Services/DataService.luau" }
+        "DataService": {
+          "$path": "src/server/Common/Services/DataService.luau"
+        }
       }
     },
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "Controllers": { "$className": "Folder" }
+        "Controllers": {
+          "$className": "Folder"
+        }
+      }
+    },
+    "StarterGui": {
+      "$path": "src/ui/Lobby",
+      "CinematicGui": {
+        "$path": "src/ui/Common/CinematicGui.model.json"
+      },
+      "NotificationGui": {
+        "$path": "src/ui/Common/NotificationGui.model.json"
+      },
+      "SettingsGui": {
+        "$path": "src/ui/Common/SettingsGui.model.json"
       }
     }
   }

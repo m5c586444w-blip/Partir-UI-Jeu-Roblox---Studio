@@ -1,0 +1,96 @@
+{
+  "name": "Partie",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Config": {
+        "$path": "src/shared/Config"
+      },
+      "Shared": {
+        "$path": "src/shared/Shared"
+      },
+      "Remotes": {
+        "$path": "src/shared/Remotes/Partie",
+        "RE_Notify": {
+          "$path": "src/shared/Remotes/Common/RE_Notify.model.json"
+        },
+        "RE_PlayCinematic": {
+          "$path": "src/shared/Remotes/Common/RE_PlayCinematic.model.json"
+        }
+      },
+      "Animations": {
+        "$className": "Folder",
+        "Player": {
+          "$className": "Folder"
+        },
+        "Creature": {
+          "$className": "Folder"
+        }
+      },
+      "Characters": {
+        "$className": "Folder"
+      },
+      "Items": {
+        "$className": "Folder"
+      }
+    },
+    "ServerStorage": {
+      "Creatures": {
+        "$className": "Folder"
+      },
+      "Props": {
+        "$className": "Folder"
+      }
+    },
+    "ServerScriptService": {
+      "Bootstrap": {
+        "$path": "src/server/Partie/Bootstrap.server.luau"
+      },
+      "Services": {
+        "$path": "src/server/Partie/Services",
+        "DataService": {
+          "$path": "src/server/Common/Services/DataService.luau"
+        }
+      },
+      "AI": {
+        "$className": "Folder",
+        "Behaviors": {
+          "$className": "Folder"
+        },
+        "Attacks": {
+          "$className": "Folder"
+        }
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Controllers": {
+          "$className": "Folder"
+        }
+      }
+    },
+    "Workspace": {
+      "Vegetation": {
+        "$className": "Folder"
+      },
+      "Places": {
+        "$className": "Folder"
+      },
+      "SpawnPoints": {
+        "$className": "Folder"
+      },
+      "ClimbPoints": {
+        "$className": "Folder"
+      },
+      "CluePoints": {
+        "$className": "Folder"
+      },
+      "Cinematics": {
+        "$className": "Folder"
+      },
+      "Navigation": {
+        "$className": "Folder"
+      }
+    }
+  }
+}

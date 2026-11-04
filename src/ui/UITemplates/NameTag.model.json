@@ -1,0 +1,79 @@
+{
+  "className": "BillboardGui",
+  "properties": {
+    "Size": {
+      "UDim2": [
+        [
+          0,
+          160
+        ],
+        [
+          0,
+          30
+        ]
+      ]
+    },
+    "StudsOffset": [
+      0,
+      3,
+      0
+    ],
+    "AlwaysOnTop": true,
+    "LightInfluence": 0,
+    "ResetOnSpawn": false
+  },
+  "children": [
+    {
+      "name": "PlayerName",
+      "className": "TextLabel",
+      "properties": {
+        "Text": "",
+        "Font": "RobotoMono",
+        "TextColor3": [
+          0.9098,
+          0.8941,
+          0.8471
+        ],
+        "TextScaled": true,
+        "TextWrapped": true,
+        "TextXAlignment": "Center",
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        }
+      },
+      "children": [
+        {
+          "name": "UITextSizeConstraint",
+          "className": "UITextSizeConstraint",
+          "properties": {
+            "MinTextSize": 14,
+            "MaxTextSize": 28
+          }
+        }
+      ]
+    }
+  ]
+}

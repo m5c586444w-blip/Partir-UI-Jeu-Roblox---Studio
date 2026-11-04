@@ -1,0 +1,91 @@
+{
+  "className": "BillboardGui",
+  "properties": {
+    "Size": {
+      "UDim2": [
+        [
+          0,
+          24
+        ],
+        [
+          0,
+          24
+        ]
+      ]
+    },
+    "StudsOffset": [
+      0,
+      1,
+      0
+    ],
+    "AlwaysOnTop": true,
+    "LightInfluence": 0,
+    "ResetOnSpawn": false
+  },
+  "children": [
+    {
+      "name": "Dot",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 0,
+        "BorderSizePixel": 0,
+        "BackgroundColor3": [
+          0.4314,
+          0.5451,
+          0.3686
+        ],
+        "Position": {
+          "UDim2": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        }
+      },
+      "children": [
+        {
+          "name": "UICorner",
+          "className": "UICorner",
+          "properties": {
+            "CornerRadius": {
+              "UDim": [
+                0.5,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "name": "UIStroke",
+          "className": "UIStroke",
+          "properties": {
+            "Color": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "Thickness": 1,
+            "ApplyStrokeMode": "Border"
+          }
+        }
+      ]
+    }
+  ]
+}

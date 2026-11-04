@@ -1,8 +1,6 @@
 # PISTE FROIDE — règles pour Claude Code
 
-Bible (seule source de vérité) : `BIBLE_PISTE_FROIDE.md` à la racine du dépôt.
-Tant que Gabriel ne l'a pas exportée en Markdown (18.1), la version de référence est
-`BIBLE_PISTE_FROIDE.pdf` (94 pages, même racine).
+Bible (seule source de vérité) : `BIBLE_PISTE_FROIDE.md` à la racine du dépôt (écrite par Gabriel).
 
 À lire au début de chaque session : ce fichier, `SUIVI.md`, `HANDOFF.md`, puis la bible,
 sections 0, 16 et la section du jalon demandé.
@@ -27,6 +25,11 @@ sections 0, 16 et la section du jalon demandé.
    jamais supprimée.
 7. **Une session = un jalon** (section 18). Ne pas modifier les fichiers des autres jalons,
    sauf demande explicite.
+
+**Questions en attente (section 0) :** une question qui ne touche **ni un texte affiché aux
+joueurs, ni une valeur de gameplay, ni un asset** est tranchée par Claude Code : il applique sa
+proposition, la marque `DÉFAUT` (dans le code et dans `SUIVI.md`) et continue. Les autres
+restent des `TODO(BIBLE)` et attendent une réponse écrite dans la bible.
 
 Autres règles de la bible à garder en tête :
 - Tout texte affiché en jeu vient de la bible ; Claude Code n'en rédige pas d'autre (section 2).
@@ -87,11 +90,18 @@ Règles :
 ## Projet Rojo (mis en place en phase A1)
 
 - Rojo 7.7.1 (version épinglée dans `rokit.toml`).
-- Deux projets : `Lobby.project.json` et `Partie.project.json`.
+- Deux projets complets : `Lobby.project.json` et `Partie.project.json` (scripts + UI),
+  pour `rojo build` avant la première ouverture dans Studio.
+- Deux projets de synchronisation sans UI : `Lobby.serve.project.json` et
+  `Partie.serve.project.json` (ni `StarterGui`, ni `ReplicatedStorage/UITemplates`), pour
+  `rojo serve` une fois la place ouverte dans Studio (18.1 ter : l'UI appartient alors à Studio).
 - Build : `rojo build Lobby.project.json -o builds/Lobby.rbxlx` et
   `rojo build Partie.project.json -o builds/Partie.rbxlx`.
-- Synchronisation dans Studio (phase B) : `rojo serve Lobby.project.json` ou
-  `rojo serve Partie.project.json`, avec le plugin Rojo.
+- Synchronisation dans Studio (phase B) : `rojo serve Lobby.serve.project.json` ou
+  `rojo serve Partie.serve.project.json`, avec le plugin Rojo.
+- UI (phase A2) : `python3 tools/ui/build_ui.py` régénère `src/ui/**` et `UI_MAP.md`
+  depuis une description unique (noms de la section 15, style 15.2). À ne plus lancer
+  pour une place déjà ouverte dans Studio.
 - Vérification de syntaxe (aucun test en jeu possible en phase A) : `stylua --check src`
   (StyLua lit le Luau ; une erreur de syntaxe fait échouer la commande) et `selene src`.
 
@@ -106,6 +116,9 @@ src/shared/Remotes/Partie → ReplicatedStorage/Remotes  (Partie)
 src/server/Common/Services → ServerScriptService/Services (les deux places)
 src/server/<Place>/Bootstrap.server.luau → ServerScriptService/Bootstrap
 src/server/<Place>/Services → ServerScriptService/Services
+src/ui/Lobby, src/ui/Partie → StarterGui                  (ScreenGui, section 15)
+src/ui/Common              → StarterGui                  (les deux places, 15.5)
+src/ui/UITemplates         → ReplicatedStorage/UITemplates (BillboardGui, 15.5)
 ```
 
 Fichier `.luau` = ModuleScript, `.server.luau` = Script, `.client.luau` = LocalScript,
