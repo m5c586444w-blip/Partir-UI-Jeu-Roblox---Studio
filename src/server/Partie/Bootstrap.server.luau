@@ -6,7 +6,24 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local servicesFolder = ServerScriptService:WaitForChild("Services")
 
 -- ordre de chargement : DataService d'abord, les autres en dépendent
-local ORDER = { "DataService", "ReturnService", "PartyLoaderService" }
+local ORDER = {
+	"DataService",
+	"ReturnService",
+	"PartyLoaderService",
+	"NoiseService",
+	"InteractionService",
+	"CharacterService",
+	"SpawnService",
+	"HealthService",
+	"StaminaService",
+	"FearService",
+	"InventoryService",
+	"ItemSpawnService",
+	"WeaponService",
+	"EvidenceService",
+	"DocumentService",
+	"TabletService",
+}
 
 local services = {}
 for _, name in ORDER do

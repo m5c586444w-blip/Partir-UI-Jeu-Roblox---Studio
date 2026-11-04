@@ -5,55 +5,72 @@ entrée au journal : date, ce qui est fait, ce qui reste ouvert.
 
 Règle de la section 0 : une question qui ne touche ni un texte affiché aux joueurs, ni une
 valeur de gameplay, ni un asset est tranchée par Claude Code et marquée **DÉFAUT**. Les autres
-restent des `TODO(BIBLE)` jusqu'à une réponse écrite dans la bible.
+restent des `TODO(BIBLE)`. Une valeur marquée **PROVISOIRE** est une valeur de gameplay mise
+seulement pour que le code tourne : elle attend la bible.
+
+## État de reprise (à lire en premier)
+
+- Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
+- Phases terminées dans cette session : **A3**. En cours : A4. Restent : A5, A6, A7, A8.
+- Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
+  `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
+  puis `rojo build` des deux places.
 
 ## Journal des sessions
 
+### 2026-11-04 (3) — session cloud, réponses B1–B4 puis phases A3 → A8
+
+Réponses de la bible appliquées (commit `39d62eb`) : libellés 15.6 dans les interfaces,
+images 13.5 (`Img_FearVignette` et 41 icônes `Icon_<ID>`, dessinées par script dans
+`assets/ui/`), départ équiprobable (4.4), votes par défaut et égalités (5.4),
+`MSG_LaunchConfigMissing` (4.6), `Portrait` en `ViewportFrame`.
+
+**Phase A3 (J6, J7, J8)** — fait :
+- Config : `PlayerConfig` (section 7 complète), `ItemConfig` (8, 8.1, 8.3, 8.4),
+  `WeaponConfig` (8.2), `MapConfig` (section 3 complète : lieux, départs, extractions, zones,
+  points tirés, tracés, biomes, génération), `ActConfig` (section 5), `AmbienceConfig` (12.1–12.4),
+  `AudioConfig` (12.5, 12.6, 13.7 ; identifiants vides), `LoreConfig.Documents` (2.7).
+- Serveur (Partie) : `NoiseService`, `InteractionService` (invites Custom, durées par rôle, ping),
+  `CharacterService` (rôle, skin ou mannequin `MANQUANT_CHR_<ROLE>_Skin_<n>`, copie des ScreenGui),
+  `SpawnService`, `HealthService` (6 membres, sang, hémorragies, à terre, relever, mort, ragdoll,
+  sac au sol), `StaminaService` (postures, vitesses, endurance, bruits de pas), `FearService`
+  (peur, cri involontaire, ordre du Meneur), `InventoryService` (emplacements, sac 12 kg, objets
+  lourds, lampes et piles, soins, fusée, feu de camp, lancers, bombe anti-ours, capacités),
+  `ItemSpawnService` (tirage 6 indices sur 12, objets clés, objets fixes, graine en console),
+  `WeaponService` (validation, cadence, munitions, plombs, tir allié, mêlée, rechargement
+  interruptible), `EvidenceService` (A/B/C, vidéo à 60 % visible, sauvegarde à l'extraction),
+  `DocumentService` (journal, tablette des géologues, carnet), `TabletService` (DÉFAUT, voir plus bas).
+- Client : `ClientBootstrap` (DÉFAUT) et les contrôleurs `InputController`, `CameraController`,
+  `HUDController`, `InventoryController`, `InteractController`, `TabletController`,
+  `DocumentController`, `DownedController`, `SpectatorController`, `RadioController`,
+  `LightController`, `FearFXController` (Partie) et `NotificationController` (les deux).
+- Relecture : StyLua et selene sans erreur ; `tools/check_values.py` : 0 nombre hors Config ;
+  chemins d'UI tous présents ; `rojo build` des deux places réussi.
+
+Non fait en A3 (bloqué par la bible) : porter un blessé (7.2, 7.7 : l'interaction n'est pas
+décrite), indices « cachés » de la Descendante (8 studs : aucun indice n'est désigné comme
+caché), voix comme bruit (7.8 : chat vocal non décidé, 19.4), sons (13.7 : à fournir).
+`TreeWindController` (12.4) est laissé au jalon J3/J4 : il anime les os des arbres, qui ne
+sont pas encore importés.
+
 ### 2026-11-04 (2) — session cloud, réponses de Gabriel + phase A2 (jalon J5)
 
-Fait :
-- `BIBLE_PISTE_FROIDE.pdf` remplacé par `BIBLE_PISTE_FROIDE.md` (version de Gabriel).
-- A1 mis à jour avec les réponses de la bible : identifiants des rôles (2.5), PlaceId (16.4),
-  `LaunchConfig` (16.1), clé `Launch_<PrivateServerId>` et contrôle de version côté Partie
-  (16.1, 16.4), valeurs techniques acceptées (mention PROPOSITION retirée), messages système
-  `MSG_` de la section 4.6 dans `LoreConfig.Messages`, envoyés par `RE_Notify` (clé + `{player}`/`{n}`).
-- Nouveaux comportements tirés de 4.6 : créateur du groupe et passation (`MSG_HostLeft`),
-  `MSG_PartyLeft`, `MSG_WaitingReady`, `MSG_Countdown`, `MSG_CountdownCancelled`,
-  `MSG_Teleporting`, nouvel essai de départ (`MSG_TeleportRetry` puis `MSG_TeleportAbort`),
-  `MSG_WaitingPlayers`, `MSG_PlayerMissing`, `MSG_VersionMismatch`, `MSG_ReturnToLobby`,
-  `MSG_DataLoadFailed`.
-- **Phase A2** : les 24 ScreenGui de la section 15 (11 Lobby, 10 Partie, 3 dans les deux places)
-  et 2 BillboardGui modèles (`ReplicatedStorage/UITemplates`), en fichiers `.model.json`,
-  générés par `tools/ui/build_ui.py`, avec le style de 15.2. `UI_MAP.md` livré.
-- Projets `Lobby.serve.project.json` et `Partie.serve.project.json` (sans UI) pour `rojo serve`
-  après la première ouverture dans Studio (18.1 ter).
-- `Util.findUI` : un élément d'UI introuvable produit un seul avertissement « UI manquante : … » (15.1).
-- Relecture : StyLua et selene sans erreur ; aucune valeur hors `Config` ; aucun `Instance.new`
-  d'UI (les deux seuls `Instance.new` créent des `TeleportOptions`) ; les 268 chemins de la
-  section 15 sont présents dans les deux builds (vérification automatique) ; `rojo build` des
-  deux places réussi.
-
-Laissé ouvert :
-- 39 textes d'interface absents de la bible (B1 ci-dessous) : les éléments ont un texte vide.
-- Assets d'interface absents de 13.5 (B2).
-- Aucun test dans Studio : affichage PC et mobile à vérifier en phase B (seul un aperçu
-  approximatif a été fait ici, rendu des fichiers en HTML).
+- Bible Markdown ; réponses Q1–Q20 appliquées ; messages 4.6 ; 24 ScreenGui de la section 15
+  et 2 BillboardGui générés par `tools/ui/build_ui.py` ; `UI_MAP.md` ; projets `*.serve.project.json`.
 
 ### 2026-11-04 (1) — session cloud, phase A1 (jalon J1)
 
-- Dépôt Git et projet Rojo 7.7.1 (installé depuis crates.io) pour les places `Lobby` et `Partie` ;
-  `CLAUDE.md`, `SUIVI.md`, `HANDOFF.md` ; arborescence de 16.1 ; modules `Config` et `Shared` ;
-  28 RemoteEvents de 16.3 ; `DataService` ; `PartyService`, `MatchmakingService`,
-  `LaunchService` ; `PartyLoaderService`, `ReturnService`. Aucun test en jeu possible.
+- Dépôt Git, projet Rojo 7.7.1, `CLAUDE.md`, `SUIVI.md`, `HANDOFF.md`, arborescence 16.1,
+  Config, Shared, 28 RemoteEvents, `DataService`, groupe, lancement, retour.
 
 ## Phases
 
 | Phase | Où | Jalons | Contenu | État |
 |---|---|---|---|---|
-| A1 | Cloud | J1 | Arborescence Rojo, Config, Shared, remotes, DataService, téléportation Lobby ↔ Partie | Fait (code) — à tester en phase B |
-| A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | Fait (fichiers) — textes manquants (B1), à tester en phase B |
-| A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | À faire |
-| A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | À faire |
+| A1 | Cloud | J1 | Arborescence Rojo, Config, Shared, remotes, DataService, téléportation Lobby ↔ Partie | Fait (code) — à tester en B |
+| A2 | Cloud | J5 | Toutes les UI en fichiers d'instances, noms de la section 15, `UI_MAP.md` | Fait — à tester en B |
+| A3 | Cloud | J6, J7, J8 | Joueur, objets, inventaire, tablette, documents, preuves, armes | Fait (code) — à tester en B |
+| A4 | Cloud | J9 | Actes, horloge, extractions, fins, cinématiques (scripts), lobby (scripts) | En cours |
 | A5 | Cloud | J10, J11, J12 | IA complète de la famille, directeur de tension, événements inexpliqués | À faire |
 | A6 | Cloud | J13, J14 (scripts) | Gore (deux profils), musée, dialogues, skins, records | À faire |
 | A7 | Cloud | J2 (préparation) | Script `TerrainBuilder` complet, téléchargement des textures Poly Haven | À faire |
@@ -62,81 +79,85 @@ Laissé ouvert :
 | B2 | Studio | J4 | Lumière, brouillard, météo, sons : réglage à l'œil, captures | À faire |
 | B3 | Studio | J0, J15 | Import des modèles 3D et animations, tests en jeu, mobile, équilibrage | À faire |
 
-## Critères d'acceptation
+## Critères d'acceptation (18.2)
 
-J1 (18.2) :
-- [ ] Un groupe de 2 part et revient — code écrit, non testé (téléportation possible seulement dans l'expérience publiée ; il faut aussi le contrôleur de `PartyGui`, A4).
-- [ ] Données sauvegardées — code écrit, non testé.
-- [ ] Zéro erreur console — non vérifiable sans Studio (zéro erreur de syntaxe vérifiée).
+En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié dans Roblox.
 
-J5 (18.2) :
-- [x] Aucun `Instance.new` d'UI dans le code.
-- [ ] Affichage correct sur PC et mobile — non vérifiable sans Studio. Fait ici : tout en Scale,
-      contraintes de 15.2, éléments contraints ancrés au centre, listes à hauteur calculée depuis
-      la largeur, aperçu approximatif à 1280 × 720 et 844 × 390. À vérifier dans l'émulateur
-      d'appareils de Studio (17.4).
+- J1 : [ ] groupe de 2 part et revient (code) · [ ] données sauvegardées (code) · [ ] zéro erreur console (non vérifiable ; zéro erreur de syntaxe)
+- J5 : [x] aucun `Instance.new` d'UI · [ ] affichage correct PC et mobile (à vérifier dans l'émulateur)
+- J6 : [ ] chaque valeur de la section 7 vérifiable dans `CreatureDebug` ou la console — les valeurs sont toutes dans `PlayerConfig` et lisibles en attributs du joueur ; `CreatureDebug` vient en A5
+- J7 : [ ] 6 indices sur 12 tirés (code) · [ ] graine affichée (code : console de `ItemSpawnService`) · [ ] preuves sauvegardées après extraction (code : `EvidenceService:CommitForSurvivor`, appelé par l'extraction en A4)
+- J8 : [ ] tir impossible sans munitions (code) · [ ] cadence respectée (code) · [ ] tir allié seulement en Difficile et Cauchemar (code)
 
 ## Questions encore ouvertes (TODO(BIBLE))
 
-| # | Question | Bloque | Où |
+Chaque ligne correspond à un marqueur `TODO(BIBLE)` dans le code. Rien ne bloque la suite des
+phases A ; ces points bloquent le réglage final.
+
+| # | Question | Où | En attendant |
 |---|---|---|---|
-| B1 | **Textes d'interface absents de la bible.** 39 éléments ont un texte vide : boutons Fermer / Confirmer / Prendre / Équiper / Continuer / Jeter / Envoyer / Lire, boutons du groupe (créer public, créer privé, rejoindre avec le code, quitter), titre « Groupe », texte d'aide du champ de code, aide « à terre », boutons et note du spectateur, 12 boutons mobiles, tailles de sous-titres « petite » et « grande », Appliquer / Réinitialiser. Liste complète avec mes propositions : `UI_MAP.md`, section « Textes absents de la bible ». | A2 complet | `tools/ui/build_ui.py` |
-| B2 | **Images d'interface absentes de 13.5.** Vignettage de peur (`HUDGui/FearVignette`), portraits des 10 rôles (`RoleCard_<ROLE>/Portrait`), icônes des 3 armes (`WeaponBoardGui`), icônes d'objets (`Icon` de l'inventaire). Faut-il les ajouter à 13.5, et qui les crée ? En attendant : `ImageLabel` vides. | Affichage final | `tools/ui/build_ui.py` |
-| B3 | Le départ S1 / S2 / S3 est-il tiré de façon équiprobable ? (valeur de gameplay) | J9 | `LaunchService` (équiprobable en attendant) |
-| B4 | Difficulté transmise si personne n'a voté (valeur de gameplay). | J9 | `LaunchService` (aucune en attendant) |
+| C1 | Distance à laquelle un joueur « voit » un corps (+15 peur) et la créature (+20 à +35). | `PlayerConfig.Fear` | Hausses non appliquées |
+| C2 | Qu'est-ce qui déclenche une hémorragie légère ou grave (seuil de dégâts, attaque) ? | `PlayerConfig.BleedOnDamage` | Seules les attaques qui le précisent font saigner |
+| C3 | Un coup reçu à terre tue-t-il ? | `PlayerConfig.Technical.DownedDamageKills` | PROVISOIRE : oui |
+| C4 | Sur quel membre agissent le bandage et la trousse ? | `PlayerConfig.HealTarget` | PROVISOIRE : le plus abîmé |
+| C5 | Sang rendu au joueur relevé après être tombé faute de sang. | `PlayerConfig.ReviveBlood` | PROVISOIRE : 20 |
+| C6 | Porter un blessé : comment le prendre et le poser (7.2, 7.7) ? | — | Non fait (vitesses prêtes dans `PlayerConfig`) |
+| C7 | Quels indices sont « cachés » (visibles par la Descendante à 8 studs) ? | — | Non fait |
+| C8 | Nombre de fusées à main du Pyrotechnicien au départ. | `ItemConfig.StartingItems` | PROVISOIRE : 1 |
+| C9 | Poids des preuves et des munitions. | `ItemConfig.Items` | PROVISOIRE : 0 kg |
+| C10 | Distance et vitesse d'un lancer (pierre, branche). | `ItemConfig.Throw` | PROVISOIRE : 40 studs/s, 1 s |
+| C11 | Bruit du piège à bruit du Pyrotechnicien. | `ItemConfig.NoiseTrapRadius` | Piège désactivé |
+| C12 | Munitions au départ (chargeur plein ? réserve ?). | `InventoryService` | PROVISOIRE : chargeur plein, réserve 0 |
+| C13 | Fusil à pompe : forme de la baisse entre 15 et 40 studs, portée au-delà, écart des plombs. | `WeaponConfig` | PROVISOIRE : linéaire, plombs dans l'axe |
+| C14 | Pistolet lance-fusées : cadence et brûlure sur un coéquipier ; munitions de réserve. | `WeaponConfig` | Cadence = rechargement (2 s) |
+| C15 | Qui porte la machette au départ, ou où est-elle ? | `WeaponConfig` | Personne |
+| C16 | Portée des armes de mêlée. | `WeaponConfig.MeleeRange` | PROVISOIRE : 7 (portée du coup de la créature) |
+| C17 | Quantité de chaque objet sur C09–C12 et aux lieux fixes de 8.1. | `MapConfig` | PROVISOIRE : 1 |
+| C18 | 12.3 « endurance ×0,85 » par neige : sur le maximum, la dépense ou la récupération ? | `StaminaService` | PROVISOIRE : récupération |
+| C19 | Textes d'objectif des actes 3 et 4 pour E1, E3, E4 (CS_07 ne donne que l'exemple de E2). | `ActConfig.Objectives` | Vides |
+| C20 | Cadence des pierres pendant le siège. | `ActConfig.Siege.StoneInterval` | Réglée avec l'IA (A5) |
+| C21 | Période du cycle en sinus des rafales de pluie ; intervalle des rafales de neige. | `AmbienceConfig` | — |
+| C22 | Ce qui allume l'indicateur `RadioGui/Talking` (dépend du chat vocal, 19.4). | `RadioController` | Caché |
+
+Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
+bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite.
 
 ## Décisions DÉFAUT (section 0)
 
 Lancement et données (A1) :
-- `LaunchConfig.MemoryStore.LaunchMapName = "Launch"` : carte de hachage qui contient les clés `Launch_`.
-- Téléportation ratée : 3 essais, 5 s d'écart (`LaunchConfig.Teleport`), au départ comme au retour.
-- File rapide et code privé : seulement les groupes du même serveur du lobby.
-- Seul le groupe privé a un code.
-- Un joueur déjà dans un groupe qui demande à créer ou rejoindre : la demande est ignorée sans message (l'interface masque ces boutons).
-- Le créateur qui part est remplacé par le plus ancien membre restant (`MSG_HostLeft`).
-- `MSG_Countdown` est envoyé une fois au début du compte à rebours (n = 10) ; `MSG_CountdownCancelled` à chaque arrêt d'un compte à rebours en cours (membre qui n'est plus prêt, qui part, ou nouveau membre).
-- Partie hors serveur réservé (test dans Studio) : aucune configuration ; un joueur absent de la configuration, ou arrivé après 60 s, peut rester.
-- Configuration de partie illisible : retour au Lobby avec `MSG_ReturnToLobby` (le seul message de 4.6 qui convient ; 4.6 n'en prévoit pas pour ce cas).
-- `{player}` = nom d'affichage Roblox (`DisplayName`), transmis dans la configuration de partie.
-- L'état du groupe passe par des attributs du joueur (`partyId`, `partyCode`, `partyHostId`, `isReady`, `partyCountdownEnd`).
-- Le verrou de session est rangé dans les métadonnées de la clé DataStore.
-- La graine (3.4) est tirée par le Lobby au départ du groupe et écrite dans la console des deux places.
-- Les résultats renvoyés au Lobby voyagent dans les données de téléportation, pour l'affichage seulement.
-- Limite de 16.3 appliquée par joueur et par remote.
+- Carte de hachage MemoryStore « Launch » ; 3 essais de téléportation à 5 s ; file rapide et code limités au serveur du lobby ; seul le groupe privé a un code ; demande ignorée si le joueur a déjà un groupe ; le plus ancien membre remplace le créateur ; `MSG_Countdown` envoyé une fois au début ; partie de test sans configuration dans Studio (Normal, aléatoire, S1, rôles dans l'ordre) ; `{player}` = `DisplayName` ; état du groupe en attributs ; verrou dans les métadonnées DataStore ; graine tirée au départ du groupe ; résultats dans les données de téléportation (affichage seulement) ; limite 16.3 par joueur et par remote.
 
 Interfaces (A2) :
-- Positions, tailles et ordre d'affichage (`DisplayOrder` : notifications 50, cinématiques 60, réglages 70, chargement 100) : réglages de départ, à retoucher à la main.
-- Couleur « Hurt » des membres du HUD : rouge danger à moitié transparent (15.2 ne donne pas de couleur intermédiaire) ; « Ok » : vert mousse ; « Critical » : rouge danger.
-- Menus cachés au départ (`Visible = false`), le contrôleur les montre ; HUD, inventaire rapide, objectifs et notifications visibles.
-- Éléments ajoutés pour la lisibilité, marqués « décoratif » dans `UI_MAP.md` : titres « Difficulté » et « Météo » (4.4), nom de l'arme sur chaque emplacement (8.2), étiquettes des réglages (17.2).
-- `SettingsGui/Window/Pages` : une page par onglet (`Graphics`, `Controls`, `Audio`, `Accessibility`), une ligne par réglage de 17.2 (noms anglais, ex. `Preset`, `FieldOfView`), options `Opt_<valeur>` ou curseur `Slider/Track/Fill` + `Value`. Ordre des onglets : celui du tableau 17.2.
-- Cartes de rôle et tenues : `TextButton` sans texte (cliquables en entier) ; cartes ordonnées Meneur, Caméraman, puis l'ordre de 2.5 (4.4 : proposés en premier).
-- Grille des rôles défilante (sur téléphone, 10 cartes ne tiennent pas avec un texte à 14 au minimum).
-- Listes défilantes : chaque ligne a une hauteur calculée depuis sa largeur (`UIAspectRatioConstraint` en `ScaleWithParentSize`), pour rester tout en Scale.
-- Boutons mobiles regroupés à droite au-dessus du bouton de saut de Roblox ; pencher à gauche et à droite au milieu gauche.
-- Bandes de cinématique : hauteur calculée pour un format 2.35:1 sur un écran 16:9.
-- `UITemplates` : `PingMarker` et `NameTag` (noms choisis).
-- Polices : `SpecialElite` et `RobotoMono` existent dans `Enum.Font` (Rojo refuse un nom de police inconnu et a accepté ces deux) ; rendu à confirmer dans Studio (15.2).
+- Positions, tailles, `DisplayOrder` (notifications 50, cinématiques 60, réglages 70, chargement 100) ; couleur « Hurt » = rouge à moitié transparent ; menus cachés au départ ; éléments décoratifs ajoutés (titres « Difficulté », « Météo », nom de l'arme, étiquettes des réglages) ; pages et lignes de `SettingsGui` ; cartes et tenues en `TextButton` ; grille des rôles défilante ; lignes de listes à hauteur calculée depuis la largeur ; boutons mobiles au-dessus du saut ; bandes 2.35:1 calculées pour un écran 16:9 ; `PingMarker` et `NameTag` ; libellés courts hors 15.6 : « Groupe », « Petite », « Grande », et les invites (« Ramasser », « Relever », « Barricader », « Réparer », « Changer la roue », « Appeler », « Conduire », « Dégager le bouchon », « Ouvrir »).
 
-## Questions réglées par la bible (pour mémoire)
-
-Q1 `LaunchConfig` (16.1) · Q2 PlaceId (16.4) · Q3 identifiants des rôles (2.5) · Q4, Q5, Q9 valeurs
-techniques acceptées (16.4) · Q6 et Q17 messages 4.6 · Q8 et Q12 clé `Launch_<PrivateServerId>`
-et contrôle de version côté Partie (16.1, 16.4) · Q7, Q13, Q14, Q15, Q16, Q18, Q19 → DÉFAUT ·
-Q20 (sol provisoire pour les tests) → DÉFAUT : rien dans les fichiers, Gabriel pose une plaque
-provisoire dans Studio pour ses tests et la retire ensuite (voir `HANDOFF.md`).
-
-Rappel : les décisions de la section 19.4 restent à trancher (Restricted 18+, langue, voix, etc.).
+Joueur, objets, armes (A3) :
+- `TabletService` ajouté (16.2 ne nomme pas le service de `RE_TabletAction`) ; `ClientBootstrap` charge les contrôleurs ; état partagé dans `ReplicatedStorage/MatchState` (attributs : journal, preuves, repères, couche tunnels, carnet).
+- Numéros d'emplacement : 1..N rapides, N+1.. sac ; `RE_UseItem(0)` = capacité du rôle.
+- Inventaire publié en attribut JSON `inventory` ; munitions de réserve rangées en objets `AMMO_<arme>` (pile de 99) ; preuves = objets `EVD_*` et `ITM_SDCard`.
+- Objet lourd porté = mains prises, même s'il n'est pas sélectionné ; il reste en main.
+- Lampe torche et lampe puissante : allumées seulement en main ; frontale : partout.
+- Fusée posée aux pieds ; feu de camp posé devant le joueur ; lancer dans la direction du personnage.
+- Pluie : le facteur 0,6 est appliqué une seule fois, par la perception (12.3 et 9.4 décrivent le même effet).
+- Tirage des indices : les 4 documents tirés reçoivent chacun un point compatible distinct, les 2 autres points sont pris parmi C09–C12 ; appareil photo de C03–C06 posé sur un de ces points s'il est tiré.
+- Points de départ alignés d'ouest en est ; `Workspace/SpawnPoints` et `Workspace/CluePoints` (Part nommées comme les codes) remplacent les coordonnées si Gabriel en pose.
+- Touches : Maj courir, C accroupi, X couché, Q/E se pencher (= A/E en AZERTY, 7.2), T lampe, R recharger, Tab tablette, G signaler, B sac, V capacité, F interagir, 1–4 emplacements ; manette : L3, B, R2, L2, Y, X.
+- Durée de maintien propre au joueur : attribut `hold_<UserId>` sur l'invite, vérifié par le serveur (marge 0,3 s).
+- Personnage absent : mannequin Roblox neutre (`HumanoidDescription` vide) nommé `MANQUANT_CHR_<ROLE>_Skin_<n>`.
+- Tablette : « sommet » de P11 / P23 = dans le rayon et au niveau de la cabine ; le Géologue est le seul à voir son point dans les tunnels.
+- Valeurs d'affichage et techniques regroupées dans `PlayerConfig.Interface`, `PlayerConfig.Technical`, `PlayerConfig.Keys`, `ItemConfig` (bloc gris, placement, visuels du feu).
 
 ## Assets MANQUANT_
 
-Aucun bloc `MANQUANT_<ID>` n'est encore placé. Assets marqués MANQUANT dans la section 13.3 :
+Aucun bloc `MANQUANT_<ID>` n'est posé à la main ; les scripts en créent quand le modèle manque :
+- `MANQUANT_CHR_<ROLE>_Skin_<n>` (mannequin) par `CharacterService` ;
+- `MANQUANT_Item_<Nom>` (bloc gris 1 × 1 × 1) par `ItemSpawnService` pour chaque objet du monde.
 
-| ID | Contenu | Jalon qui les place |
+| ID (13.3) | Contenu | Utilisé par |
 |---|---|---|
-| `CHR_<ROLE>_Skin_A–C` | 10 humains réalistes avec squelette, découpés en 6 | J6 |
-| `WPN_Revolver`, `WPN_Shotgun`, `WPN_FlareGun`, `MEL_Axe`, `MEL_Machete` | Armes | J8 |
-| `Item_Tablet`, `Item_Camcorder`, `Item_Jerrycan`, `Item_CarBattery`, `Item_Jack`, `Item_ToolBox`, `Item_BearSpray`, `Item_Headlamp`, `Item_Flare`, `Item_Bandage`, `Item_Medkit` | Objets | J7 |
+| `CHR_<ROLE>_Skin_A–C` | 10 humains réalistes avec squelette, découpés en 6 | `CharacterService`, `RoleSelectGui/Portrait` |
+| `WPN_Revolver`, `WPN_Shotgun`, `WPN_FlareGun`, `MEL_Axe`, `MEL_Machete` | Armes | `ItemSpawnService` |
+| `Item_Tablet`, `Item_Camcorder`, `Item_Jerrycan`, `Item_CarBattery`, `Item_Jack`, `Item_ToolBox`, `Item_BearSpray`, `Item_Headlamp`, `Item_Flare`, `Item_Bandage`, `Item_Medkit` | Objets | `ItemSpawnService` |
 
-Images d'interface encore vides (voir B2) : `Img_TabletMap` et la couche « tunnels » (13.5, à créer),
-illustrations du musée `Img_Museum_M1–M8` (13.5), vignettage de peur, portraits, icônes.
+Images et sons : `assets/ui/png` (vignettage, icônes) à importer dans Studio ; `Img_TabletMap`,
+couche tunnels, `Img_DOC06`, `Img_DOC16`, `Img_Museum_M1–M8`, `Img_News_CS14` à créer (13.5) ;
+tous les sons de 13.7 à fournir.

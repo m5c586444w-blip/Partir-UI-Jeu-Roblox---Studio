@@ -64,8 +64,14 @@
     },
     "StarterPlayer": {
       "StarterPlayerScripts": {
+        "ClientBootstrap": {
+          "$path": "src/client/Common/ClientBootstrap.client.luau"
+        },
         "Controllers": {
-          "$className": "Folder"
+          "$path": "src/client/Partie/Controllers",
+          "NotificationController": {
+            "$path": "src/client/Common/Controllers/NotificationController.luau"
+          }
         }
       }
     },

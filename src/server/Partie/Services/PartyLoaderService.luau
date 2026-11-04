@@ -148,6 +148,29 @@ local function load()
 	waitForPlayers(data)
 end
 
+-- informations de partie pour les autres services (difficulté, météo, départ, graine, rôles).
+-- DÉFAUT : hors serveur réservé (Studio), partie de test : Normal, météo aléatoire, départ S1,
+-- graine os.time(), rôles attribués dans l'ordre de PlayerConfig.Roles.
+local testSeed = os.time()
+function PartyLoaderService:GetMatchInfo()
+	local data = launchData
+	local roles = {}
+	if data ~= nil then
+		for _, entry in data.players do
+			roles[entry.userId] = { role = entry.role, weapon = entry.weapon }
+		end
+	end
+	return {
+		difficulty = data and data.difficulty or LaunchConfig.Votes.DefaultDifficulty,
+		weather = data and data.weather or LaunchConfig.Votes.DefaultWeather,
+		start = data and data.start or "S1",
+		seed = data and data.seed or testSeed,
+		roles = roles,
+		playerCount = if data then #data.players else #Players:GetPlayers(),
+		isTest = data == nil,
+	}
+end
+
 -- configuration de la partie (nil tant qu'elle n'est pas lue, ou hors serveur réservé)
 function PartyLoaderService:GetLaunchData()
 	return launchData

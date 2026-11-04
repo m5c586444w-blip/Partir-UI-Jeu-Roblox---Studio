@@ -84,6 +84,45 @@ function Util.formatMessage(template, params)
 	)
 end
 
+-- DÉFAUT : état partagé de la partie (journal, preuves du groupe, horloge…), en attributs d'un
+-- dossier ReplicatedStorage/MatchState créé par le serveur (répliqué automatiquement).
+function Util.getMatchState()
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local RunService = game:GetService("RunService")
+	local folder = ReplicatedStorage:FindFirstChild("MatchState")
+	if folder == nil then
+		if RunService:IsServer() then
+			folder = Instance.new("Folder")
+			folder.Name = "MatchState"
+			folder.Parent = ReplicatedStorage
+		else
+			folder = ReplicatedStorage:WaitForChild("MatchState")
+		end
+	end
+	return folder
+end
+
+-- tableau ↔ chaîne JSON (attributs : pas de tables)
+function Util.encode(value)
+	return game:GetService("HttpService"):JSONEncode(value)
+end
+
+function Util.decode(text, fallback)
+	if type(text) ~= "string" or text == "" then
+		return fallback
+	end
+	local ok, value = pcall(function()
+		return game:GetService("HttpService"):JSONDecode(text)
+	end)
+	return if ok then value else fallback
+end
+
+-- HumanoidRootPart du personnage d'un joueur, ou nil
+function Util.characterRoot(player)
+	local character = player and player.Character
+	return character and character:FindFirstChild("HumanoidRootPart") or nil
+end
+
 -- côté client : élément d'UI par son chemin depuis PlayerGui (ex. "HUDGui/BodyStatus/Head").
 -- 15.1 : un élément introuvable produit un seul avertissement clair, et le jeu continue (renvoie nil).
 local warnedUI = {}
@@ -97,6 +136,40 @@ function Util.findUI(root, path)
 		warn("UI manquante : " .. path)
 	end
 	return node
+end
+
+Util.SECONDS_PER_MINUTE = 60 -- constante (unité)
+Util.GUI_WAIT_TIMEOUT = 30 -- constante (attente d'une ScreenGui dans PlayerGui, s)
+
+-- côté client : ScreenGui du joueur (attend sa copie dans PlayerGui)
+function Util.waitGui(name)
+	local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	local gui = playerGui:WaitForChild(name, Util.GUI_WAIT_TIMEOUT)
+	if gui == nil then
+		warn("UI manquante : " .. name)
+	end
+	return gui
+end
+
+-- 15.1 : clone d'un enfant « Template » (seule création d'UI permise aux scripts)
+function Util.cloneTemplate(template, order)
+	local clone = template:Clone()
+	clone.Name = template.Name .. "Clone"
+	clone.Visible = true
+	if order then
+		clone.LayoutOrder = order
+	end
+	clone.Parent = template.Parent
+	return clone
+end
+
+-- retire les clones d'un modèle (laisse le Template et les objets de disposition)
+function Util.clearClones(template)
+	for _, child in template.Parent:GetChildren() do
+		if child.Name == template.Name .. "Clone" then
+			child:Destroy()
+		end
+	end
 end
 
 return Util

@@ -1,21 +1,16 @@
 # HANDOFF — de la session cloud à la session Studio
 
-Mis à jour le 2026-11-04, fin de la phase A2 (jalon J5). Section 18.1 ter de la bible.
+Mis à jour le 2026-11-04 au fil des phases A3 → A8 (voir `SUIVI.md`, « État de reprise »).
+Section 18.1 ter de la bible.
 
 ## Ce qui est prêt
 
-- `builds/Lobby.rbxlx` et `builds/Partie.rbxlx`, assemblées par Rojo 7.7.1
-  (`Lobby.project.json`, `Partie.project.json`).
-- Scripts (A1) : `Config` (14 modules), `Shared` (6 modules), 28 RemoteEvents, `Bootstrap`,
-  `DataService`, `PartyService`, `MatchmakingService`, `LaunchService` (Lobby),
-  `PartyLoaderService`, `ReturnService` (Partie). PlaceId déjà renseignés dans `LaunchConfig`
-  (16.4). Messages système de 4.6 envoyés par `RE_Notify`.
-- Interfaces (A2) : les 24 ScreenGui de la section 15 dans `StarterGui` (11 Lobby, 10 Partie,
-  3 dans les deux), et `PingMarker` / `NameTag` dans `ReplicatedStorage/UITemplates`.
-  Carte complète : `UI_MAP.md`.
-- Pas encore de contrôleurs client (ils viennent avec leurs jalons) : les interfaces
-  s'affichent mais ne réagissent pas encore. 39 libellés sont vides en attendant la bible
-  (`SUIVI.md`, question B1).
+- `builds/Lobby.rbxlx` et `builds/Partie.rbxlx`, assemblées par Rojo 7.7.1.
+- A1 : `Config`, `Shared`, 28 RemoteEvents, `DataService`, groupe, lancement, retour (PlaceId renseignés).
+- A2 : les 24 ScreenGui de la section 15 et `PingMarker` / `NameTag` ; libellés de 15.6 ; `UI_MAP.md`.
+- A3 : joueur (santé par membre, sang, à terre, mort, spectateur, endurance, postures, peur, bruits),
+  objets, inventaire, lampes, tablette, documents, preuves, armes ; contrôleurs client de la Partie.
+- Images d'interface dans `assets/ui/png` (vignettage de peur, 41 icônes) : à importer.
 
 ## Ce que la phase A n'a pas pu vérifier
 
@@ -45,7 +40,10 @@ L'affichage n'a été contrôlé que par un aperçu approximatif (HTML), pas dan
    boutons mobiles au-dessus du bouton de saut. Rendre visibles un à un les menus cachés
    (`Visible = false` au départ) pour les contrôler. Retouches à la main autorisées : c'est
    l'objectif de 15.
-8. **Fin de session Studio** : exporter les ScreenGui retouchés dans `ui-export/`
+8. **Images (13.5)** : importer `assets/ui/png/*.png` (Asset Manager > Import). Coller
+   l'identifiant de `Img_FearVignette` dans `HUDGui/FearVignette.Image`, et ceux des icônes
+   dans `Config/ItemConfig.Icons` et `Config/WeaponConfig.Icons` (`["ITM_Bandage"] = "rbxassetid://…"`).
+9. **Fin de session Studio** : exporter les ScreenGui retouchés dans `ui-export/`
    (clic droit > « Save to File… », `.rbxmx`), commit, et noter dans `SUIVI.md` ce qui a changé.
 
 ## Tests de J1
@@ -69,6 +67,19 @@ console développeur côté serveur,
 `require(game.ServerScriptService.Services.ReturnService):ReturnAll(nil)`.
 Console de la Partie : « graine …, départ S… » et « 2/2 joueur(s) arrivé(s) ».
 
+## Tests de J6, J7, J8 (Studio, Test > Clients et serveurs)
+
+Hors serveur réservé, la Partie lance une partie de test (DÉFAUT) : Normal, départ S1, rôles
+dans l'ordre de 2.5. Sans terrain, poser d'abord la plaque provisoire sous S1 (étape 6).
+- Console serveur : « ItemSpawnService : graine … » et la liste des 6 points d'indice tirés.
+- Attributs du joueur (fenêtre Propriétés > Attributs) : `hpHead`…`hpLegR`, `blood`, `stamina`,
+  `fear`, `stance`, `inventory`, `heldItem`, `lightOn`, `ammo`.
+- Blesser un joueur (barre de commande, contexte Serveur) :
+  `require(game.ServerScriptService.Services.HealthService):Damage(game.Players.Player1, "LegL", 50, "test")`
+  → boiterie (vitesse ×0,6) ; `Damage(..., "Torso", 100, ...)` → à terre, invite « Relever » pour l'autre joueur.
+- Armes : donner un fusil (`require(game.ServerScriptService.Services.InventoryService):Add(game.Players.Player1, "WPN_Rifle", 1)`),
+  tirer 5 fois puis vérifier que le 6e tir est refusé ; en Normal, aucun dégât à un coéquipier.
+
 ## Commandes
 
 ```
@@ -77,13 +88,13 @@ rojo build Lobby.project.json -o builds/Lobby.rbxlx     # cloud, avant la 1re ou
 rojo build Partie.project.json -o builds/Partie.rbxlx   # cloud, avant la 1re ouverture
 rojo serve Lobby.serve.project.json                     # Studio, place Lobby (scripts seulement)
 rojo serve Partie.serve.project.json                    # Studio, place Partie (scripts seulement)
+python3 tools/check_values.py                           # aucun nombre hors Config
+python3 tools/ui/check_ui.py                            # chemins d'UI de la section 15 dans les builds
+python3 tools/images/make_images.py && node tools/images/rasterize.js   # images 13.5
 stylua --check src                                      # syntaxe et mise en forme
 selene src                                              # analyse statique
 ```
 
-## Prochaine session cloud
+## Prochaine étape
 
-Phase A3 (jalons J6, J7, J8) : joueur, objets, inventaire, tablette, documents, preuves, armes.
-Lire d'abord les réponses de Gabriel aux questions B1 à B4 de `SUIVI.md`. Si Gabriel donne
-les libellés manquants avant d'ouvrir les places dans Studio, les reporter dans
-`tools/ui/build_ui.py` et relancer le générateur ; après, les saisir à la main dans Studio.
+Suite des phases A4 → A8 dans la même session (voir `SUIVI.md`).

@@ -21,3 +21,51 @@ globals:
   warn:
     args:
       - type: "..."
+  Vector2:
+    any: true
+  Color3:
+    any: true
+  CFrame:
+    any: true
+  Region3:
+    any: true
+  RaycastParams:
+    any: true
+  OverlapParams:
+    any: true
+  UDim:
+    any: true
+  UDim2:
+    any: true
+  TweenInfo:
+    any: true
+  NumberSequence:
+    any: true
+  NumberSequenceKeypoint:
+    any: true
+  ColorSequence:
+    any: true
+  ColorSequenceKeypoint:
+    any: true
+  NumberRange:
+    any: true
+  BrickColor:
+    any: true
+  Ray:
+    any: true
+  DateTime:
+    any: true
+  PhysicalProperties:
+    any: true
+  Rect:
+    any: true
+  Font:
+    any: true
+  Region3int16:
+    any: true
+  Vector3int16:
+    any: true
+  Axes:
+    any: true
+  Faces:
+    any: true
