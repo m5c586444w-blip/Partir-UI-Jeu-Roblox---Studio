@@ -30,11 +30,51 @@ section 15 présents, 0 signalement de `check_ui.py`, build des deux places réu
 
 ## Ce que la session Studio doit faire, dans l'ordre
 
+### 0. Remise à zéro (avant toute autre tâche)
+
+Les places Lobby et Partie publiées sur Roblox peuvent contenir un ancien contenu. Ordre : **0a** (inventaire,
+lecture seule) → étapes 1 à 4 → publication en **Overwrite** par Gabriel (étape 5) → **0b** (vérification
+et suppression des résidus). Outils : `tools/studio/ResetInventory.luau`, `tools/studio/ResetPaths.luau`
+(à coller dans la barre de commande ou à lancer par l'outil MCP de Roblox Studio ; aucun n'écrit rien),
+`python3 tools/studio/reset_diff.py`.
+
+**0a — inventaire, avant la publication, sans rien modifier**
+- 0.1. Ouvrir dans Studio la place **publiée** Lobby (77677833738174), depuis Roblox (pas `builds/`).
+  Ne jamais Enregistrer ni Publier, ne pas lancer `rojo serve`. Si Team Create est actif, toute
+  modification est enregistrée aussitôt : ne rien toucher dans l'Explorer.
+- 0.2. Lancer `ResetInventory.luau` et `ResetPaths.luau`. Coller la sortie du premier dans
+  `RESET_INVENTAIRE.md` (section Lobby) et garder la sortie du second (chemins) pour 0b. L'inventaire couvre
+  scripts (chemin, taille), modèles et instances par service, terrain (nombre de cellules), UI,
+  sons (`SoundId`), packages (`PackageLink`), identifiants d'assets et noms de stockage trouvés dans les scripts.
+- 0.3. Même chose pour la place publiée Partie (103506696801797).
+- 0.4. Faire remplir par Gabriel, dans `RESET_INVENTAIRE.md`, ce que l'Overwrite ne touche pas (Creator
+  Dashboard) : autres places de l'univers, badges, passes de jeu, produits développeur, paramètres et
+  collaborateurs, packages à mise à jour automatique.
+- 0.5. Commit de `RESET_INVENTAIRE.md`. **Aucune modification des places avant la publication en Overwrite.**
+
+**Noms de stockage jamais utilisés auparavant.** Le code utilise le DataStore `PisteFroide_v1`
+(clé `player_<UserId>`, 16.4) et les MemoryStore `Parties` et `Launch_<PrivateServerId>` (`LaunchConfig`).
+- Comparer avec les noms trouvés par `ResetInventory.luau` dans les anciens scripts.
+- Après la publication et l'accès aux API (étape 7), **avant tout test en jeu** (sinon `DataService` crée
+  lui-même `PisteFroide_v1`), lister les DataStores existants dans la barre de commande :
+  `for _, p in game:GetService("DataStoreService"):ListDataStoresAsync():GetCurrentPage() do print(p.DataStoreName) end`.
+- Les noms de MemoryStore ne se listent pas : seule la recherche dans les anciens scripts les révèle.
+- Si un nom est déjà pris : arrêt, proposer un nouveau nom à Gabriel (la bible fixe `PisteFroide_v1`) et le
+  noter dans `SUIVI.md` ; ne lancer aucun test avant sa réponse.
+
+**0b — après la publication en Overwrite (étape 5)**
+- 0.6. Rouvrir chaque place publiée, relancer `ResetPaths.luau`, enregistrer la sortie dans un fichier, puis
+  `python3 tools/studio/reset_diff.py <fichier> Lobby` (ou `Partie`) : tout chemin absent de `builds/` est un
+  résidu (scripts, modèles, terrain, UI, sons). Relancer `ResetInventory.luau` : aucun package, aucun ancien
+  identifiant d'asset, terrain vide tant que la phase B1 n'a pas commencé.
+- 0.7. Supprimer les résidus dans Studio, les noter dans `RESET_INVENTAIRE.md` (section 0b), publier
+  (Gabriel), commit. Vérifier aussi les éléments de l'expérience listés en 0.4 avec Gabriel.
+
 ### 1. Préparer (une fois)
 1. Installer Rokit, puis `rokit install` à la racine (Rojo 7.7.1, StyLua, selene) ; plugin : `rojo plugin install`.
 2. Lire `CLAUDE.md`, `SUIVI.md`, ce fichier (18.1 ter, règle 2).
 
-### 2. Vérifier les écrans, sans publier (15.7, 8) — première tâche
+### 2. Vérifier les écrans, sans publier (15.7, 8) — après l'inventaire 0a
 3. Ouvrir `builds/Lobby.rbxlx` puis `builds/Partie.rbxlx` **sans les publier**.
 4. Dans chaque place, émulateur d'appareils de Studio (onglet Test > Device) : vérifier **chaque écran** au
    format PC 1280 × 720 et au format téléphone 844 × 390 (paysage), capture de chacun. Pour faire apparaître
@@ -43,12 +83,14 @@ section 15 présents, 0 signalement de `check_ui.py`, build des deux places réu
    gauche et bas droit libres sur téléphone (joystick, saut), 6 boutons tactiles au plus, voiles derrière
    les fenêtres, verrous opaques. Retoucher à la main si besoin (Studio fait foi pour l'UI) et noter les
    écarts dans `SUIVI.md`.
-5. **Attendre la publication par Gabriel** (18.3 : Claude Code ne publie pas). Il publie le Lobby sur la
-   place 77677833738174 et la Partie sur 103506696801797 de « PISTE FROIDE (test) ». Si l'expérience a été
+5. **Attendre la publication par Gabriel** (18.3 : Claude Code ne publie pas), **en Overwrite** : il publie
+   `builds/Lobby.rbxlx` sur la place 77677833738174 et `builds/Partie.rbxlx` sur 103506696801797 de
+   « PISTE FROIDE (test) ». Si l'expérience a été
    recréée : reporter les PlaceId dans `src/shared/Config/LaunchConfig.luau`, commit.
 6. Dès l'ouverture des places, **plus aucun `rojo build`** vers elles ; scripts par `rojo serve Lobby.serve.project.json`
    ou `rojo serve Partie.serve.project.json` uniquement (projets sans UI : l'UI appartient à Studio).
 7. Après la publication : Paramètres du jeu > Sécurité : « Enable Studio Access to API Services ».
+   Puis, avant tout test : la liste des DataStores (étape 0) et l'étape **0b**.
 
 ### 3. Phase B1 (J2, J3) — terrain et végétation
 8. Partie, barre de commande : `require(game.ServerStorage.TerrainBuilder).Build()` (long : progression en console).
