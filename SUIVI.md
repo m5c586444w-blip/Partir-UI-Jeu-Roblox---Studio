@@ -10,13 +10,39 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## État de reprise (à lire en premier)
 
-- Session cloud du 2026-11-04 (3) : Gabriel a demandé d'enchaîner A3 → A8 sans s'arrêter.
-- **Phase A terminée** (A1 → A8, 2026-11-04). Prochaine étape : session Studio, phase B1 (voir `HANDOFF.md`).
-- Outils de relecture de fin de phase : `stylua --check src`, `selene src`,
-  `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py`,
-  puis `rojo build` des deux places.
+- Session cloud du 2026-11-05 : bible 19.5 (C1–C42) et 15.7 (téléphone) appliquées, `check_ui.py`
+  à deux tailles (0 signalement), RaycastParams mis en cache. Tout est commité et poussé.
+- **Phase A terminée.** Prochaine étape : session Studio, d'abord **ouvrir les deux places sans les publier
+  et vérifier chaque écran dans l'émulateur (PC 1280 × 720, téléphone 844 × 390)**, puis attendre la
+  publication par Gabriel (voir `HANDOFF.md`).
+- Outils de relecture : `stylua --check src tools/terrain`, `selene src tools/terrain`,
+  `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py --previews`
+  (chemins, débordements, chevauchements, aperçus dans `previews/`), puis `rojo build` des deux places.
 
 ## Journal des sessions
+
+### 2026-11-05 — session cloud, bible 19.5 et 15.7
+
+Fait, dans l'ordre demandé (un commit par étape, puis push) :
+1. **19.5 dans le code** : profil Moderate (C35) ; C6 portage d'un blessé (`HealthService` : Porter 2 s,
+   Poser 1 s, compte à rebours ×0,5, pas de relèvement porté, +0,5 au score de cible, ni arme à feu ni lampe
+   en main) ; C7 `HiddenClueService` + `HiddenClueController` (HC1 repère de la boîte de munitions, HC2 vide
+   sanitaire invisible à la vue, HC3 gué ×0,4, HC4 puits sans corde) ; C15 machette fixe en P10 ; C38
+   accessoires (données, déblocages, équipement) ; C42 lacets et C40 gorges en trapèze (`TerrainBuilder`) ;
+   J12 attaque imposée (`TensionDirector:ForcedAttack`) ; valeurs C2, C10, C12, C13, C20/C34, C23 ;
+   textes C19 (objectifs séquentiels, phrase de CS_07), C24 (messages radio), C25 (fins, statuts), C36 (sources).
+2. **15.7 dans `tools/ui/build_ui.py`** : `Layout_Desktop` / `Layout_Touch` pour chaque écran (zones sûres
+   1280 × 662 et 750 × 311), boutons tactiles en icônes (12, au plus 6 visibles), HUD en haut à gauche sur
+   téléphone, icônes devant les jauges, 6 silhouettes, verrous opaques avec condition, fenêtres opaques avec
+   voile, sac avec Fermer, lignes de 36 px, cartes de rôle réduites + panneau `Detail`, notifications par place.
+3. **`tools/ui/check_ui.py`** : moteur de mise en page aux deux tailles ; **371 signalements avant (UI d'avant
+   15.7 : 45 PC, 326 téléphone), 0 après** ; aperçus PNG dans `previews/` (28 contextes × 2 tailles).
+4. **RaycastParams** : `Shared/TaggedSet` ; Perception, EvidenceService, ATK_Throw, CreatureBrain,
+   WeaponService, lancer, GoreController ; `GetTagged` répétés remplacés (FearService, comportements, contrôleurs).
+5. Relecture : StyLua, selene (0/0), 0 nombre hors Config, 0 `Instance.new` d'UI, build des deux places.
+
+Laissé ouvert : les questions du tableau ci-dessous (19.5 n'y répond pas), les couleurs du bonnet (C38),
+le placement des Part `CrawlSpace` et `Ford` (B1), l'import des nouvelles icônes.
 
 ### 2026-11-04 (3) — session cloud, réponses B1–B4 puis phases A3 → A8
 
@@ -150,15 +176,15 @@ sont pas encore importés.
 En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié dans Roblox.
 
 - J1 : [ ] groupe de 2 part et revient (code) · [ ] données sauvegardées (code) · [ ] zéro erreur console (non vérifiable ; zéro erreur de syntaxe)
-- J5 : [x] aucun `Instance.new` d'UI · [ ] affichage correct PC et mobile (à vérifier dans l'émulateur)
+- J5 : [x] aucun `Instance.new` d'UI · [x] `check_ui.py` : 0 débordement, 0 chevauchement à 1280 × 720 et 844 × 390 · [ ] affichage correct PC et mobile dans l'émulateur de Studio (15.7, 8)
 - J6 : [ ] chaque valeur de la section 7 vérifiable dans `CreatureDebug` ou la console — les valeurs sont toutes dans `PlayerConfig` et lisibles en attributs du joueur ; `CreatureDebug` vient en A5
 - J7 : [ ] 6 indices sur 12 tirés (code) · [ ] graine affichée (code : console de `ItemSpawnService`) · [ ] preuves sauvegardées après extraction (code : `EvidenceService:CommitForSurvivor`, appelé par l'extraction en A4)
 - J8 : [ ] tir impossible sans munitions (code) · [ ] cadence respectée (code) · [ ] tir allié seulement en Difficile et Cauchemar (code)
 - J10 : [ ] elle suit un joueur bruyant (code : ouïe + cible) · [ ] perd un joueur couché dans les fougères (code : visibilité ×0,1, invisible au-delà de 10 studs) · [ ] grimpe par les `ClimbPoint` (non fait : escalade à brancher quand les falaises et les points existeront, phase B1)
 - J11 : [ ] chaque comportement observé au moins une fois en test (16 comportements écrits) · [ ] aucune attaque sans signal (code : chaque ATK_ attend son signal)
-- J12 : [ ] aucun mort en acte 1 hors exceptions (code : `TensionDirector:AllowAttack`) · [ ] au moins un temps fort par acte (code partiel : CS_03 et 2 signes garantis en acte 1 ; acte 3 « au moins 2 tentatives » compté mais pas forcé)
+- J12 : [ ] aucun mort en acte 1 hors exceptions (code : `TensionDirector:AllowAttack`) · [ ] au moins un temps fort par acte (code : CS_03 et 2 signes garantis en acte 1 ; acte 3 : attaque imposée après 10 min si moins de 2 tentatives, 19.5)
 - J13 : [ ] bascule Restricted / Moderate sans erreur (code : `GoreConfig.Profile`) · [ ] limites fixes respectées (11.3 : aucun organe, aucun gros plan, aucun ralenti, aucune torture — rien de tel n'est codé)
-- J14 : [ ] les 8 panneaux lisibles avec sources (textes recopiés ; adresses sources manquantes, C36) · [ ] déblocages corrects (code)
+- J14 : [ ] les 8 panneaux lisibles avec sources (textes et sources recopiés, 19.5 C36) · [ ] déblocages corrects (code)
 - J9 : [ ] une partie complète jouable sans créature, de CS_02 à l'écran de résultats (code ; plans de caméra à poser dans Studio, sinon bandes et texte seuls)
 
 ## Questions encore ouvertes (TODO(BIBLE))
@@ -169,47 +195,27 @@ phases A ; ces points bloquent le réglage final.
 | # | Question | Où | En attendant |
 |---|---|---|---|
 | C1 | Distance à laquelle un joueur « voit » un corps (+15 peur) et la créature (+20 à +35). | `PlayerConfig.Fear` | Hausses non appliquées |
-| C2 | Qu'est-ce qui déclenche une hémorragie légère ou grave (seuil de dégâts, attaque) ? | `PlayerConfig.BleedOnDamage` | Seules les attaques qui le précisent font saigner |
 | C3 | Un coup reçu à terre tue-t-il ? | `PlayerConfig.Technical.DownedDamageKills` | PROVISOIRE : oui |
 | C4 | Sur quel membre agissent le bandage et la trousse ? | `PlayerConfig.HealTarget` | PROVISOIRE : le plus abîmé |
 | C5 | Sang rendu au joueur relevé après être tombé faute de sang. | `PlayerConfig.ReviveBlood` | PROVISOIRE : 20 |
-| C6 | Porter un blessé : comment le prendre et le poser (7.2, 7.7) ? | — | Non fait (vitesses prêtes dans `PlayerConfig`) |
-| C7 | Quels indices sont « cachés » (visibles par la Descendante à 8 studs) ? | — | Non fait |
 | C8 | Nombre de fusées à main du Pyrotechnicien au départ. | `ItemConfig.StartingItems` | PROVISOIRE : 1 |
 | C9 | Poids des preuves et des munitions. | `ItemConfig.Items` | PROVISOIRE : 0 kg |
-| C10 | Distance et vitesse d'un lancer (pierre, branche). | `ItemConfig.Throw` | PROVISOIRE : 40 studs/s, 1 s |
 | C11 | Bruit du piège à bruit du Pyrotechnicien. | `ItemConfig.NoiseTrapRadius` | Piège désactivé |
-| C12 | Munitions au départ (chargeur plein ? réserve ?). | `InventoryService` | PROVISOIRE : chargeur plein, réserve 0 |
-| C13 | Fusil à pompe : forme de la baisse entre 15 et 40 studs, portée au-delà, écart des plombs. | `WeaponConfig` | PROVISOIRE : linéaire, plombs dans l'axe |
-| C14 | Pistolet lance-fusées : cadence et brûlure sur un coéquipier ; munitions de réserve. | `WeaponConfig` | Cadence = rechargement (2 s) |
-| C15 | Qui porte la machette au départ, ou où est-elle ? | `WeaponConfig` | Personne |
-| C16 | Portée des armes de mêlée. | `WeaponConfig.MeleeRange` | PROVISOIRE : 7 (portée du coup de la créature) |
+| C14 | Pistolet lance-fusées : cadence et brûlure sur un coéquipier (munitions : réglées par C12). | `WeaponConfig` | Cadence = rechargement (2 s) |
+| C16 | Portée des armes de mêlée. | `WeaponConfig.MeleeRange` | PROVISOIRE : 7 |
 | C17 | Quantité de chaque objet sur C09–C12 et aux lieux fixes de 8.1. | `MapConfig` | PROVISOIRE : 1 |
 | C18 | 12.3 « endurance ×0,85 » par neige : sur le maximum, la dépense ou la récupération ? | `StaminaService` | PROVISOIRE : récupération |
-| C19 | Textes d'objectif des actes 3 et 4 pour E1, E3, E4 (CS_07 ne donne que l'exemple de E2). | `ActConfig.Objectives` | Vides |
-| C20 | Cadence des pierres pendant le siège. | `ActConfig.Siege.StoneInterval` | Réglée avec l'IA (A5) |
-| C21 | Période du cycle en sinus des rafales de pluie ; intervalle des rafales de neige. | `AmbienceConfig` | — |
-| C22 | Ce qui allume l'indicateur `RadioGui/Talking` (dépend du chat vocal, 19.4). | `RadioController` | Caché |
-| C23 | CS_05 dure 25 s, mais « en partie, elles durent 12 s au plus » (6) : exception pour la vidéo ? | `CinematicConfig` | 25 s |
-| C24 | Texte du « message radio » entendu hors du rayon d'une cinématique de lieu (6.1). | `CinematicConfig` | Rien |
-| C25 | Textes de fin pour `ResultsGui > EndingText` (seul Silence en a un). | `LoreConfig.Endings` | Vides |
-| C26 | Rayon du bruit du démarrage du van (E1, « démarrage bruyant »). | `ActConfig.Routes.E1` | Pas de bruit |
-| C27 | Durée d'une rafale de vent. | `AmbienceConfig.GustDuration` | PROVISOIRE : 1 s |
-| C28 | Position des 3 « arbres à pierres » fixes (9.1). | `CreatureConfig.StoneTreeTag` | Part taguées `StoneTree` à poser |
+| C26 | Rayon du bruit du démarrage du van (E1). | `ActConfig.Routes.E1` | Pas de bruit |
 | C29 | « Hors combat » (régénération) : combien de secondes sans dégâts ? | `CreatureConfig.OutOfCombatAfter` | PROVISOIRE : 10 s |
-| C30 | Vitesse d'une pierre lancée, force du recul de ATK_Strike. | `CreatureConfig` | PROVISOIRE : 80 studs/s, 40 |
+| C30 | Force du recul de ATK_Strike (la vitesse des pierres est réglée par C10 : 90). | `CreatureConfig.KnockbackForce` | PROVISOIRE : 40 |
 | C31 | « Lance plus » après 2 tirs reçus (9.8) : de combien ? | `CreatureConfig.Memory.ThrowMoreFactor` | PROVISOIRE : ×1,5 |
 | C32 | Catalogue « bas » du directeur (10) : quels événements ? | `DirectorConfig.LowCatalog` | PROVISOIRE : tous |
 | C33 | Distances « au loin » et « tout près » des événements. | `DirectorConfig` | PROVISOIRE : 150 et 15 studs |
-| C34 | Cadence des pierres du siège (= C20). | `ActConfig.Siege.StoneInterval` | PROVISOIRE : 4 s par créature |
-| C35 | **19.4 bloquant** : profil publié, Restricted (18+ vérifié) ou Moderate ? | `GoreConfig.Profile` | PROVISOIRE : Moderate |
-| C36 | Adresse « Source » de chaque panneau du musée (4.3). | `LoreConfig.Museum` | Vides |
-| C37 | Plage de la sensibilité (17.2 : « — »). | `ProgressionConfig.Settings.Sensitivity` | PROVISOIRE : 0,1 à 3 |
-| C38 | Déblocage des accessoires (bonnet, frontale colorée, sac, 7.1). | `ProgressionConfig.SkinUnlocks` | Non fait |
-| C39 | Taille d'une flaque et d'une petite tache de sang. | `GoreConfig.PoolSize` | PROVISOIRE : 4 et 1,5 studs |
-| C40 | Largeur des gorges d'Ape Canyon et de Lava Canyon (3.7 donne la profondeur). | `MapConfig.Terrain` | PROVISOIRE : demi-largeurs 60 et 40 |
-| C41 | Niveau du réservoir Swift (3.8). | `MapConfig.Terrain.ReservoirLevel` | PROVISOIRE : 40 |
-| C42 | Lacets de T3 sous F01 : tracé non donné ; TerrainBuilder borne seulement la pente. | `TerrainBuilder` | À tracer en B1 |
+| C43 | Les 3 couleurs du bonnet (C38). | `ProgressionConfig.AccessoryUnlocks.Beanie` | Bonnet sans choix de couleur |
+
+Répondues par 19.5 et appliquées le 2026-11-05 : C2, C6, C7, C10, C12, C13, C15, C19, C20, C23, C24, C25,
+C34, C35, C36, C38, C40, C42, J12. Tranchées en DÉFAUT (ni texte, ni gameplay, ni asset) : C21, C22, C27,
+C28, C37, C39, C41 (voir ci-dessous). Les marqueurs PROVISOIRE restants (13) sont tous dans ce tableau.
 
 Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
 bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
@@ -278,6 +284,45 @@ Terrain (A7) :
 - Maille de calcul 8 studs, écriture par blocs de 256 studs ; F01 = marche de 40 sur la bande juste au sud de Z = −800 ; lieux souterrains (P07b) non aplanis.
 - Végétation : un seul biome par bloc de 512 studs (celui du centre) ; modèles cherchés par préfixe (`Tree_DouglasFir` → `Tree_DouglasFir_A`…).
 
+Bible 19.5 et 15.7 (2026-11-05) :
+- C21, C27 : les rafales gardent la direction du vent (l'odorat ne lit que la direction) → valeurs d'ambiance :
+  cycle de la pluie 12 s, rafale 1 s, rafales de neige toutes les 8 à 15 s.
+- C22 : `RadioGui/Talking` reste caché tant que le chat vocal (19.4) n'est pas décidé. C28 : arbres à pierres =
+  Part taguées `StoneTree` posées en B1. C37 : sensibilité 0,1 à 3. C39 : flaque 4 / tache 1,5 studs (visuel).
+  C41 : réservoir Swift à Y = 40 (décor).
+- C6 : Porter / Poser sur une touche à part (G, manette Y) pour ne pas se confondre avec Relever (F) ;
+  sur écran tactile, un appui bref sur l'invite passe à l'invite suivante ; joueur porté soudé sur l'épaule
+  (décalage 0 ; 1,5 ; 0,5), sans masse ni collision ; invites « Porter », « Poser », « Descendre » (mots de 19.5 et 8.1).
+- C7 : service à part `HiddenClueService` ; découverte quand la Descendante passe à 8 studs ; Part
+  `CrawlSpace` (sous P05c) et `Ford` (gué) posées à la main, sinon le point de la marque ; le gué réduit
+  seulement les bruits de pas et de saut ; HC2 s'ouvre avec l'invite « Ouvrir » ; descente du puits P21
+  avec une corde (8.1) ou l'anneau.
+- C10 : lancer joueur = simulation balistique avec la gravité du moteur, direction de la caméra ; la portée
+  horizontale est bornée à 60 studs. Pierres : erreur tirée dans un disque de rayon 3 % de la distance.
+- C12 : `magazine` (1 fusée chargée) et `startReserve` (2) dans `WeaponConfig` ; munition `AMMO_WPN_FlareGun`
+  nommée « Fusées ».
+- C19 : « Fouiller le camp » est fait quand le camp est atteint et qu'un indice ou la tablette y est trouvé ;
+  « Barricader » passe à « Tenir » quand les 3 ouvertures sont clouées ou que le siège commence ; objets de
+  l'acte 3 comptés dès qu'un joueur du groupe les porte ; la ligne facultative E4 s'affiche sous l'objectif.
+- C20 : impacts cosmétiques sur le toit quand aucune ouverture n'est clouée ; essais de bras seulement de 3:20 à 5:00.
+- C23 : CS_05 dans la page Journal de la tablette (Title = horodatage, Body = réplique puis texte d'écran).
+- C24 : le message radio passe par `NotificationGui` (clé = identifiant de la cinématique).
+- C38 : champs de données `evidenceBOut`, `accessories`, `equippedAccessories` ; `RE_EquipSkin(rôle, accessoire)`
+  porte ou retire ; textes des verrous sur le modèle de 15.7 (« Verrouillé — 3 parties jouées »,
+  « Verrouillé — 10 parties jouées », « Verrouillé — 1 preuve de classe B », Cauchemar « Verrouillé — 1 survie »).
+- J12 : toutes les créatures (sauf la femelle) attaquent leur meilleure cible tant que l'acte 3 a passé
+  10 min avec moins de 2 tentatives, dans les limites de `AllowAttack`.
+- 15.7 : zones sûres de référence 1280 × 662 et 750 × 311 ; `Util.prepareGui` choisit la disposition et
+  lie chaque `Veil` aux fenêtres de son attribut `veilFor` ; ordre de priorité des boutons tactiles
+  (Utiliser, Tirer, Viser, Recharger, Courir, Accroupi, Couché, Pencher ×2 si accroupi, Lampe, Tablette,
+  Signaler), tous cachés quand le sac, la tablette ou un document est ouvert ; toucher l'emplacement déjà
+  choisi ouvre le sac ; `NotificationGui` propre à chaque place, 2 messages au plus ; sous-titres longs
+  montrés phrase par phrase ; disposition du lobby sur téléphone : armes et votes à gauche, groupe à droite,
+  notifications en bas à gauche.
+- `check_ui.py` : barre de Roblox 58 px, encoche 47 px, barre d'accueil 21 px (téléphone en paysage) ;
+  polices de mesure dans `tools/ui/fonts` (Apache 2.0, OFL 1.1 ; outil seulement).
+- `Shared/TaggedSet` (budget 17) : listes taguées et RaycastParams mis à jour par les signaux de tag.
+
 ## Assets MANQUANT_
 
 Aucun bloc `MANQUANT_<ID>` n'est posé à la main ; les scripts en créent quand le modèle manque :
@@ -290,6 +335,10 @@ Aucun bloc `MANQUANT_<ID>` n'est posé à la main ; les scripts en créent quand
 | `WPN_Revolver`, `WPN_Shotgun`, `WPN_FlareGun`, `MEL_Axe`, `MEL_Machete` | Armes | `ItemSpawnService` |
 | `Item_Tablet`, `Item_Camcorder`, `Item_Jerrycan`, `Item_CarBattery`, `Item_Jack`, `Item_ToolBox`, `Item_BearSpray`, `Item_Headlamp`, `Item_Flare`, `Item_Bandage`, `Item_Medkit` | Objets | `ItemSpawnService` |
 
-Images et sons : `assets/ui/png` (vignettage, icônes) à importer dans Studio ; `Img_TabletMap`,
+Ajoutés le 2026-11-05 : marques de mineurs `MANQUANT_HiddenMark` (décalque, C7) ; modèles des accessoires
+(bonnet ×3 couleurs, frontale ambre, sac « Cold Trail », C38).
+
+Images et sons : `assets/ui/png` (vignettage, icônes d'objets, 12 icônes `Icon_Ctrl_*`, `Icon_Stamina`,
+`Icon_Battery`, 6 silhouettes `Img_Body_*`) à importer dans Studio ; `Img_TabletMap`,
 couche tunnels, `Img_DOC06`, `Img_DOC16`, `Img_Museum_M1–M8`, `Img_News_CS14` à créer (13.5) ;
 tous les sons de 13.7 à fournir.
