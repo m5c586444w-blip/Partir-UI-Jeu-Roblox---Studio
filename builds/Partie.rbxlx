@@ -6301,9 +6301,10 @@ local function followPath(self, dt)
 	end
 end
 
--- 9.2 : régénération hors combat, jusqu'à 70 %
+-- 9.2 : régénération hors combat, jusqu'à 70 % ; 19.6 (C29) : 10 s sans dégâts reçus ni attaque lancée
 local function regen(self, dt)
-	if os.clock() - self.lastDamageAt >= CreatureConfig.OutOfCombatAfter then
+	local lastCombat = math.max(self.lastDamageAt, self.lastAttackAt or -math.huge)
+	if os.clock() - lastCombat >= CreatureConfig.OutOfCombatAfter then
 		local cap = self.maxHealth * CreatureConfig.Regen.MaxFraction
 		if self.health < cap then
 			self.health = math.min(cap, self.health + CreatureConfig.Regen.PerSecond * dt)
@@ -6355,6 +6356,7 @@ function CreatureBrain:Attack(attackId, target)
 		return false
 	end
 	self.busy = true
+	self.lastAttackAt = os.clock() -- 19.6 (C29) : une attaque lancée compte comme combat
 	ai.TensionDirector:RegisterAttackAttempt(self, target)
 	task.spawn(function()
 		local ok, err = pcall(attack.run, self, target)

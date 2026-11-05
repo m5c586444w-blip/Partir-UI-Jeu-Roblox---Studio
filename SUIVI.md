@@ -10,16 +10,36 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## État de reprise (à lire en premier)
 
-- Session cloud du 2026-11-05 : bible 19.5 (C1–C42) et 15.7 (téléphone) appliquées, `check_ui.py`
-  à deux tailles (0 signalement), RaycastParams mis en cache. Tout est commité et poussé.
-- **Phase A terminée.** Prochaine étape : session Studio, d'abord **ouvrir les deux places sans les publier
-  et vérifier chaque écran dans l'émulateur (PC 1280 × 720, téléphone 844 × 390)**, puis attendre la
-  publication par Gabriel (voir `HANDOFF.md`).
+- Session cloud du 2026-11-05 (2) : bible 19.6 appliquée (plus aucun `TODO(BIBLE)` ni PROVISOIRE dans le code),
+  bible découpée dans `docs/bible/`, `.claude/settings.json`, étape 0 « Remise à zéro » dans `HANDOFF.md`.
+- **Phase A terminée.** Prochaine étape : session Studio, d'abord **l'étape 0a** (inventaire en lecture seule
+  des places publiées dans `RESET_INVENTAIRE.md`), puis ouvrir les deux places de `builds/` sans les publier
+  et vérifier chaque écran dans l'émulateur, puis attendre la publication en Overwrite par Gabriel, puis
+  l'étape 0b (résidus). Voir `HANDOFF.md`.
 - Outils de relecture : `stylua --check src tools/terrain`, `selene src tools/terrain`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py --previews`
   (chemins, débordements, chevauchements, aperçus dans `previews/`), puis `rojo build` des deux places.
 
 ## Journal des sessions
+
+### 2026-11-05 (2) — session cloud, bible 19.6
+
+Fait (un commit par étape, puis push) :
+1. **19.6 dans le code** : C1 (peur en voyant un corps ou la créature, en ligne de vue), C3 (à terre : la
+   créature tue, pierre ou tir allié −10 s), C4, C5 (45 de sang), C8 (2 fusées), C9 (poids), C11 (piège à
+   bruit), C14 (brûlure), C16 (hache 7, machette 6), C17 (quantités, `GroundItem`), C18, C26 (van 1 500 studs,
+   attaque autorisée), C29 (une attaque lancée bloque aussi la régénération), C30 (recul 40 + 15), C31
+   (fréquence ×1,5), C32 (catalogue « bas » et règles propres), C33 (distances tirées), C43 (palette du bonnet,
+   couleur suivante à chaque « Équiper »), textes des verrous et 4 interprétations validés.
+2. **Bible découpée** : `docs/bible/NN_titre.md` + `INDEX.md` (`tools/split_bible.py`, reconstitution
+   identique vérifiée) ; `CLAUDE.md` pointe vers l'index (142 lignes).
+3. **`.claude/settings.json`** : modèle, conseiller, effort, taille de flux ; autorisations rojo, git (push forcé
+   refusé), selene, stylua, outils UI, MCP Roblox Studio.
+4. **Remise à zéro** : étape 0 de `HANDOFF.md`, `RESET_INVENTAIRE.md`, `tools/studio/` (inventaire et chemins
+   en lecture seule, comparaison avec `builds/`).
+5. Relecture : StyLua, selene, 0 nombre hors Config, `check_ui.py` à 0, build des deux places.
+
+Laissé ouvert : rien dans la bible ; l'inventaire et la remise à zéro attendent la session Studio.
 
 ### 2026-11-05 — session cloud, bible 19.5 et 15.7
 
@@ -189,39 +209,14 @@ En phase A rien ne se teste en jeu : « code » = écrit et relu, pas vérifié 
 
 ## Questions encore ouvertes (TODO(BIBLE))
 
-Chaque ligne correspond à un marqueur `TODO(BIBLE)` dans le code. Rien ne bloque la suite des
-phases A ; ces points bloquent le réglage final.
+**Aucune.** La bible 19.5 et 19.6 répond à C1–C43 ; le code ne contient plus aucun `TODO(BIBLE)` ni PROVISOIRE.
+Les textes des verrous et les quatre interprétations ci-dessous sont validés (19.6) :
+« bruit des 10 dernières secondes » (9.7) = le bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne
+×2 » = deux fois plus vite ; un acte ne s'achève pas avant sa durée minimale (5.1) ; « conditions d'extraction
+réunies » = voie principale préparée, extraction à l'acte 4.
 
-| # | Question | Où | En attendant |
-|---|---|---|---|
-| C1 | Distance à laquelle un joueur « voit » un corps (+15 peur) et la créature (+20 à +35). | `PlayerConfig.Fear` | Hausses non appliquées |
-| C3 | Un coup reçu à terre tue-t-il ? | `PlayerConfig.Technical.DownedDamageKills` | PROVISOIRE : oui |
-| C4 | Sur quel membre agissent le bandage et la trousse ? | `PlayerConfig.HealTarget` | PROVISOIRE : le plus abîmé |
-| C5 | Sang rendu au joueur relevé après être tombé faute de sang. | `PlayerConfig.ReviveBlood` | PROVISOIRE : 20 |
-| C8 | Nombre de fusées à main du Pyrotechnicien au départ. | `ItemConfig.StartingItems` | PROVISOIRE : 1 |
-| C9 | Poids des preuves et des munitions. | `ItemConfig.Items` | PROVISOIRE : 0 kg |
-| C11 | Bruit du piège à bruit du Pyrotechnicien. | `ItemConfig.NoiseTrapRadius` | Piège désactivé |
-| C14 | Pistolet lance-fusées : cadence et brûlure sur un coéquipier (munitions : réglées par C12). | `WeaponConfig` | Cadence = rechargement (2 s) |
-| C16 | Portée des armes de mêlée. | `WeaponConfig.MeleeRange` | PROVISOIRE : 7 |
-| C17 | Quantité de chaque objet sur C09–C12 et aux lieux fixes de 8.1. | `MapConfig` | PROVISOIRE : 1 |
-| C18 | 12.3 « endurance ×0,85 » par neige : sur le maximum, la dépense ou la récupération ? | `StaminaService` | PROVISOIRE : récupération |
-| C26 | Rayon du bruit du démarrage du van (E1). | `ActConfig.Routes.E1` | Pas de bruit |
-| C29 | « Hors combat » (régénération) : combien de secondes sans dégâts ? | `CreatureConfig.OutOfCombatAfter` | PROVISOIRE : 10 s |
-| C30 | Force du recul de ATK_Strike (la vitesse des pierres est réglée par C10 : 90). | `CreatureConfig.KnockbackForce` | PROVISOIRE : 40 |
-| C31 | « Lance plus » après 2 tirs reçus (9.8) : de combien ? | `CreatureConfig.Memory.ThrowMoreFactor` | PROVISOIRE : ×1,5 |
-| C32 | Catalogue « bas » du directeur (10) : quels événements ? | `DirectorConfig.LowCatalog` | PROVISOIRE : tous |
-| C33 | Distances « au loin » et « tout près » des événements. | `DirectorConfig` | PROVISOIRE : 150 et 15 studs |
-| C43 | Les 3 couleurs du bonnet (C38). | `ProgressionConfig.AccessoryUnlocks.Beanie` | Bonnet sans choix de couleur |
-
-Répondues par 19.5 et appliquées le 2026-11-05 : C2, C6, C7, C10, C12, C13, C15, C19, C20, C23, C24, C25,
-C34, C35, C36, C38, C40, C42, J12. Tranchées en DÉFAUT (ni texte, ni gameplay, ni asset) : C21, C22, C27,
-C28, C37, C39, C41 (voir ci-dessous). Les marqueurs PROVISOIRE restants (13) sont tous dans ce tableau.
-
-Interprétations à confirmer (non bloquantes) : « bruit des 10 dernières secondes » (9.7) = le
-bruit le plus fort émis pendant ces 10 s ; « la Médecin soigne ×2 » = deux fois plus vite ;
-un acte ne s'achève pas avant sa durée minimale même si sa condition est remplie (5.1) ;
-« conditions d'extraction réunies » (fin de l'acte 3) = la voie principale est préparée
-(roue changée, radio réparée, bulldozer réparé) ; l'extraction se déclenche à l'acte 4.
+Interprétation nouvelle, à confirmer (non bloquante) : 19.6 (C9) ne pèse pas les photos (créature, charnier) ;
+elles restent à 0 kg.
 
 ## Décisions DÉFAUT (section 0)
 
@@ -323,6 +318,25 @@ Bible 19.5 et 15.7 (2026-11-05) :
   polices de mesure dans `tools/ui/fonts` (Apache 2.0, OFL 1.1 ; outil seulement).
 - `Shared/TaggedSet` (budget 17) : listes taguées et RaycastParams mis à jour par les signaux de tag.
 
+Bible 19.6 (2026-11-05, soir) :
+- C1 : « voir » = cible devant le joueur (demi-espace de son regard) et rayon libre depuis sa tête ; les
+  feuillages `Foliage` ne cachent pas (comme pour la vue de la créature) ; RaycastParams par personnage.
+- C3 : un coup de pierre ou un tir allié laisse au moins un pas de calcul (0,5 s) au compte à rebours ; la
+  brûlure du lance-fusées fait partie du tir allié et ne retire rien de plus.
+- C11 : déclenchement à 4 studs ; le poseur ne déclenche pas son propre piège ; bruit réémis toutes les 0,5 s
+  pendant 3 s ; piège en bloc gris (`MANQUANT_NoiseTrap`).
+- C17 : branches et pierres au sol = Part taguées `GroundItem` (attribut `itemId`) posées en B1, une unité par Part.
+- C26 : l'attaque est autorisée pour les joueurs dans le rayon de P01 après le démarrage (`vanStartedAt`),
+  malgré une pause du directeur.
+- C32 : un événement hors catalogue « bas » avec des lieux est tenté quand le joueur y est ; sans lieu, une
+  fois par acte ; EVT_08 par BHV_Mimic ; cadences de 10.1 respectées.
+- C43 : « Équiper » sur le bonnet passe à la couleur suivante, puis le retire.
+- `.claude/settings.json` : clés `advisorModel`, `effortLevel`, `workflowSizeGuideline` écrites comme demandé
+  (non vérifiées dans la documentation de Claude Code) ; les refus de push forcé à joker au milieu peuvent ne
+  pas s'appliquer : les formes en préfixe sont celles qui comptent.
+- Remise à zéro : outils en lecture seule ; objets créés par le moteur ignorés par `reset_diff.py` (liste
+  `ENGINE_DEFAULTS`), contenu des phases B listé à part (`STUDIO_OWNED`).
+
 ## Assets MANQUANT_
 
 Aucun bloc `MANQUANT_<ID>` n'est posé à la main ; les scripts en créent quand le modèle manque :
@@ -336,7 +350,8 @@ Aucun bloc `MANQUANT_<ID>` n'est posé à la main ; les scripts en créent quand
 | `Item_Tablet`, `Item_Camcorder`, `Item_Jerrycan`, `Item_CarBattery`, `Item_Jack`, `Item_ToolBox`, `Item_BearSpray`, `Item_Headlamp`, `Item_Flare`, `Item_Bandage`, `Item_Medkit` | Objets | `ItemSpawnService` |
 
 Ajoutés le 2026-11-05 : marques de mineurs `MANQUANT_HiddenMark` (décalque, C7) ; modèles des accessoires
-(bonnet ×3 couleurs, frontale ambre, sac « Cold Trail », C38).
+(bonnet en 3 couleurs #7A2E24, #4F6B45, #3A3A3A, frontale ambre, sac « Cold Trail », C38, C43) ;
+piège à bruit `MANQUANT_NoiseTrap` (C11) ; branches et pierres au sol à poser (`GroundItem`, C17).
 
 Images et sons : `assets/ui/png` (vignettage, icônes d'objets, 12 icônes `Icon_Ctrl_*`, `Icon_Stamina`,
 `Icon_Battery`, 6 silhouettes `Img_Body_*`) à importer dans Studio ; `Img_TabletMap`,

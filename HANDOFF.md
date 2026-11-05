@@ -1,7 +1,7 @@
 # HANDOFF — de la session cloud à la session Studio
 
-Mis à jour le 2026-11-05 : phase A (A1 → A8) terminée, puis bible 19.5 (réponses C1–C42) et 15.7
-(affichage sur téléphone) appliquées. Section 18.1 ter de la bible. Questions ouvertes : `SUIVI.md`.
+Mis à jour le 2026-11-05 (soir) : phase A (A1 → A8) terminée, bible 19.5, 19.6 et 15.7 appliquées (plus
+aucun `TODO(BIBLE)` ni PROVISOIRE), bible découpée dans `docs/bible/` (point d'entrée : `docs/bible/INDEX.md`). Section 18.1 ter de la bible. Questions ouvertes : `SUIVI.md`.
 
 ## Ce qui est prêt
 
@@ -105,7 +105,9 @@ et suppression des résidus). Outils : `tools/studio/ResetInventory.luau`, `tool
     `Cover`, `Trail`, `Forbidden` (9.11) ; au besoin `Workspace/SpawnPoints/S1_1…`, `Workspace/CluePoints/C01…`,
     ancres d'extraction (`E1_Van`, `E2_Radio`, `E3_Bulldozer`, `E4_Plug`), ouvertures de la cabane
     (`P05c/Door`, `Window`, `RoofHole`), `Body_LeahBrandt` (P09) ; 19.5 (C7) : Part `CrawlSpace` (vide
-    sanitaire sous le plancher de P05c, 2 joueurs) et `Ford` (gué, 60 studs en aval de HC3, près de P16).
+    sanitaire sous le plancher de P05c, 2 joueurs) et `Ford` (gué, 60 studs en aval de HC3, près de P16) ;
+    19.6 (C17) : branches et pierres au sol, Part taguées `GroundItem` avec l'attribut `itemId`
+    (`ITM_Branch` en forêt, `ITM_Stone` partout).
 13. Lobby : poser la ville (4.1) et les Part taguées `RangerHollis`, `MuseumPanel` ×8 (attribut `panelId`),
     `EvidenceBoard`, `SkinShop`, `RecordsBoard`, une `SpawnLocation` en L01 (0, 5, 120).
 
@@ -145,7 +147,8 @@ et suppression des résidus). Outils : `tools/studio/ResetInventory.luau`, `tool
 ```
 rojo serve Lobby.serve.project.json                     # Studio, place Lobby (scripts seulement)
 rojo serve Partie.serve.project.json                    # Studio, place Partie (scripts seulement)
-stylua --check src tools/terrain && selene src tools/terrain
+stylua --check src tools/terrain tools/studio && selene src tools/terrain tools/studio
+python3 tools/split_bible.py                            # nouvelle bible → docs/bible/ (une section par fichier)
 python3 tools/check_values.py                           # aucun nombre hors Config
 python3 tools/ui/check_ui.py --previews                 # chemins (builds) ; débordements et chevauchements
                                                         # à 1280 × 720 et 844 × 390 ; aperçus dans previews/

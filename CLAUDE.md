@@ -105,8 +105,8 @@ Règles :
 - UI (phase A2) : `python3 tools/ui/build_ui.py` régénère `src/ui/**` et `UI_MAP.md`
   depuis une description unique (noms de la section 15, style 15.2). À ne plus lancer
   pour une place déjà ouverte dans Studio.
-- Relecture de fin de phase (aucun test en jeu possible en phase A) : `stylua --check src tools/terrain`,
-  `selene src tools/terrain`, `python3 tools/check_values.py` (aucun nombre hors Config ; une ligne
+- Relecture de fin de phase (aucun test en jeu possible en phase A) : `stylua --check src tools/terrain tools/studio`,
+  `selene src tools/terrain tools/studio`, `python3 tools/check_values.py` (aucun nombre hors Config ; une ligne
   marquée `-- constante` est une unité ou une limite du moteur), `python3 tools/ui/check_ui.py`.
 - Générateurs : `tools/ui/build_ui.py` (UI, `UI_MAP.md`), `tools/animations/build_animations.py` (14),
   `tools/images/make_images.py` + `rasterize.js` (13.5), `tools/terrain/download_polyhaven.py` (13.4, Credits).
