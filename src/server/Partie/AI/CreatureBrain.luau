@@ -133,12 +133,15 @@ function CreatureBrain:HasBody()
 	return self.model.Parent == workspace
 end
 
+-- paramètres de rayon construits une seule fois (aucune exclusion), au lieu d'un RaycastParams par appel
+local SEEN_PARAMS = RaycastParams.new()
+
 -- vrai si un joueur voit ce point (pour faire apparaître le corps hors de vue, 9.3 et 10.1)
 function CreatureBrain:IsPointSeen(position)
 	for _, player in Players:GetPlayers() do
 		local head = player.Character and player.Character:FindFirstChild("Head")
 		if head and (head.Position - position).Magnitude < CreatureConfig.Simulation.BodyRange then
-			local hit = workspace:Raycast(head.Position, position - head.Position, RaycastParams.new())
+			local hit = workspace:Raycast(head.Position, position - head.Position, SEEN_PARAMS)
 			if hit == nil or (hit.Position - position).Magnitude < CAPSULE_WIDTH then
 				local look = head.CFrame.LookVector
 				if look:Dot((position - head.Position).Unit) > 0 then

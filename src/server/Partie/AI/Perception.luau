@@ -2,7 +2,6 @@
 -- Section 9.4 : vue (portée Rv, cône 120°, périphérie 200° ×0,4, deux rayons tête et torse, feuillages
 -- tagués « Foliage » transparents), vigilance par joueur, ouïe (atténuations), odorat (vent), lumière.
 -- Section 7.6 : coefficient de visibilité du joueur. Rafraîchie 10 fois/s à moins de 150 studs, 2 fois/s au-delà.
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -11,6 +10,7 @@ local ActConfig = require(Config:WaitForChild("ActConfig"))
 local CreatureConfig = require(Config:WaitForChild("CreatureConfig"))
 local MapConfig = require(Config:WaitForChild("MapConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
+local TaggedSet = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("TaggedSet"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
 
 local Perception = {}
@@ -108,15 +108,21 @@ function Perception:BaseRange()
 	return range
 end
 
-local function rayParams(brain, player)
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	local filter = { brain.model }
-	for _, foliage in CollectionService:GetTagged("Foliage") do
-		table.insert(filter, foliage)
+-- RaycastParams de la vue : la créature et la végétation taguée « Foliage » sont transparentes.
+-- Construits une fois par créature, mis à jour seulement quand un « Foliage » est ajouté ou retiré.
+local function rayParams(brain)
+	if brain.sightParams == nil then
+		brain.sightParams = TaggedSet.excludeParams({ brain.model }, { "Foliage" })
 	end
-	params.FilterDescendantsInstances = filter
-	return params, player.Character
+	return brain.sightParams:Get()
+end
+
+-- RaycastParams qui n'excluent que la créature (pierres, ATK_Throw), construits une fois par créature
+function Perception:BodyParams(brain)
+	if brain.bodyParams == nil then
+		brain.bodyParams = TaggedSet.excludeParams({ brain.model }, {})
+	end
+	return brain.bodyParams:Get()
 end
 
 -- vrai si la créature voit le joueur ; renvoie aussi le facteur de périphérie
@@ -143,7 +149,7 @@ function Perception:CanSee(brain, player)
 	else
 		return false, 0
 	end
-	local params = rayParams(brain, player)
+	local params = rayParams(brain)
 	for _, part in { target, torso } do
 		local hit = workspace:Raycast(head.Position, part.Position - head.Position, params)
 		if hit == nil or hit.Instance:IsDescendantOf(character) then

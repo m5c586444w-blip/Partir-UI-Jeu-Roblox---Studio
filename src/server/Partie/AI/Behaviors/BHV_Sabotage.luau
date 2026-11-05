@@ -11,12 +11,12 @@ local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util
 local B = CreatureConfig.Behaviors.BHV_Sabotage
 local Behavior = {}
 
-local CollectionService = game:GetService("CollectionService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 
 local function sabotageTarget(brain)
 	local best, bestDistance = nil, math.huge
 	for _, tag in { "FireSource", "LightSource" } do
-		for _, item in CollectionService:GetTagged(tag) do
+		for _, item in TaggedSet.list(tag) do
 			if item:IsA("BasePart") and not brain:IsPointSeen(item.Position) then
 				local d = (item.Position - brain:Position()).Magnitude
 				if d < bestDistance then

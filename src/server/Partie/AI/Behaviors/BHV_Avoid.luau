@@ -11,11 +11,11 @@ local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util
 local B = CreatureConfig.Behaviors.BHV_Avoid
 local Behavior = {}
 
-local CollectionService = game:GetService("CollectionService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 Behavior.urgent = true
 
 local function nearFire(brain)
-	for _, fire in CollectionService:GetTagged("FireSource") do
+	for _, fire in TaggedSet.list("FireSource") do
 		if fire:IsA("BasePart") then
 			local keepAway = fire:GetAttribute("keepAway") or B.fireRange
 			if (fire.Position - brain:Position()).Magnitude < keepAway then

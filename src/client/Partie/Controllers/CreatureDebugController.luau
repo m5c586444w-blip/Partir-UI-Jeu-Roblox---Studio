@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 
 local PlayerConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("PlayerConfig"))
 
@@ -33,7 +34,7 @@ function CreatureDebugController:Start()
 	RunService.Heartbeat:Connect(function()
 		local isTracker = player:GetAttribute("role") == "Tracker"
 		local maxAge = PlayerConfig.Abilities.Tracker.FootprintMaxAge
-		for _, print_ in CollectionService:GetTagged("Footprint") do
+		for _, print_ in TaggedSet.list("Footprint") do
 			local age = workspace:GetServerTimeNow() - (print_:GetAttribute("createdTime") or 0)
 			local show = isTracker and age <= maxAge
 			local h = highlights[print_]

@@ -2,9 +2,9 @@
 -- Section 7.5 : peur de 0 à 100 (attribut fear), jamais affichée en chiffre.
 -- Lumière : la lampe du joueur allumée (attribut lightOn) ou une source taguée « LightSource »
 -- dont la portée (attribut range) couvre le joueur. Feu et fusée : tag « FireSource » (attribut radius).
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
@@ -34,7 +34,7 @@ local function inLight(player, position, radius)
 	if player:GetAttribute("lightOn") then
 		return true
 	end
-	for _, source in CollectionService:GetTagged("LightSource") do
+	for _, source in TaggedSet.list("LightSource") do
 		local part = if source:IsA("BasePart") then source else source:FindFirstAncestorWhichIsA("BasePart")
 		local range = source:GetAttribute("range") or 0
 		if part and (part.Position - position).Magnitude <= math.max(range, radius) then
@@ -45,7 +45,7 @@ local function inLight(player, position, radius)
 end
 
 local function nearFire(position)
-	for _, source in CollectionService:GetTagged("FireSource") do
+	for _, source in TaggedSet.list("FireSource") do
 		local part = if source:IsA("BasePart") then source else source:FindFirstAncestorWhichIsA("BasePart")
 		local radius = source:GetAttribute("radius") or 0
 		if part and (part.Position - position).Magnitude <= radius then
@@ -148,7 +148,7 @@ local function tick(dt)
 			end
 			-- 7.5 : voir un corps (+15 une fois par corps), si la portée est donnée par la bible
 			if Fear.SeeBodyRange then
-				for _, corpse in CollectionService:GetTagged("Corpse") do
+				for _, corpse in TaggedSet.list("Corpse") do
 					local s = state[player]
 					local pivot = corpse:IsA("Model") and corpse:GetPivot().Position or corpse.Position
 					if not s.seenBodies[corpse] and (pivot - position).Magnitude <= Fear.SeeBodyRange then

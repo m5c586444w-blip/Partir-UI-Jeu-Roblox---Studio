@@ -1,9 +1,9 @@
 -- Controllers/HiddenClueController (Partie)
 -- 19.5 (C7) : les marques de mineurs (Part taguées HiddenClue, invisibles pour tous) sont rendues
 -- visibles localement pour la Descendante, à 8 studs au plus.
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
@@ -20,7 +20,7 @@ function HiddenClueController:Start()
 			task.wait(PlayerConfig.Technical.Tick)
 			local root = Util.characterRoot(player)
 			local isDescendant = player:GetAttribute("role") == "Descendant"
-			for _, mark in CollectionService:GetTagged("HiddenClue") do
+			for _, mark in TaggedSet.list("HiddenClue") do
 				local near = isDescendant and root ~= nil and (mark.Position - root.Position).Magnitude <= RANGE
 				mark.Transparency = if near then 0 else 1
 			end

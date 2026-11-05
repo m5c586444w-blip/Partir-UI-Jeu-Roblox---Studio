@@ -11,11 +11,11 @@ local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util
 local B = CreatureConfig.Behaviors.BHV_Mark
 local Behavior = {}
 
-local CollectionService = game:GetService("CollectionService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 
 local function nearestTree(brain)
 	local best, bestDistance = nil, math.huge
-	for _, tree in CollectionService:GetTagged(CreatureConfig.StoneTreeTag) do
+	for _, tree in TaggedSet.list(CreatureConfig.StoneTreeTag) do
 		if tree:IsA("BasePart") then
 			local d = (tree.Position - brain:Position()).Magnitude
 			if d < bestDistance then

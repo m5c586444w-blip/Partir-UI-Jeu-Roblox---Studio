@@ -3,7 +3,6 @@
 -- survivant la sort de la forêt (CommitForSurvivor, appelé à l'extraction).
 -- Vidéo A : créature visible à 60 % au moins, à 30 studs ou moins, 2 s sans interruption
 -- (le caméscope a la vision nocturne). Carte mémoire ITM_SDCard créée après la vidéo.
-local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -13,6 +12,7 @@ local MapConfig = require(Config:WaitForChild("MapConfig"))
 local ProgressionConfig = require(Config:WaitForChild("ProgressionConfig"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Signal = require(Shared:WaitForChild("Signal"))
+local TaggedSet = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("TaggedSet"))
 local Util = require(Shared:WaitForChild("Util"))
 
 local EvidenceService = {}
@@ -27,7 +27,27 @@ local Evidence = ItemConfig.Evidence
 local VIDEO_CHECK = require(Config:WaitForChild("PlayerConfig")).Technical.VideoCheckInterval
 
 local function creatures()
-	return CollectionService:GetTagged("Creature")
+	return TaggedSet.list("Creature")
+end
+
+-- RaycastParams par (créature, personnage qui filme) : feuillages « Foliage » transparents ;
+-- construits une fois, mis à jour seulement quand un « Foliage » est ajouté ou retiré
+local visibilityParams = setmetatable({}, { __mode = "k" })
+local function visibilityFor(creature, ignore)
+	local key = ignore and ignore[1] or creature
+	local byCreature = visibilityParams[creature]
+	if byCreature == nil then
+		byCreature = setmetatable({}, { __mode = "k" })
+		visibilityParams[creature] = byCreature
+	end
+	if byCreature[key] == nil then
+		local base = { creature }
+		for _, inst in ignore or {} do
+			table.insert(base, inst)
+		end
+		byCreature[key] = TaggedSet.excludeParams(base, { "Foliage" })
+	end
+	return byCreature[key]:Get()
 end
 
 -- fraction des parties de la créature visibles depuis `origin` (les feuillages tagués « Foliage » ne bloquent pas)
@@ -41,16 +61,7 @@ function EvidenceService:VisibleFraction(origin, creature, ignore)
 	if #parts == 0 then
 		return 0
 	end
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	local filter = { creature }
-	for _, inst in ignore or {} do
-		table.insert(filter, inst)
-	end
-	for _, foliage in CollectionService:GetTagged("Foliage") do
-		table.insert(filter, foliage)
-	end
-	params.FilterDescendantsInstances = filter
+	local params = visibilityFor(creature, ignore)
 	local visible = 0
 	for _, part in parts do
 		local hit = workspace:Raycast(origin, part.Position - origin, params)
@@ -113,7 +124,7 @@ local function checkVideo(dt)
 end
 
 local function nearTagged(tag, position, range)
-	for _, inst in CollectionService:GetTagged(tag) do
+	for _, inst in TaggedSet.list(tag) do
 		local pos = inst:IsA("Model") and inst:GetPivot().Position or inst.Position
 		if (pos - position).Magnitude <= range then
 			return inst

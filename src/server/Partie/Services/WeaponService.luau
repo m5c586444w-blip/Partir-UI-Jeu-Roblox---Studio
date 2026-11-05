@@ -59,10 +59,19 @@ local function friendlyFireOn()
 	return ActConfig.difficulty(info.difficulty).friendlyFire
 end
 
+-- RaycastParams du tireur : construits une fois par personnage (8 plombs par tir au fusil à pompe)
+local shooterParams = setmetatable({}, { __mode = "k" })
 local function cast(shooter, origin, direction, range)
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = { shooter.Character }
+	local character = shooter.Character
+	local params = character and shooterParams[character]
+	if params == nil then
+		params = RaycastParams.new()
+		params.FilterType = Enum.RaycastFilterType.Exclude
+		params.FilterDescendantsInstances = { character }
+		if character then
+			shooterParams[character] = params
+		end
+	end
 	return workspace:Raycast(origin, direction.Unit * range, params)
 end
 

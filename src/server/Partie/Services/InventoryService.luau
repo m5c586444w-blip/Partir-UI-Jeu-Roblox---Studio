@@ -492,10 +492,15 @@ end
 
 -- 19.5 (C10) : trajectoire balistique à 70 studs/s (gravité du moteur), portée horizontale de 60 studs
 -- au plus ; bruit 50 à l'impact. Rend le point d'impact et la durée du vol.
+local throwParams = setmetatable({}, { __mode = "k" }) -- RaycastParams par personnage, construits une fois
 local function ballistic(player, origin, direction)
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = { player.Character }
+	local params = throwParams[player.Character]
+	if params == nil then
+		params = RaycastParams.new()
+		params.FilterType = Enum.RaycastFilterType.Exclude
+		params.FilterDescendantsInstances = { player.Character }
+		throwParams[player.Character] = params
+	end
 	local velocity = direction.Unit * THROW.Speed
 	local gravity = Vector3.new(0, -workspace.Gravity, 0)
 	local position, t = origin, 0

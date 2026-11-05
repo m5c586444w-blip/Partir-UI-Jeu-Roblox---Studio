@@ -69,9 +69,7 @@ function Attack.run(brain, target)
 	end
 	-- la pierre file vers le point visé (au lâcher) : un joueur qui a bougé l'esquive ;
 	-- couvert : un obstacle entre le point de lancer et la cible arrête la pierre
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = { brain.model }
+	local params = brain.ai.Perception:BodyParams(brain)
 	local hit = workspace:Raycast(from, (landing - from).Unit * A.maxRange, params)
 	if hit == nil or target.Character == nil or not hit.Instance:IsDescendantOf(target.Character) then
 		return

@@ -47,16 +47,38 @@ local function burst(part)
 	Debris:AddItem(emitter, GoreConfig.Blood.BurstDuration * 4) -- constante (le temps que les gouttes retombent)
 end
 
+-- RaycastParams des flaques : tous les personnages exclus ; refaits seulement quand un personnage
+-- apparaît ou disparaît (au lieu de reconstruire la liste à chaque flaque)
+local poolParams = RaycastParams.new()
+poolParams.FilterType = Enum.RaycastFilterType.Exclude
+local poolParamsDirty = true
+
+local function markCharactersChanged()
+	poolParamsDirty = true
+end
+
+local function watchPlayer(p)
+	p.CharacterAdded:Connect(markCharactersChanged)
+	p.CharacterRemoving:Connect(markCharactersChanged)
+end
+for _, p in Players:GetPlayers() do
+	watchPlayer(p)
+end
+Players.PlayerAdded:Connect(watchPlayer)
+Players.PlayerRemoving:Connect(markCharactersChanged)
+
 local function pool(position)
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	local characters = {}
-	for _, p in Players:GetPlayers() do
-		if p.Character then
-			table.insert(characters, p.Character)
+	if poolParamsDirty then
+		poolParamsDirty = false
+		local characters = {}
+		for _, p in Players:GetPlayers() do
+			if p.Character then
+				table.insert(characters, p.Character)
+			end
 		end
+		poolParams.FilterDescendantsInstances = characters
 	end
-	params.FilterDescendantsInstances = characters
+	local params = poolParams
 	local hit = workspace:Raycast(position, Vector3.new(0, -PlayerConfig.LimbHealth.Torso, 0), params)
 	if hit == nil then
 		return
