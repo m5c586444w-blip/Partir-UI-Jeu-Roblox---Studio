@@ -1,0 +1,53 @@
+{
+  "model": "sonnet",
+  "advisorModel": "opus",
+  "effortLevel": "medium",
+  "workflowSizeGuideline": "small",
+  "permissions": {
+    "allow": [
+      "Bash(rojo build:*)",
+      "Bash(rojo serve:*)",
+      "Bash(rojo sourcemap:*)",
+      "Bash(rojo plugin install:*)",
+      "Bash(rojo --version)",
+      "Bash(rokit install:*)",
+      "Bash(selene:*)",
+      "Bash(stylua:*)",
+      "Bash(python3 tools/ui/build_ui.py:*)",
+      "Bash(python3 tools/ui/check_ui.py:*)",
+      "Bash(python tools/ui/build_ui.py:*)",
+      "Bash(python tools/ui/check_ui.py:*)",
+      "Bash(python3 tools/check_values.py:*)",
+      "Bash(python3 tools/split_bible.py:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git branch:*)",
+      "Bash(git stash:*)",
+      "Bash(git push:*)",
+      "mcp__Roblox_Studio",
+      "mcp__roblox_studio",
+      "mcp__roblox-studio"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push --force-if-includes:*)",
+      "Bash(git push origin --force:*)",
+      "Bash(git push origin -f:*)",
+      "Bash(git push -u origin --force:*)",
+      "Bash(git push -u origin -f:*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f *)",
+      "Bash(git push * +*)"
+    ]
+  }
+}
