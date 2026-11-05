@@ -1,9 +1,12 @@
 # PISTE FROIDE — règles pour Claude Code
 
 Bible (seule source de vérité) : `BIBLE_PISTE_FROIDE.md` à la racine du dépôt (écrite par Gabriel).
+**Point d'entrée : [`docs/bible/INDEX.md`](docs/bible/INDEX.md)** — une section par fichier
+(`docs/bible/NN_titre.md`, contenu identique), régénéré par `python3 tools/split_bible.py` à chaque
+nouvelle version de la bible. Ne pas modifier `docs/bible/` à la main.
 
-À lire au début de chaque session : ce fichier, `SUIVI.md`, `HANDOFF.md`, puis la bible,
-sections 0, 16 et la section du jalon demandé.
+À lire au début de chaque session : ce fichier, `SUIVI.md`, `HANDOFF.md`, puis, via l'index,
+les sections 0, 16 et la section du jalon demandé.
 
 ## Règles absolues (bible, section 0)
 
@@ -66,7 +69,7 @@ Studio (phase B).
 
 | Fichier | Écrit par | Contenu |
 |---|---|---|
-| `BIBLE_PISTE_FROIDE.md` | Gabriel | La bible, seule source de vérité |
+| `BIBLE_PISTE_FROIDE.md` | Gabriel | La bible, seule source de vérité (découpée dans `docs/bible/`) |
 | `CLAUDE.md` | Session cloud, au début | Règles de la section 0, rappel de ce tableau |
 | `SUIVI.md` | Les deux sessions | Phases faites, `TODO(BIBLE)`, assets `MANQUANT_`, questions pour Gabriel |
 | `HANDOFF.md` | Session cloud, à la fin | Ce qui est prêt, ce qui reste à faire dans Studio, ordre exact, commandes |
