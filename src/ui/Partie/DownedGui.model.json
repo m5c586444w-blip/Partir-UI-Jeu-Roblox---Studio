@@ -8,130 +8,19 @@
   },
   "children": [
     {
-      "name": "Countdown",
-      "className": "TextLabel",
-      "properties": {
-        "Text": "",
-        "Font": "SpecialElite",
-        "TextColor3": [
-          0.6392,
-          0.2039,
-          0.1686
-        ],
-        "TextScaled": true,
-        "TextWrapped": true,
-        "TextXAlignment": "Center",
-        "BackgroundTransparency": 1,
-        "BorderSizePixel": 0,
-        "Position": {
-          "UDim2": [
-            [
-              0.4,
-              0
-            ],
-            [
-              0.4,
-              0
-            ]
-          ]
-        },
-        "Size": {
-          "UDim2": [
-            [
-              0.2,
-              0
-            ],
-            [
-              0.1,
-              0
-            ]
-          ]
-        },
-        "Visible": false
-      },
-      "children": [
-        {
-          "name": "UITextSizeConstraint",
-          "className": "UITextSizeConstraint",
-          "properties": {
-            "MinTextSize": 14,
-            "MaxTextSize": 28
-          }
-        }
-      ]
-    },
-    {
-      "name": "HelpHint",
-      "className": "TextLabel",
-      "properties": {
-        "Text": "Appelle à l'aide : un coéquipier peut te relever.",
-        "Font": "RobotoMono",
-        "TextColor3": [
-          0.9098,
-          0.8941,
-          0.8471
-        ],
-        "TextScaled": true,
-        "TextWrapped": true,
-        "TextXAlignment": "Center",
-        "BackgroundTransparency": 1,
-        "BorderSizePixel": 0,
-        "Position": {
-          "UDim2": [
-            [
-              0.3,
-              0
-            ],
-            [
-              0.52,
-              0
-            ]
-          ]
-        },
-        "Size": {
-          "UDim2": [
-            [
-              0.4,
-              0
-            ],
-            [
-              0.06,
-              0
-            ]
-          ]
-        },
-        "Visible": false
-      },
-      "children": [
-        {
-          "name": "UITextSizeConstraint",
-          "className": "UITextSizeConstraint",
-          "properties": {
-            "MinTextSize": 14,
-            "MaxTextSize": 28
-          }
-        }
-      ]
-    },
-    {
-      "name": "Bleed",
+      "name": "Layout_Desktop",
       "className": "Frame",
       "properties": {
-        "BackgroundTransparency": 0.35,
+        "BackgroundTransparency": 1.0,
         "BorderSizePixel": 0,
-        "BackgroundColor3": [
-          0.0549,
-          0.0588,
-          0.051
-        ],
         "Position": {
           "UDim2": [
             [
-              0.35,
+              0,
               0
             ],
             [
-              0.6,
+              0,
               0
             ]
           ]
@@ -139,37 +28,41 @@
         "Size": {
           "UDim2": [
             [
-              0.3,
+              1,
               0
             ],
             [
-              0.015,
+              1,
               0
             ]
           ]
-        },
-        "Visible": false
+        }
       },
       "children": [
         {
-          "name": "Fill",
-          "className": "Frame",
+          "name": "Countdown",
+          "className": "TextLabel",
           "properties": {
-            "BackgroundTransparency": 0,
-            "BorderSizePixel": 0,
-            "BackgroundColor3": [
+            "Text": "",
+            "Font": "SpecialElite",
+            "TextColor3": [
               0.6392,
               0.2039,
               0.1686
             ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
             "Position": {
               "UDim2": [
                 [
-                  0,
+                  0.4219,
                   0
                 ],
                 [
-                  0,
+                  0.3776,
                   0
                 ]
               ]
@@ -177,16 +70,375 @@
             "Size": {
               "UDim2": [
                 [
-                  1,
+                  0.1562,
                   0
                 ],
                 [
-                  1,
+                  0.1208,
                   0
                 ]
               ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
             }
-          }
+          ]
+        },
+        {
+          "name": "HelpHint",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "Appelle à l'aide : un coéquipier peut te relever.",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.2656,
+                  0
+                ],
+                [
+                  0.5136,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.4688,
+                  0
+                ],
+                [
+                  0.0604,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bleed",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.3438,
+                  0
+                ],
+                [
+                  0.5921,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.3125,
+                  0
+                ],
+                [
+                  0.0151,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "Fill",
+              "className": "Frame",
+              "properties": {
+                "BackgroundTransparency": 0,
+                "BorderSizePixel": 0,
+                "BackgroundColor3": [
+                  0.6392,
+                  0.2039,
+                  0.1686
+                ],
+                "Position": {
+                  "UDim2": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      0
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Layout_Touch",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 1.0,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "Size": {
+          "UDim2": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        "Visible": false
+      },
+      "children": [
+        {
+          "name": "Countdown",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "",
+            "Font": "SpecialElite",
+            "TextColor3": [
+              0.6392,
+              0.2039,
+              0.1686
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.4,
+                  0
+                ],
+                [
+                  0.3087,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.2,
+                  0
+                ],
+                [
+                  0.1608,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "HelpHint",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "Appelle à l'aide : un coéquipier peut te relever.",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Center",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.1067,
+                  0
+                ],
+                [
+                  0.4952,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.7867,
+                  0
+                ],
+                [
+                  0.0772,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bleed",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.3,
+                  0
+                ],
+                [
+                  0.6045,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.4,
+                  0
+                ],
+                [
+                  0.0193,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "Fill",
+              "className": "Frame",
+              "properties": {
+                "BackgroundTransparency": 0,
+                "BorderSizePixel": 0,
+                "BackgroundColor3": [
+                  0.6392,
+                  0.2039,
+                  0.1686
+                ],
+                "Position": {
+                  "UDim2": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      0,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      1,
+                      0
+                    ],
+                    [
+                      1,
+                      0
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
         }
       ]
     }

@@ -27,6 +27,26 @@ function RoleController:IsConfirmed()
 	return confirmed and player:GetAttribute("partyRole") ~= nil
 end
 
+-- 15.7 (5) : sur téléphone, panneau de détail (capacité, faiblesse) de la carte choisie
+local function detailPanel()
+	local gui = root and root:FindFirstChild("RoleSelectGui")
+	local layout = gui and Util.activeLayout(gui)
+	return layout and layout:FindFirstChild("Detail")
+end
+
+local function showDetail(card)
+	local detail = detailPanel()
+	if detail == nil or card == nil then
+		return
+	end
+	for _, name in { "Ability", "Weakness" } do
+		local source, target = card:FindFirstChild(name), detail:FindFirstChild(name)
+		if source and target then
+			target.Text = source.Text
+		end
+	end
+end
+
 local function setOpen(open)
 	local grid, confirm = find("Grid"), find("Confirm")
 	if grid then
@@ -34,6 +54,10 @@ local function setOpen(open)
 	end
 	if confirm then
 		confirm.Visible = open
+	end
+	local detail = detailPanel()
+	if detail then
+		detail.Visible = open
 	end
 end
 
@@ -103,6 +127,7 @@ function RoleController:Start()
 		if card then
 			fillPortrait(card, role.id)
 			card.Activated:Connect(function()
+				showDetail(card)
 				if remote then
 					remote:FireServer(role.id)
 				end

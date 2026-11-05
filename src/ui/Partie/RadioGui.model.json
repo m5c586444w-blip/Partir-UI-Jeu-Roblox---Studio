@@ -8,77 +8,19 @@
   },
   "children": [
     {
-      "name": "Channel",
-      "className": "TextLabel",
-      "properties": {
-        "Text": "",
-        "Font": "RobotoMono",
-        "TextColor3": [
-          0.9098,
-          0.8941,
-          0.8471
-        ],
-        "TextScaled": true,
-        "TextWrapped": true,
-        "TextXAlignment": "Right",
-        "BackgroundTransparency": 1,
-        "BorderSizePixel": 0,
-        "Position": {
-          "UDim2": [
-            [
-              0.8,
-              0
-            ],
-            [
-              0.2,
-              0
-            ]
-          ]
-        },
-        "Size": {
-          "UDim2": [
-            [
-              0.18,
-              0
-            ],
-            [
-              0.04,
-              0
-            ]
-          ]
-        },
-        "Visible": false
-      },
-      "children": [
-        {
-          "name": "UITextSizeConstraint",
-          "className": "UITextSizeConstraint",
-          "properties": {
-            "MinTextSize": 14,
-            "MaxTextSize": 28
-          }
-        }
-      ]
-    },
-    {
-      "name": "Talking",
+      "name": "Layout_Desktop",
       "className": "Frame",
       "properties": {
-        "BackgroundTransparency": 0,
+        "BackgroundTransparency": 1.0,
         "BorderSizePixel": 0,
-        "BackgroundColor3": [
-          0.4314,
-          0.5451,
-          0.3686
-        ],
         "Position": {
           "UDim2": [
             [
-              0.955,
+              0,
               0
             ],
             [
-              0.25,
+              0,
               0
             ]
           ]
@@ -86,51 +28,176 @@
         "Size": {
           "UDim2": [
             [
-              0.015,
+              1,
               0
             ],
             [
-              0.027,
+              1,
               0
             ]
           ]
-        },
-        "Visible": false
+        }
       },
       "children": [
         {
-          "name": "UICorner",
-          "className": "UICorner",
+          "name": "Channel",
+          "className": "TextLabel",
           "properties": {
-            "CornerRadius": {
-              "UDim": [
-                0.5,
-                0
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Right",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.8,
+                  0
+                ],
+                [
+                  0.0876,
+                  0
+                ]
               ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.1688,
+                  0
+                ],
+                [
+                  0.0423,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
             }
+          ]
+        },
+        {
+          "name": "Talking",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.4314,
+              0.5451,
+              0.3686
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.9703,
+                  0
+                ],
+                [
+                  0.0967,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.0109,
+                  0
+                ],
+                [
+                  0.0211,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.5,
+                    0
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Static",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.4,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.8,
+                  0
+                ],
+                [
+                  0.139,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.1812,
+                  0
+                ],
+                [
+                  0.0076,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
           }
         }
       ]
     },
     {
-      "name": "Static",
+      "name": "Layout_Touch",
       "className": "Frame",
       "properties": {
-        "BackgroundTransparency": 0.4,
+        "BackgroundTransparency": 1.0,
         "BorderSizePixel": 0,
-        "BackgroundColor3": [
-          0.6039,
-          0.5882,
-          0.549
-        ],
         "Position": {
           "UDim2": [
             [
-              0.8,
+              0,
               0
             ],
             [
-              0.29,
+              0,
               0
             ]
           ]
@@ -138,17 +205,162 @@
         "Size": {
           "UDim2": [
             [
-              0.18,
+              1,
               0
             ],
             [
-              0.01,
+              1,
               0
             ]
           ]
         },
         "Visible": false
-      }
+      },
+      "children": [
+        {
+          "name": "Channel",
+          "className": "TextLabel",
+          "properties": {
+            "Text": "",
+            "Font": "RobotoMono",
+            "TextColor3": [
+              0.9098,
+              0.8941,
+              0.8471
+            ],
+            "TextScaled": true,
+            "TextWrapped": true,
+            "TextXAlignment": "Right",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Position": {
+              "UDim2": [
+                [
+                  0.7867,
+                  0
+                ],
+                [
+                  0.0643,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.1867,
+                  0
+                ],
+                [
+                  0.0643,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UITextSizeConstraint",
+              "className": "UITextSizeConstraint",
+              "properties": {
+                "MinTextSize": 14,
+                "MaxTextSize": 28
+              }
+            }
+          ]
+        },
+        {
+          "name": "Talking",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.4314,
+              0.5451,
+              0.3686
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.9813,
+                  0
+                ],
+                [
+                  0.0772,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.016,
+                  0
+                ],
+                [
+                  0.0386,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          },
+          "children": [
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.5,
+                    0
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Static",
+          "className": "Frame",
+          "properties": {
+            "BackgroundTransparency": 0.4,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.6039,
+              0.5882,
+              0.549
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.7867,
+                  0
+                ],
+                [
+                  0.1415,
+                  0
+                ]
+              ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.2107,
+                  0
+                ],
+                [
+                  0.0129,
+                  0
+                ]
+              ]
+            },
+            "Visible": false
+          }
+        }
+      ]
     }
   ]
 }

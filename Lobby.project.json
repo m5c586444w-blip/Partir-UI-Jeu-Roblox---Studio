@@ -75,9 +75,6 @@
       "CinematicGui": {
         "$path": "src/ui/Common/CinematicGui.model.json"
       },
-      "NotificationGui": {
-        "$path": "src/ui/Common/NotificationGui.model.json"
-      },
       "SettingsGui": {
         "$path": "src/ui/Common/SettingsGui.model.json"
       }

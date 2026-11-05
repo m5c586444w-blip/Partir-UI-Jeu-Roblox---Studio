@@ -83,6 +83,39 @@ ICONS = {
     "WPN_FlareGun": [R.format(16, 36, 50, 18, 4), P.format("M44 54 L50 82 L64 82 L60 54"), C.format(24, 45, 4)],
     "MEL_Axe": [L.format(30, 86, 62, 18), P.format("M56 16 Q80 10 86 30 L64 34 Z")],
     "MEL_Machete": [L.format(18, 82, 30, 70), P.format("M30 70 L80 18 Q90 22 84 34 L38 78 Z")],
+    # 15.7 (3) : boutons tactiles (Icon_Ctrl_<nom>), sans mot
+    "Ctrl_Interact": [C.format(50, 50, 30), P.format("M40 30 L40 66 L50 56 L58 72 L64 69 L56 53 L70 52 Z")],
+    "Ctrl_Fire": [C.format(50, 50, 26), L.format(50, 10, 50, 30), L.format(50, 70, 50, 90), L.format(10, 50, 30, 50),
+                  L.format(70, 50, 90, 50), C.format(50, 50, 3)],
+    "Ctrl_Aim": [C.format(50, 50, 30), C.format(50, 50, 12), L.format(50, 14, 50, 26), L.format(50, 74, 50, 86)],
+    "Ctrl_Reload": [P.format("M74 34 A28 28 0 1 0 78 56"), P.format("M74 18 L74 36 L56 36")],
+    "Ctrl_Sprint": [C.format(58, 18, 7), P.format("M54 30 L44 54 L58 62 L52 86"), P.format("M44 54 L30 70"),
+                    P.format("M52 36 L70 46"), P.format("M50 34 L32 40")],
+    "Ctrl_Crouch": [C.format(52, 24, 7), P.format("M50 36 L42 58 L62 62 L62 84"), P.format("M42 58 L30 84"),
+                    P.format("M48 40 L66 50")],
+    "Ctrl_Prone": [C.format(18, 58, 7), P.format("M28 62 L84 66"), P.format("M40 62 L50 74"), L.format(14, 80, 90, 80)],
+    "Ctrl_LeanL": [P.format("M60 86 L56 50 L40 24"), C.format(36, 16, 7), P.format("M44 34 L26 46"),
+                   P.format("M30 70 L14 70 M20 62 L12 70 L20 78")],
+    "Ctrl_LeanR": [P.format("M40 86 L44 50 L60 24"), C.format(64, 16, 7), P.format("M56 34 L74 46"),
+                   P.format("M70 70 L86 70 M80 62 L88 70 L80 78")],
+    "Ctrl_Light": [R.format(18, 40, 40, 20, 3), P.format("M58 36 L72 28 L72 72 L58 64 Z"), L.format(80, 40, 90, 34),
+                   L.format(82, 50, 92, 50), L.format(80, 60, 90, 66)],
+    "Ctrl_Tablet": [R.format(22, 14, 56, 72, 5), R.format(28, 22, 44, 52, 2), C.format(50, 80, 2)],
+    "Ctrl_Ping": [P.format("M50 88 L28 52 A26 26 0 1 1 72 52 Z"), C.format(50, 38, 9)],
+    # 15.7 (6) : icônes des jauges
+    "Stamina": [P.format("M56 10 L28 54 L48 54 L42 90 L72 42 L52 42 Z")],
+    "Battery": [R.format(14, 30, 64, 40, 4), R.format(78, 42, 8, 16, 1), L.format(26, 42, 26, 58), L.format(38, 42, 38, 58)],
+}
+
+# 15.7 (6) : silhouettes de BodyStatus, une par membre (Img_Body_<membre>), pleines, teintées par le jeu
+# (ImageColor3 : Ok, Hurt, Critical) ; ScaleType Stretch dans le cadre du membre.
+BODY = {
+    "Head": '<circle cx="50" cy="50" r="44"/>',
+    "Torso": '<rect x="6" y="4" width="88" height="92" rx="16"/>',
+    "ArmL": '<rect x="10" y="4" width="80" height="92" rx="36"/>',
+    "ArmR": '<rect x="10" y="4" width="80" height="92" rx="36"/>',
+    "LegL": '<rect x="10" y="4" width="80" height="92" rx="34"/>',
+    "LegR": '<rect x="10" y="4" width="80" height="92" rx="34"/>',
 }
 
 
@@ -102,7 +135,11 @@ def main():
     for icon_id, elements in ICONS.items():
         with open(os.path.join(SVG_DIR, f"Icon_{icon_id}.svg"), "w", encoding="utf-8") as f:
             f.write(svg(elements))
-    print(f"Img_FearVignette + {len(ICONS)} icônes SVG")
+    for limb, shape in BODY.items():
+        with open(os.path.join(SVG_DIR, f"Img_Body_{limb}.svg"), "w", encoding="utf-8") as f:
+            f.write('<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 100 100">'
+                    f'<g fill="#FFFFFF">{shape}</g></svg>\n')
+    print(f"Img_FearVignette + {len(ICONS)} icônes SVG + {len(BODY)} silhouettes")
 
 
 if __name__ == "__main__":

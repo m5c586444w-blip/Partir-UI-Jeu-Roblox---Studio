@@ -58,7 +58,25 @@ function CinematicController:Play(id, extra)
 	setVisible(true)
 	local subtitle = find("Subtitle")
 	if subtitle then
-		subtitle.Text = (extra and extra.text) or def.subtitle or def.screenText or ""
+		-- DÉFAUT (15.7) : un long sous-titre est montré phrase par phrase, réparties sur la durée
+		local text = (extra and extra.text) or def.subtitle or def.screenText or ""
+		local sentences = {}
+		for sentence in string.gmatch(text .. " ", "(.-[%.%!%?…]+)%s+") do
+			table.insert(sentences, sentence)
+		end
+		if #sentences <= 1 then
+			subtitle.Text = text
+		else
+			task.spawn(function()
+				for _, sentence in sentences do
+					if playing == nil or playing.token ~= token then
+						return
+					end
+					subtitle.Text = sentence
+					task.wait(def.duration / #sentences)
+				end
+			end)
+		end
 	end
 	local skip = find("Skip")
 	local votes = find("Skip/Votes")

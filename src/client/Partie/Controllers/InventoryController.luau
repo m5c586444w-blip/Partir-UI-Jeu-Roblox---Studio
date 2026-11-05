@@ -122,11 +122,27 @@ function InventoryController:Start()
 			slot.InputBegan:Connect(function(input)
 				local click = input.UserInputType == Enum.UserInputType.MouseButton1
 					or input.UserInputType == Enum.UserInputType.Touch
-				if click and equipRemote then
+				if not click then
+					return
+				end
+				-- DÉFAUT (15.7, téléphone) : toucher l'emplacement déjà choisi ouvre ou ferme le sac
+				local inv = Util.decode(player:GetAttribute("inventory"), nil)
+				if input.UserInputType == Enum.UserInputType.Touch and inv and inv.selected == i then
+					InventoryController:ToggleBag()
+				elseif equipRemote then
 					equipRemote:FireServer(i)
 				end
 			end)
 		end
+	end
+	-- 15.7 : bouton Fermer du sac
+	local close = Util.findUI(root, "InventoryGui/Bag/Close")
+	if close then
+		close.Activated:Connect(function()
+			if bag then
+				bag.Visible = false
+			end
+		end)
 	end
 	player:GetAttributeChangedSignal("inventory"):Connect(refresh)
 	refresh()

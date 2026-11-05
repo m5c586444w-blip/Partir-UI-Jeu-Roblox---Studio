@@ -21,7 +21,7 @@ local ui = {}
 local lastChange = 0
 local hidden = false
 
-local FADING = { "BodyStatus", "Stamina", "Battery", "Ammo", "HeldItem" }
+local FADING = { "BodyStatus", "Stamina", "StaminaIcon", "Battery", "BatteryIcon", "Ammo", "HeldItem" }
 
 local function find(path)
 	return Util.findUI(root, "HUDGui/" .. path)
@@ -155,7 +155,20 @@ function HUDController:Start()
 	for _, limb in PlayerConfig.Limbs do
 		ui.limbs[limb] = find("BodyStatus/" .. limb)
 	end
-	for _, name in { "BodyStatus", "BleedIcon", "Stamina", "Battery", "Ammo", "HeldItem", "Crosshair", "FearVignette" } do
+	for _, name in
+		{
+			"BodyStatus",
+			"BleedIcon",
+			"Stamina",
+			"StaminaIcon",
+			"Battery",
+			"BatteryIcon",
+			"Ammo",
+			"HeldItem",
+			"Crosshair",
+			"FearVignette",
+		}
+	do
 		ui[name] = find(name)
 	end
 	local watched = { "bleed", "stamina", "lightBattery", "heldItem", "ammo", "ammoReserve", "role" }

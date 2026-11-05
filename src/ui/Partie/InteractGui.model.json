@@ -8,24 +8,19 @@
   },
   "children": [
     {
-      "name": "Prompt",
+      "name": "Layout_Desktop",
       "className": "Frame",
       "properties": {
-        "BackgroundTransparency": 0.35,
+        "BackgroundTransparency": 1.0,
         "BorderSizePixel": 0,
-        "BackgroundColor3": [
-          0.0549,
-          0.0588,
-          0.051
-        ],
         "Position": {
           "UDim2": [
             [
-              0.5,
+              0,
               0
             ],
             [
-              0.66,
+              0,
               0
             ]
           ]
@@ -33,128 +28,19 @@
         "Size": {
           "UDim2": [
             [
-              0.18,
+              1,
               0
             ],
             [
-              0.08,
+              1,
               0
             ]
           ]
-        },
-        "Visible": false,
-        "AnchorPoint": [
-          0.5,
-          0.5
-        ]
+        }
       },
       "children": [
         {
-          "name": "KeyHint",
-          "className": "TextLabel",
-          "properties": {
-            "Text": "",
-            "Font": "RobotoMono",
-            "TextColor3": [
-              0.9098,
-              0.8941,
-              0.8471
-            ],
-            "TextScaled": true,
-            "TextWrapped": true,
-            "TextXAlignment": "Center",
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "Position": {
-              "UDim2": [
-                [
-                  0.03,
-                  0
-                ],
-                [
-                  0.12,
-                  0
-                ]
-              ]
-            },
-            "Size": {
-              "UDim2": [
-                [
-                  0.2,
-                  0
-                ],
-                [
-                  0.6,
-                  0
-                ]
-              ]
-            }
-          },
-          "children": [
-            {
-              "name": "UITextSizeConstraint",
-              "className": "UITextSizeConstraint",
-              "properties": {
-                "MinTextSize": 14,
-                "MaxTextSize": 28
-              }
-            }
-          ]
-        },
-        {
-          "name": "ActionText",
-          "className": "TextLabel",
-          "properties": {
-            "Text": "",
-            "Font": "RobotoMono",
-            "TextColor3": [
-              0.9098,
-              0.8941,
-              0.8471
-            ],
-            "TextScaled": true,
-            "TextWrapped": true,
-            "TextXAlignment": "Left",
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "Position": {
-              "UDim2": [
-                [
-                  0.26,
-                  0
-                ],
-                [
-                  0.12,
-                  0
-                ]
-              ]
-            },
-            "Size": {
-              "UDim2": [
-                [
-                  0.71,
-                  0
-                ],
-                [
-                  0.6,
-                  0
-                ]
-              ]
-            }
-          },
-          "children": [
-            {
-              "name": "UITextSizeConstraint",
-              "className": "UITextSizeConstraint",
-              "properties": {
-                "MinTextSize": 14,
-                "MaxTextSize": 28
-              }
-            }
-          ]
-        },
-        {
-          "name": "Progress",
+          "name": "Prompt",
           "className": "Frame",
           "properties": {
             "BackgroundTransparency": 0.35,
@@ -167,11 +53,11 @@
             "Position": {
               "UDim2": [
                 [
-                  0.03,
+                  0.5,
                   0
                 ],
                 [
-                  0.8,
+                  0.707,
                   0
                 ]
               ]
@@ -179,36 +65,46 @@
             "Size": {
               "UDim2": [
                 [
-                  0.94,
+                  0.2188,
                   0
                 ],
                 [
-                  0.12,
+                  0.0846,
                   0
                 ]
               ]
-            }
+            },
+            "Visible": false,
+            "AnchorPoint": [
+              0.5,
+              0.5
+            ]
           },
           "children": [
             {
-              "name": "Fill",
-              "className": "Frame",
+              "name": "KeyHint",
+              "className": "TextLabel",
               "properties": {
-                "BackgroundTransparency": 0,
-                "BorderSizePixel": 0,
-                "BackgroundColor3": [
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
                   0.9098,
                   0.8941,
                   0.8471
                 ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
                 "Position": {
                   "UDim2": [
                     [
-                      0,
+                      0.0286,
                       0
                     ],
                     [
-                      0,
+                      0.1429,
                       0
                     ]
                   ]
@@ -216,37 +112,453 @@
                 "Size": {
                   "UDim2": [
                     [
-                      1,
+                      0.1286,
                       0
                     ],
                     [
-                      1,
+                      0.6071,
                       0
                     ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ActionText",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Left",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.1786,
+                      0
+                    ],
+                    [
+                      0.1071,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.7929,
+                      0
+                    ],
+                    [
+                      0.6786,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Progress",
+              "className": "Frame",
+              "properties": {
+                "BackgroundTransparency": 0.35,
+                "BorderSizePixel": 0,
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ],
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.0286,
+                      0
+                    ],
+                    [
+                      0.8214,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9429,
+                      0
+                    ],
+                    [
+                      0.0893,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "Fill",
+                  "className": "Frame",
+                  "properties": {
+                    "BackgroundTransparency": 0,
+                    "BorderSizePixel": 0,
+                    "BackgroundColor3": [
+                      0.9098,
+                      0.8941,
+                      0.8471
+                    ],
+                    "Position": {
+                      "UDim2": [
+                        [
+                          0,
+                          0
+                        ],
+                        [
+                          0,
+                          0
+                        ]
+                      ]
+                    },
+                    "Size": {
+                      "UDim2": [
+                        [
+                          1,
+                          0
+                        ],
+                        [
+                          1,
+                          0
+                        ]
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "UIAspectRatioConstraint",
+              "className": "UIAspectRatioConstraint",
+              "properties": {
+                "AspectRatio": 5.0
+              }
+            },
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
                   ]
                 }
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Layout_Touch",
+      "className": "Frame",
+      "properties": {
+        "BackgroundTransparency": 1.0,
+        "BorderSizePixel": 0,
+        "Position": {
+          "UDim2": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
         },
-        {
-          "name": "UIAspectRatioConstraint",
-          "className": "UIAspectRatioConstraint",
-          "properties": {
-            "AspectRatio": 4.0
-          }
+        "Size": {
+          "UDim2": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
         },
+        "Visible": false
+      },
+      "children": [
         {
-          "name": "UICorner",
-          "className": "UICorner",
+          "name": "Prompt",
+          "className": "Frame",
           "properties": {
-            "CornerRadius": {
-              "UDim": [
-                0.0,
-                4
+            "BackgroundTransparency": 0.35,
+            "BorderSizePixel": 0,
+            "BackgroundColor3": [
+              0.0549,
+              0.0588,
+              0.051
+            ],
+            "Position": {
+              "UDim2": [
+                [
+                  0.5,
+                  0
+                ],
+                [
+                  0.7042,
+                  0
+                ]
               ]
+            },
+            "Size": {
+              "UDim2": [
+                [
+                  0.36,
+                  0
+                ],
+                [
+                  0.0965,
+                  0
+                ]
+              ]
+            },
+            "Visible": false,
+            "AnchorPoint": [
+              0.5,
+              0.5
+            ]
+          },
+          "children": [
+            {
+              "name": "KeyHint",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Center",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.0148,
+                      0
+                    ],
+                    [
+                      0.0667,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.0741,
+                      0
+                    ],
+                    [
+                      0.7333,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ActionText",
+              "className": "TextLabel",
+              "properties": {
+                "Text": "",
+                "Font": "RobotoMono",
+                "TextColor3": [
+                  0.9098,
+                  0.8941,
+                  0.8471
+                ],
+                "TextScaled": true,
+                "TextWrapped": true,
+                "TextXAlignment": "Left",
+                "BackgroundTransparency": 1,
+                "BorderSizePixel": 0,
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.1037,
+                      0
+                    ],
+                    [
+                      0.0333,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.8741,
+                      0
+                    ],
+                    [
+                      0.7667,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "UITextSizeConstraint",
+                  "className": "UITextSizeConstraint",
+                  "properties": {
+                    "MinTextSize": 14,
+                    "MaxTextSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Progress",
+              "className": "Frame",
+              "properties": {
+                "BackgroundTransparency": 0.35,
+                "BorderSizePixel": 0,
+                "BackgroundColor3": [
+                  0.0549,
+                  0.0588,
+                  0.051
+                ],
+                "Position": {
+                  "UDim2": [
+                    [
+                      0.0148,
+                      0
+                    ],
+                    [
+                      0.8333,
+                      0
+                    ]
+                  ]
+                },
+                "Size": {
+                  "UDim2": [
+                    [
+                      0.9704,
+                      0
+                    ],
+                    [
+                      0.1,
+                      0
+                    ]
+                  ]
+                }
+              },
+              "children": [
+                {
+                  "name": "Fill",
+                  "className": "Frame",
+                  "properties": {
+                    "BackgroundTransparency": 0,
+                    "BorderSizePixel": 0,
+                    "BackgroundColor3": [
+                      0.9098,
+                      0.8941,
+                      0.8471
+                    ],
+                    "Position": {
+                      "UDim2": [
+                        [
+                          0,
+                          0
+                        ],
+                        [
+                          0,
+                          0
+                        ]
+                      ]
+                    },
+                    "Size": {
+                      "UDim2": [
+                        [
+                          1,
+                          0
+                        ],
+                        [
+                          1,
+                          0
+                        ]
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "UIAspectRatioConstraint",
+              "className": "UIAspectRatioConstraint",
+              "properties": {
+                "AspectRatio": 9.0
+              }
+            },
+            {
+              "name": "UICorner",
+              "className": "UICorner",
+              "properties": {
+                "CornerRadius": {
+                  "UDim": [
+                    0.0,
+                    4
+                  ]
+                }
+              }
             }
-          }
+          ]
         }
       ]
     }

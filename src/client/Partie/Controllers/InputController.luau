@@ -217,7 +217,65 @@ local function onInput(input, processed, isDown)
 	end
 end
 
--- MobileControlsGui : un bouton par action (15.4), visible seulement sur écran tactile
+-- MobileControlsGui : un bouton par action (15.4), visible seulement sur écran tactile.
+-- 15.7 (3) : icônes, au plus 6 visibles ; Viser, Tirer, Recharger seulement arme en main ; Utiliser seulement
+-- près d'une invite. DÉFAUT : ordre de priorité ci-dessous (les 6 premiers voulus) ; accroupi, les deux
+-- boutons pour se pencher remplacent Tablette et Signaler ; tous cachés quand le sac, la tablette ou un
+-- document est ouvert (15.7 : sac ouvert → seul Fermer reste).
+local TOUCH_MAX = 6 -- constante (15.7, 3)
+local mobileButtons = {}
+
+local function wantedButtons()
+	local wanted = {}
+	if activePrompt then
+		table.insert(wanted, "Interact")
+	end
+	local held = player:GetAttribute("heldItem")
+	local weapon = held and WeaponConfig.Weapons[held]
+	if weapon and not weapon.melee then
+		for _, name in { "Fire", "Aim", "Reload" } do
+			table.insert(wanted, name)
+		end
+	elseif weapon then
+		table.insert(wanted, "Fire")
+	end
+	local base = if stance == "Crouch"
+		then { "Sprint", "Crouch", "Prone", "LeanL", "LeanR", "Light", "Tablet", "Ping" }
+		else { "Sprint", "Crouch", "Prone", "Light", "Tablet", "Ping" }
+	for _, name in base do
+		table.insert(wanted, name)
+	end
+	return wanted
+end
+
+local function windowOpen(root)
+	for _, path in { "InventoryGui/Bag", "TabletGui/Device", "DocumentGui/Paper", "DocumentGui/Tape" } do
+		local el = Util.findUI(root, path)
+		if el and el.Visible then
+			return true
+		end
+	end
+	return false
+end
+
+local function refreshMobile(root)
+	if next(mobileButtons) == nil then
+		return
+	end
+	local shown = {}
+	if not windowOpen(root) then
+		for i, name in wantedButtons() do
+			if i > TOUCH_MAX then
+				break
+			end
+			shown[name] = true
+		end
+	end
+	for name, button in mobileButtons do
+		button.Visible = shown[name] == true
+	end
+end
+
 local function bindMobile()
 	if not UserInputService.TouchEnabled then
 		return
@@ -226,24 +284,26 @@ local function bindMobile()
 	if gui == nil then
 		return
 	end
-	local map = {
-		Sprint = "Sprint",
-		Crouch = "Crouch",
-		Prone = "Prone",
-		Interact = "Interact",
-		Aim = "Aim",
-		Fire = "Fire",
-		Reload = "Reload",
-		Light = "Light",
-		Tablet = "Tablet",
-		Ping = "Ping",
-		LeanL = "LeanL",
-		LeanR = "LeanR",
-	}
-	for buttonName, actionName in map do
-		local button = Util.findUI(gui.Parent, "MobileControlsGui/" .. buttonName)
+	local root = gui.Parent
+	for _, actionName in
+		{
+			"Sprint",
+			"Crouch",
+			"Prone",
+			"Interact",
+			"Aim",
+			"Fire",
+			"Reload",
+			"Light",
+			"Tablet",
+			"Ping",
+			"LeanL",
+			"LeanR",
+		}
+	do
+		local button = Util.findUI(root, "MobileControlsGui/" .. actionName)
 		if button then
-			button.Visible = true
+			mobileButtons[actionName] = button
 			local action = ACTIONS[actionName]
 			-- courir et viser : maintien ; les autres : appui
 			button.InputBegan:Connect(function(input)
@@ -258,6 +318,13 @@ local function bindMobile()
 			end)
 		end
 	end
+	-- DÉFAUT : recalcul régulier (invite proche, objet en main, fenêtres ouvertes)
+	task.spawn(function()
+		while true do
+			refreshMobile(root)
+			task.wait(PlayerConfig.Technical.Tick)
+		end
+	end)
 end
 
 function InputController:Init(all)
