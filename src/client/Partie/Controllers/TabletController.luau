@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
+local CinematicConfig = require(Config:WaitForChild("CinematicConfig"))
 local ItemConfig = require(Config:WaitForChild("ItemConfig"))
 local LoreConfig = require(Config:WaitForChild("LoreConfig"))
 local MapConfig = require(Config:WaitForChild("MapConfig"))
@@ -17,6 +18,7 @@ local player = Players.LocalPlayer
 local root = nil
 local remote = nil
 local state = nil
+local video = nil -- vidéo en cours dans la tablette (19.5, C23) : { id }
 
 local PAGES = {
 	Btn_Map = "Page_Map",
@@ -150,7 +152,7 @@ end
 local function refresh()
 	local device = Util.findUI(root, "TabletGui/Device")
 	if device then
-		device.Visible = player:GetAttribute("tabletOpen") == true
+		device.Visible = player:GetAttribute("tabletOpen") == true or video ~= nil
 	end
 	local battery = find("BatteryText")
 	if battery then
@@ -158,6 +160,43 @@ local function refresh()
 	end
 	refreshMap()
 	refreshNetwork()
+end
+
+-- 19.5 (C23) : CS_05 joue dans la tablette, page Journal (Reader) ; le joueur reste dans le monde
+-- et peut fermer à tout moment. DÉFAUT : chaque plan dure duration / shots ; Title = horodatage,
+-- Body = la réplique au plan 3 puis le texte d'écran au dernier plan.
+local function playVideo(id)
+	local def = CinematicConfig.Cinematics[id]
+	local mine = { id = id }
+	video = mine
+	showPage("Page_Journal")
+	local title = find("Screen/Pages/Page_Journal/Reader/Title")
+	local body = find("Screen/Pages/Page_Journal/Reader/Body")
+	if title then
+		title.Text = def.timestamp or ""
+	end
+	if body then
+		body.Text = ""
+	end
+	refresh()
+	local shotTime = def.duration / def.shots
+	task.spawn(function()
+		for shot = 1, def.shots do
+			if video ~= mine then
+				return
+			end
+			if body and shot == def.subtitleShot then
+				body.Text = def.subtitle
+			elseif body and shot == def.screenTextShot then
+				body.Text = def.screenText
+			end
+			task.wait(shotTime)
+		end
+		if video == mine then
+			video = nil
+			refresh()
+		end
+	end)
 end
 
 function TabletController:Start()
@@ -179,7 +218,20 @@ function TabletController:Start()
 	local close = find("Close")
 	if close and remote then
 		close.Activated:Connect(function()
+			if video then
+				video = nil
+				refresh()
+			end
 			remote:FireServer("Device", "Close")
+		end)
+	end
+	local cinematics = Util.getRemote("RE_PlayCinematic")
+	if cinematics then
+		cinematics.OnClientEvent:Connect(function(action, id)
+			local def = action == "Play" and CinematicConfig.Cinematics[id]
+			if def and def.inTablet then
+				playVideo(id)
+			end
 		end)
 	end
 	local send = find("Screen/Pages/Page_Network/Send")

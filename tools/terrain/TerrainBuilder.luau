@@ -169,18 +169,70 @@ local function buildHeights()
 end
 
 -- 4. gorges : Ape Canyon (150, de (2 300, −600) à (3 000, −2 200)) ; Lava Canyon (70, le long de R2 entre Z = 1 600 et 2 600)
+-- 19.5 (C40) : profil en trapèze — largeur `top` au bord, `bottom` au fond ; parois à plus de 60°
+local function carveGorge(center, top, bottom, rimY, depth, mat)
+	local floor = rimY - depth
+	local halfTop, halfBottom = top / 2, math.min(bottom, top) / 2
+	for i = toCell(center.X - halfTop), toCell(center.X + halfTop) do
+		for j = toCell(center.Y - halfTop), toCell(center.Y + halfTop) do
+			local d = (Vector2.new(toWorld(i), toWorld(j)) - center).Magnitude
+			if d <= halfTop then
+				local h = floor
+				if d > halfBottom and halfTop > halfBottom then
+					h = floor + (d - halfBottom) / (halfTop - halfBottom) * depth
+				end
+				if h < height[i][j] then
+					height[i][j] = h
+					material[i][j] = mat
+				end
+			end
+		end
+	end
+end
+
+-- contrôle : une paroi à moins de 60° est signalée (à retoucher à la main en B1)
+local function checkWalls(name, top, bottom, depth)
+	local run = (top - math.min(bottom, top)) / 2
+	local degrees = if run <= 0 then 90 else math.deg(math.atan(depth / run)) -- constante (angle droit)
+	if degrees < T.GorgeMinWallDegrees then
+		warn(("TerrainBuilder : parois de %s à %.0f° (< %d°)"):format(name, degrees, T.GorgeMinWallDegrees))
+	end
+end
+
 local function buildGorges()
 	local ape = T.Gorges.ApeCanyon
+	checkWalls("Ape Canyon", ape.topWidth, ape.bottomWidth, ape.depth)
+	-- resserrement à P05s : la largeur passe de topWidth à narrowWidth sur GorgeNarrowTaperFactor × topWidth
+	local narrow = MapConfig.Places[ape.narrowAt]
+	local narrowPoint = Vector2.new(narrow.pos.X, narrow.pos.Z)
+	local axis = (ape.to - ape.from).Unit
+	local narrowT = (narrowPoint - ape.from):Dot(axis)
+	local taper = ape.topWidth * T.GorgeNarrowTaperFactor
+	-- les hauteurs du bord sont lues avant de creuser (sinon chaque point creuserait sous le précédent)
+	local cuts = {}
 	local count = math.ceil((ape.to - ape.from).Magnitude / CELL)
 	for k = 0, count do
 		local p = ape.from:Lerp(ape.to, k / count)
-		stamp(p, T.ApeCanyonHalfWidth, T.ApeCanyonHalfWidth, getH(p.X, p.Y) - ape.depth, "Basalt")
+		local along = math.abs((p - ape.from):Dot(axis) - narrowT)
+		local w = math.clamp(along / taper, 0, 1)
+		local top = ape.narrowWidth + (ape.topWidth - ape.narrowWidth) * w
+		table.insert(
+			cuts,
+			{ at = p, top = top, bottom = math.min(ape.bottomWidth, top), rim = getH(p.X, p.Y), depth = ape.depth }
+		)
 	end
 	local lava = T.Gorges.LavaCanyon
+	checkWalls("Lava Canyon", lava.topWidth, lava.bottomWidth, lava.depth)
 	for _, p in samplePath(MapConfig.Paths[lava.path], CELL) do
 		if p.Y >= lava.fromZ and p.Y <= lava.toZ then
-			stamp(p, T.LavaCanyonHalfWidth, T.LavaCanyonHalfWidth, getH(p.X, p.Y) - lava.depth, "Basalt")
+			table.insert(
+				cuts,
+				{ at = p, top = lava.topWidth, bottom = lava.bottomWidth, rim = getH(p.X, p.Y), depth = lava.depth }
+			)
 		end
+	end
+	for _, c in cuts do
+		carveGorge(c.at, c.top, c.bottom, c.rim, c.depth, T.Materials.GorgeCliff)
 	end
 end
 
@@ -215,11 +267,10 @@ local function buildRivers()
 	end
 end
 
--- 6. routes et sentiers : pente maximale 8 % (routes) et 15 % (sentiers)
--- TODO(BIBLE): les lacets (T3, F01) ne sont pas générés : la pente est seulement bornée le long du tracé
+-- 6. routes et sentiers : pente maximale 8 % (routes) et 15 % (sentiers) ; les lacets à part (C42)
 local function buildRoads()
 	for _, path in MapConfig.Paths do
-		if path.kind ~= "River" and (path.width or 0) > 0 then
+		if path.kind ~= "River" and path.kind ~= "Switchbacks" and (path.width or 0) > 0 then
 			local maxSlope = if path.kind == "Road" then T.MaxRoadSlope else T.MaxTrailSlope
 			local mat = if path.surface == "Asphalt"
 				then T.Materials.Road
@@ -250,6 +301,34 @@ local function buildCliff()
 			for j = toCell(f.line.z), toCell(f.line.z + f.height) do
 				height[i][j] = math.min(height[i][j], top - f.height)
 				material[i][j] = T.Materials.Cliff
+			end
+		end
+	end
+end
+
+-- 19.5 (C42) : lacets de T3 sous F01 — segments droits, hauteur linéaire de fromY à toY sur la longueur
+local function buildSwitchbacks()
+	for _, path in MapConfig.Paths do
+		if path.kind == "Switchbacks" then
+			local points = {}
+			local total = 0
+			for k, p in path.points do
+				points[k] = Vector2.new(p[1], p[2])
+				if k > 1 then
+					total += (points[k] - points[k - 1]).Magnitude
+				end
+			end
+			local done = 0
+			for k = 2, #points do
+				local a, b = points[k - 1], points[k]
+				local length = (b - a).Magnitude
+				local count = math.max(1, math.ceil(length / CELL))
+				for s = 0, count do
+					local t = s / count
+					local y = path.fromY + (path.toY - path.fromY) * (done + length * t) / total
+					stamp(a:Lerp(b, t), path.width / 2, path.width, y, T.Materials.Trail)
+				end
+				done += length
 			end
 		end
 	end
@@ -430,6 +509,7 @@ function TerrainBuilder.Build()
 	flattenPlaces()
 	buildRoads()
 	buildCliff()
+	buildSwitchbacks()
 	buildLakes()
 	print("TerrainBuilder : écriture du terrain")
 	writeTerrain()

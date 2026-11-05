@@ -4,6 +4,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
+local CinematicConfig = require(Config:WaitForChild("CinematicConfig"))
 local LoreConfig = require(Config:WaitForChild("LoreConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
@@ -39,7 +40,8 @@ function NotificationController:Show(text)
 end
 
 function NotificationController:ShowMessage(key, params)
-	local text = LoreConfig.Messages[key]
+	-- clés : messages de 4.6, ou identifiant de cinématique pour le message radio de 19.5 (C24)
+	local text = LoreConfig.Messages[key] or CinematicConfig.OutOfRangeRadioText[key]
 	if text == nil then
 		warn("NotificationController : message inconnu " .. tostring(key))
 		return

@@ -6,6 +6,8 @@ local WeaponConfig = {}
 local WHOLE_MAP = math.ceil(8000 * math.sqrt(2))
 
 -- 8.2 : armes. fireInterval = 1 tir toutes les n s ; reload = s par munition
+-- 19.5 (C12) : au départ, armes chargées à pleine capacité (magazine, sinon ammo), aucune réserve sauf
+-- startReserve. Seule réserve possible ensuite : la boîte de munitions A1–A5.
 WeaponConfig.Weapons = {
 	WPN_Rifle = {
 		name = "Fusil à verrou",
@@ -33,20 +35,22 @@ WeaponConfig.Weapons = {
 		fireInterval = 1.0,
 		reloadPerRound = 0.9,
 		pellets = 8,
-		damagePerPellet = 18, -- jusqu'à 15 studs, puis −70 % à 40 studs
+		-- 19.5 (C13) : 8 plombs × 18 jusqu'à 15 studs ; baisse linéaire jusqu'à 30 % à 40 studs ; 0 au-delà de 60
+		damagePerPellet = 18,
 		fullDamageRange = 15,
 		reducedRange = 40,
 		reducedFactor = 0.3,
-		-- TODO(BIBLE): forme de la baisse entre 15 et 40 studs (linéaire en attendant) et portée au-delà de 40
+		zeroBeyond = 60,
 		friendlyPerPellet = 15,
 		noise = WHOLE_MAP,
-		-- TODO(BIBLE): écart des plombs (degrés). PROVISOIRE : 0 = tous dans l'axe
-		spreadDegrees = 0,
+		spreadDegrees = 6, -- 19.5 (C13) : cône de 6°
 	},
 	WPN_FlareGun = {
 		name = "Pistolet lance-fusées",
 		owner = "Pyrotechnician",
 		ammo = 3,
+		magazine = 1, -- 19.5 (C12) : 1 fusée chargée + 2 en réserve (AMMO_WPN_FlareGun)
+		startReserve = 2,
 		reloadTime = 2,
 		damage = 20,
 		blindDuration = 3,
@@ -54,6 +58,7 @@ WeaponConfig.Weapons = {
 		friendlyDamage = 30, -- + brûlure
 		noise = 1200,
 		-- TODO(BIBLE): cadence du pistolet lance-fusées (« — » dans 8.2) et effet de la brûlure sur un coéquipier
+		-- (C14 ; les munitions sont réglées par C12)
 	},
 	MEL_Axe = {
 		name = "Hache",
@@ -73,7 +78,8 @@ WeaponConfig.Weapons = {
 		grabReleaseHits = 2, -- deux coups = lâcher
 		friendlyDamage = 20,
 		noise = 30,
-		-- TODO(BIBLE): qui porte la machette au départ, ou où se trouve-t-elle ?
+		-- 19.5 (C15) : pas d'objet de départ ; une seule, fixe, dans la cabane du chantier P10
+		-- (MapConfig.FixedItems), prenable par tous
 	},
 }
 

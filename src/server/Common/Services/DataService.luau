@@ -63,6 +63,10 @@ local function buildDefaultData()
 		notebookPages = Util.deepCopy(ProgressionConfig.DefaultNotebookPages),
 		museumRead = museumRead,
 		nightmareUnlocked = false,
+		-- 19.5 (C38) : accessoires débloqués et portés (DÉFAUT : champs ajoutés à 16.4)
+		evidenceBOut = 0,
+		accessories = {},
+		equippedAccessories = {},
 		-- 17.2 : les défauts PC / mobile sont appliqués par le client (SettingsController) ; seules les
 		-- valeurs changées par le joueur sont enregistrées
 		settings = {},
@@ -131,7 +135,17 @@ end
 
 -- DÉFAUT : quelques compteurs publiés en attributs pour l'interface (lecture seule côté client)
 local PUBLISHED = { "xp", "plays", "survivals", "nightmareUnlocked" }
-local PUBLISHED_JSON = { "settings", "evidence", "notebookPages", "museumRead", "skins", "equipped", "endings" }
+local PUBLISHED_JSON = {
+	"settings",
+	"evidence",
+	"notebookPages",
+	"museumRead",
+	"skins",
+	"equipped",
+	"endings",
+	"accessories",
+	"equippedAccessories",
+}
 local function publishAttributes(player, data)
 	for _, key in PUBLISHED do
 		player:SetAttribute(key, data[key])

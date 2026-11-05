@@ -150,6 +150,8 @@ ItemConfig.Items = {
 	AMMO_WPN_Rifle = { name = "Balles de fusil", weight = 0, stack = 99, ammoFor = "WPN_Rifle" },
 	AMMO_WPN_Revolver = { name = "Balles de revolver", weight = 0, stack = 99, ammoFor = "WPN_Revolver" },
 	AMMO_WPN_Shotgun = { name = "Cartouches", weight = 0, stack = 99, ammoFor = "WPN_Shotgun" },
+	-- 19.5 (C12) : réserve du pistolet lance-fusées (« 2 en réserve »)
+	AMMO_WPN_FlareGun = { name = "Fusées", weight = 0, stack = 99, ammoFor = "WPN_FlareGun" },
 }
 -- TODO(BIBLE): poids des preuves (carte mémoire, moulage, etc.) et des munitions. PROVISOIRE : 0 kg.
 -- DÉFAUT : pile de 99 munitions (valeur technique de rangement).
@@ -215,8 +217,15 @@ ItemConfig.FireVisuals = {
 	CampfireAhead = 3, -- devant le joueur
 }
 
--- TODO(BIBLE): distance et vitesse d'un lancer (pierre, branche). PROVISOIRE : 40 studs/s, 1 s de vol.
-ItemConfig.Throw = { Speed = 40, Flight = 1 }
+-- 19.5 (C10) : lancer d'un joueur — portée maximale 60 studs, 70 studs/s, trajectoire balistique,
+-- bruit 50 à l'impact
+ItemConfig.Throw = {
+	MaxRange = 60,
+	Speed = 70,
+	ImpactNoise = 50,
+	SimStep = 0.05, -- DÉFAUT (technique) : pas du calcul de la trajectoire (s)
+	MaxFlight = 5, -- DÉFAUT (technique) : durée maximale simulée (s)
+}
 -- TODO(BIBLE): bruit du piège à bruit du Pyrotechnicien (boîte de conserve + corde). Sans valeur : pas de piège.
 ItemConfig.NoiseTrapRadius = nil
 

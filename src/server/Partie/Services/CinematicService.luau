@@ -20,6 +20,7 @@ local CinematicService = {}
 CinematicService.Finished = Signal.new() -- (id, skipped)
 
 local remote = nil
+local radioOutOfRange -- défini plus bas
 local current = nil -- { id, viewers = {Player}, votes = {[Player]=true}, done = Signal }
 
 local function viewersFor(id, explicit)
@@ -39,6 +40,33 @@ local function viewersFor(id, explicit)
 		return list
 	end
 	return Players:GetPlayers()
+end
+
+-- 19.5 (C24) : les joueurs hors du rayon d'une cinématique de lieu reçoivent un message radio,
+-- dit par le personnage du joueur le plus proche du lieu (parmi ceux qui la voient)
+radioOutOfRange = function(id, viewers)
+	local def = CinematicConfig.Cinematics[id]
+	local text = CinematicConfig.OutOfRangeRadioText[id]
+	if def.scope ~= "Place" or text == nil or #viewers == 0 then
+		return
+	end
+	local place = MapConfig.Places[def.place]
+	local speaker, best = nil, math.huge
+	for _, viewer in viewers do
+		local root = Util.characterRoot(viewer)
+		local distance = if root then (root.Position - place.pos).Magnitude else math.huge
+		if distance < best then
+			speaker, best = viewer, distance
+		end
+	end
+	if speaker == nil then
+		return
+	end
+	for _, player in Players:GetPlayers() do
+		if not table.find(viewers, player) and not player:GetAttribute("isDead") then
+			Util.notify(player, id, { player = speaker.DisplayName })
+		end
+	end
 end
 
 local function finish(skipped)
@@ -67,10 +95,20 @@ function CinematicService:PlayAndWait(id, players, extra)
 		warn("CinematicService : cinématique inconnue " .. tostring(id))
 		return
 	end
+	-- 19.5 (C23) : vidéo dans la tablette — ni caméra, ni file d'attente, ni invulnérabilité
+	if def.inTablet then
+		for _, player in viewersFor(id, players) do
+			if remote then
+				remote:FireClient(player, "Play", id, extra)
+			end
+		end
+		return
+	end
 	while current ~= nil do
 		current.done:Wait()
 	end
 	local viewers = viewersFor(id, players)
+	radioOutOfRange(id, viewers)
 	if #viewers == 0 then
 		return
 	end

@@ -95,7 +95,15 @@ CreatureConfig.Behaviors = {
 	BHV_Stalk = { baseScore = 0.45, minDuration = 45, minDistance = 50, maxDistance = 80 },
 	BHV_Ambush = { baseScore = 0.4, maxDuration = 90, minDistance = 20, maxDistance = 30 },
 	BHV_Attack = { baseScore = 0.9, minDuration = 0 },
-	BHV_Throw = { baseScore = 0.5, minDuration = 20, minDistance = 20, maxDistance = 120 },
+	-- 19.5 (C10) : 1 lancer toutes les 3 à 5 s hors siège
+	BHV_Throw = {
+		baseScore = 0.5,
+		minDuration = 20,
+		minDistance = 20,
+		maxDistance = 120,
+		intervalMin = 3,
+		intervalMax = 5,
+	},
 	BHV_Sabotage = { baseScore = 0.6, minDuration = 30, tightGroupFor = 120 },
 	BHV_Drag = { baseScore = 0.8, reserves = { "P20", "P04", "P07b" } }, -- rive du lac, sous les troncs, repaire
 	BHV_Retreat = { baseScore = 0.6, minDuration = 30, maxDuration = 60, healthLost = 0.15, window = 10 },
@@ -107,8 +115,8 @@ CreatureConfig.Behaviors = {
 -- DÉFAUT d'interprétation : baseScore = score quand la condition de 9.5 est pleinement remplie
 -- (la bible ne donne que des conditions) ; à régler en phase B3.
 CreatureConfig.SwitchFactor = 1.25 -- garde le comportement sauf si un autre dépasse son score ×1,25
--- TODO(BIBLE): 9.1 : position des 3 « arbres à pierres » fixes. Sans eux, BHV_Mark utilise les Part
--- taguées « StoneTree » posées à la main.
+-- DÉFAUT (C28) : les 3 « arbres à pierres » fixes (9.1) sont des Part taguées « StoneTree », posées à
+-- la main dans Studio en B1 (placement de décor).
 CreatureConfig.StoneTreeTag = "StoneTree"
 
 -- 9.6 : échelle d'intimidation (8 crans)
@@ -137,6 +145,7 @@ CreatureConfig.Target = {
 	Interval = 2,
 	IsolationDistance = 60,
 	BleedBonus = 0.3,
+	CarrierBonus = 0.5, -- 19.5 (C6) : score de cible du porteur +0,5
 	NoiseWindow = 10,
 	NoiseDivisor = 100,
 	LampOn = 1,
@@ -183,13 +192,24 @@ CreatureConfig.Attacks = {
 	ATK_Strike = { range = 7, signal = 0.6, damage = 35, knockback = true, sound = "SFX_Growl_Close" },
 	ATK_Charge = { minRange = 15, maxRange = 40, signal = 0.8, damage = 40, knockdown = 2, sound = "SFX_Call_Long" },
 	ATK_Grab = { range = 6, signal = 0.4, damagePerSecond = 10, dragAfter = 3 },
-	ATK_Throw = { minRange = 20, maxRange = 120, damageMin = 15, damageMax = 30, sound = "SFX_StoneWhoosh" },
+	-- 19.5 (C10) : erreur de visée = 3 % de la distance (×0,8 Difficile, ×0,6 Cauchemar) ;
+	-- C2 : une pierre ne cause jamais d'hémorragie grave (PlayerConfig.BleedOnDamage.StoneMax)
+	ATK_Throw = {
+		minRange = 20,
+		maxRange = 120,
+		damageMin = 15,
+		damageMax = 30,
+		sound = "SFX_StoneWhoosh",
+		aimError = 0.03,
+		aimErrorFactor = { Hard = 0.8, Nightmare = 0.6 },
+	},
 	ATK_Slam = { range = 5, signal = 1.0, damage = 60 },
 	ATK_ReachThrough = { range = 5, signal = 0.5 },
 	ATK_Execution = { range = 3, signal = 1.5, profile = "Restricted", creature = "CRT_Alpha" },
 }
--- TODO(BIBLE): vitesse d'une pierre lancée et force du recul de ATK_Strike. PROVISOIRE : 80 studs/s, 40.
-CreatureConfig.StoneSpeed = 80
+-- 19.5 (C10) : pierres à 90 studs/s
+CreatureConfig.StoneSpeed = 90
+-- TODO(BIBLE): force du recul de ATK_Strike (C30, la vitesse des pierres est réglée par C10). PROVISOIRE : 40.
 CreatureConfig.KnockbackForce = 40
 
 -- 7.3 : la créature traîne un joueur à terre à 10 studs/s vers une réserve

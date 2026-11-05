@@ -923,18 +923,35 @@ ActConfig.ActTransition = 10 -- l'heure saute au début de l'acte suivant en 10 
 ActConfig.EndHour = 6 -- 06 h 00 : la partie s'arrête, les joueurs encore dans la forêt sont disparus
 ActConfig.MaxGameDuration = 55 * 60 -- au plus tard 55 min réelles après le début
 
--- 5.2 : objectifs affichés (textes de la bible)
+-- 19.5 (C19) : objectifs, dans l'ordre, affichés dans ObjectiveGui et la tablette.
+-- {n} : progression (indices trouvés, ouvertures barricadées, secondes restantes).
 ActConfig.Objectives = {
-	[0] = "Trouver le camp des géologues",
-	[1] = "Trouver le camp des géologues",
-	Cabin = "Rejoindre la cabane avant minuit",
-	-- TODO(BIBLE): textes d'objectif des actes 3 et 4 (voie d'extraction) ; 6.2 CS_07 n'en donne qu'un exemple
-	Extraction = {
-		E1 = nil,
-		E2 = "La radio de la tour. C'est notre seule chance.", -- exemple de CS_07 (6.2)
-		E3 = nil,
-		E4 = nil,
+	[0] = { "Trouver le camp des géologues" },
+	[1] = { "Fouiller le camp", "Trouver la tablette des géologues", "Trouver des indices ({n}/3)" },
+	[2] = { "Rejoindre la cabane des mineurs avant minuit", "Barricader la cabane ({n}/3)", "Tenir" },
+	[3] = {
+		E1 = { "Trouver les clés du van", "Trouver un cric", "Changer la roue du van" },
+		E2 = {
+			"Trouver un câble d'antenne",
+			"Apporter la batterie de l'épave à la tour",
+			"Réparer la radio de la tour",
+		},
+		E3 = { "Trouver du carburant", "Trouver le relais de démarreur", "Réparer le bulldozer" },
+		E4 = { "Facultatif : suivre la carte des tunnels" }, -- en plus, si DOC_07 a été lu
 	},
+	[4] = {
+		E1 = { "Partir avec le van" },
+		E2 = { "Tenir sur l'aire jusqu'à l'hélicoptère ({n} s)" },
+		E3 = { "Forcer la barrière de la piste" },
+		E4 = { "Dégager la sortie basse et sortir" },
+	},
+}
+
+-- 19.5 (C19) : phrase de CS_07 selon la voie tirée
+ActConfig.RouteAnnounce = {
+	E1 = "Le van. Si on retrouve les clés, on part.",
+	E2 = "La radio de la tour. C'est notre seule chance.",
+	E3 = "Le bulldozer du chantier. Il peut passer la barrière.",
 }
 
 -- 5.2 : acte 1
@@ -955,9 +972,26 @@ ActConfig.Siege = {
 	PlankImpacts = 4, -- une planche reçoit 4 impacts avant de céder
 	SilenceAfter = 20, -- silence total 20 s, puis CS_07
 	NotebookPageUnlocked = 2,
-	-- TODO(BIBLE): cadence des pierres pendant le siège. PROVISOIRE : une pierre toutes les 4 s par créature
-	StoneInterval = 4,
+	-- 19.5 (C20, C34) : cadence des pierres pendant les 6 min, par créature (from/to : s depuis le début).
+	-- Les impacts sur le toit et les murs sont cosmétiques, sauf sur les 3 ouvertures.
+	Phases = {
+		{ from = 0, to = 120, interval = 4, jitter = 1.5 }, -- 0:00–2:00 : 1 pierre / 4 s (±1,5 s)
+		{ from = 120, to = 180, interval = 2.5 }, -- 2:00–3:00 : 1 / 2,5 s
+		{ from = 180, to = 200, silence = true }, -- 3:00–3:20 : silence total
+		{ from = 200, to = 300, interval = 2.5, barricadeAttempts = true }, -- 3:20–5:00 : + essais
+		{ from = 300, to = 360, interval = 2 }, -- 5:00–6:00 : 1 / 2 s
+	},
 }
+
+-- phase du siège à `elapsed` secondes du début (nil hors des 6 min)
+function ActConfig.siegePhase(elapsed)
+	for _, phase in ActConfig.Siege.Phases do
+		if elapsed >= phase.from and elapsed < phase.to then
+			return phase
+		end
+	end
+	return nil
+end
 
 -- 5.2 : acte 3 — voie principale tirée parmi E1, E2, E3 ; E4 ouverte si DOC_07 a été lu
 ActConfig.MainRoutes = { "E1", "E2", "E3" }
@@ -1172,12 +1206,14 @@ AmbienceConfig.Wind = {
 	Clear = { base = { 6, 0, -3 }, gust = 10, gustIntervalMin = 8, gustIntervalMax = 15 },
 	Fog = { base = { 2, 0, -1 }, gust = 0 },
 	Rain = { base = { 14, 0, -6 }, gust = 20, sine = true }, -- cycle en sinus comme l'exemple de la doc
-	Snow = { base = { 10, 0, -8 }, gust = 12 },
+	-- DÉFAUT (C21) : rafales de neige au même intervalle que par temps clair
+	Snow = { base = { 10, 0, -8 }, gust = 12, gustIntervalMin = 8, gustIntervalMax = 15 },
 }
--- TODO(BIBLE): période du cycle en sinus des rafales de pluie, et intervalle des rafales de neige
-AmbienceConfig.WindSinePeriod = nil
--- TODO(BIBLE): durée d'une rafale. PROVISOIRE : 1 s
-AmbienceConfig.GustDuration = 1
+-- DÉFAUT (C21, C27) : les rafales gardent la direction du vent (l'odorat de la créature, 9.4, ne lit que
+-- la direction) ; ce sont donc des valeurs d'ambiance, ni texte ni gameplay ni asset (section 0).
+AmbienceConfig.WindSinePeriod = 12 -- période du cycle en sinus de la pluie (s)
+AmbienceConfig.WindSineStep = 0.5 -- pas de mise à jour du vent en sinus (s)
+AmbienceConfig.GustDuration = 1 -- durée d'une rafale (s)
 AmbienceConfig.TreeWindRange = 120 -- 12.4 : arbres animés par leurs os à moins de 120 studs (réglage Élevé)
 
 -- 12.5 : réverbération par zone (SoundService.AmbientReverb)
@@ -1316,8 +1352,10 @@ CinematicConfig.Cinematics = {
 		subtitle = "… Oh non.",
 		subtitleNearestPlayer = true,
 	},
-	-- TODO(BIBLE): CS_05 dure 25 s alors que 6 « en partie, elles durent 12 s au plus » — exception de la vidéo ?
+	-- 19.5 (C23) : CS_05 joue dans la tablette (TabletGui), sans prise de caméra ; le joueur reste dans
+	-- le monde et peut fermer à tout moment. La limite de 12 s et l'invulnérabilité ne s'appliquent pas.
 	CS_05 = {
+		inTablet = true,
 		trigger = "Vidéo de la tablette (DOC_08)",
 		duration = 25,
 		scope = "Local",
@@ -1326,6 +1364,8 @@ CinematicConfig.Cinematics = {
 		screenText = "Point de repli de l'équipe : cabane des mineurs",
 		timestamp = "J-17 02:14",
 		noMusic = true,
+		subtitleShot = 3, -- 6.2 : « 3. Whitcombe : Éteins ça. Éteins ça ! »
+		screenTextShot = 6, -- 6.2 : « 6. Écran : Point de repli… »
 	},
 	CS_06 = { trigger = "Début du siège", duration = 6, scope = "Place", place = "P05c", shots = 2 },
 	CS_07 = { trigger = "Fin du siège", duration = 10, scope = "Place", place = "P05c", shots = 2, routeText = true },
@@ -1362,8 +1402,13 @@ CinematicConfig.Cinematics = {
 -- 3.3 et 5.2 : cinématique d'arrivée selon le départ tiré
 CinematicConfig.StartCinematic = { S1 = "CS_02a", S2 = "CS_02b", S3 = "CS_02c" }
 
--- TODO(BIBLE): texte du « message radio » entendu par les joueurs hors du rayon d'une cinématique de lieu (6.1)
-CinematicConfig.OutOfRangeRadioText = nil
+-- 19.5 (C24) : message radio entendu hors du rayon d'une cinématique de lieu, dit par le personnage
+-- du joueur le plus proche du lieu. Autres cinématiques : aucun message.
+CinematicConfig.OutOfRangeRadioText = {
+	CS_04 = "{player} : On a trouvé le camp. Il y a… quelqu'un. Venez.",
+	CS_06 = "{player} : Ça tombe sur la cabane ! Rejoignez-nous !",
+	CS_07 = "{player} : Ça s'est arrêté. Je crois.",
+}
 
 return CinematicConfig
 ]]></string>
@@ -1469,7 +1514,15 @@ CreatureConfig.Behaviors = {
 	BHV_Stalk = { baseScore = 0.45, minDuration = 45, minDistance = 50, maxDistance = 80 },
 	BHV_Ambush = { baseScore = 0.4, maxDuration = 90, minDistance = 20, maxDistance = 30 },
 	BHV_Attack = { baseScore = 0.9, minDuration = 0 },
-	BHV_Throw = { baseScore = 0.5, minDuration = 20, minDistance = 20, maxDistance = 120 },
+	-- 19.5 (C10) : 1 lancer toutes les 3 à 5 s hors siège
+	BHV_Throw = {
+		baseScore = 0.5,
+		minDuration = 20,
+		minDistance = 20,
+		maxDistance = 120,
+		intervalMin = 3,
+		intervalMax = 5,
+	},
 	BHV_Sabotage = { baseScore = 0.6, minDuration = 30, tightGroupFor = 120 },
 	BHV_Drag = { baseScore = 0.8, reserves = { "P20", "P04", "P07b" } }, -- rive du lac, sous les troncs, repaire
 	BHV_Retreat = { baseScore = 0.6, minDuration = 30, maxDuration = 60, healthLost = 0.15, window = 10 },
@@ -1481,8 +1534,8 @@ CreatureConfig.Behaviors = {
 -- DÉFAUT d'interprétation : baseScore = score quand la condition de 9.5 est pleinement remplie
 -- (la bible ne donne que des conditions) ; à régler en phase B3.
 CreatureConfig.SwitchFactor = 1.25 -- garde le comportement sauf si un autre dépasse son score ×1,25
--- TODO(BIBLE): 9.1 : position des 3 « arbres à pierres » fixes. Sans eux, BHV_Mark utilise les Part
--- taguées « StoneTree » posées à la main.
+-- DÉFAUT (C28) : les 3 « arbres à pierres » fixes (9.1) sont des Part taguées « StoneTree », posées à
+-- la main dans Studio en B1 (placement de décor).
 CreatureConfig.StoneTreeTag = "StoneTree"
 
 -- 9.6 : échelle d'intimidation (8 crans)
@@ -1511,6 +1564,7 @@ CreatureConfig.Target = {
 	Interval = 2,
 	IsolationDistance = 60,
 	BleedBonus = 0.3,
+	CarrierBonus = 0.5, -- 19.5 (C6) : score de cible du porteur +0,5
 	NoiseWindow = 10,
 	NoiseDivisor = 100,
 	LampOn = 1,
@@ -1557,13 +1611,24 @@ CreatureConfig.Attacks = {
 	ATK_Strike = { range = 7, signal = 0.6, damage = 35, knockback = true, sound = "SFX_Growl_Close" },
 	ATK_Charge = { minRange = 15, maxRange = 40, signal = 0.8, damage = 40, knockdown = 2, sound = "SFX_Call_Long" },
 	ATK_Grab = { range = 6, signal = 0.4, damagePerSecond = 10, dragAfter = 3 },
-	ATK_Throw = { minRange = 20, maxRange = 120, damageMin = 15, damageMax = 30, sound = "SFX_StoneWhoosh" },
+	-- 19.5 (C10) : erreur de visée = 3 % de la distance (×0,8 Difficile, ×0,6 Cauchemar) ;
+	-- C2 : une pierre ne cause jamais d'hémorragie grave (PlayerConfig.BleedOnDamage.StoneMax)
+	ATK_Throw = {
+		minRange = 20,
+		maxRange = 120,
+		damageMin = 15,
+		damageMax = 30,
+		sound = "SFX_StoneWhoosh",
+		aimError = 0.03,
+		aimErrorFactor = { Hard = 0.8, Nightmare = 0.6 },
+	},
 	ATK_Slam = { range = 5, signal = 1.0, damage = 60 },
 	ATK_ReachThrough = { range = 5, signal = 0.5 },
 	ATK_Execution = { range = 3, signal = 1.5, profile = "Restricted", creature = "CRT_Alpha" },
 }
--- TODO(BIBLE): vitesse d'une pierre lancée et force du recul de ATK_Strike. PROVISOIRE : 80 studs/s, 40.
-CreatureConfig.StoneSpeed = 80
+-- 19.5 (C10) : pierres à 90 studs/s
+CreatureConfig.StoneSpeed = 90
+-- TODO(BIBLE): force du recul de ATK_Strike (C30, la vitesse des pierres est réglée par C10). PROVISOIRE : 40.
 CreatureConfig.KnockbackForce = 40
 
 -- 7.3 : la créature traîne un joueur à terre à 10 studs/s vers une réserve
@@ -1628,7 +1693,9 @@ DirectorConfig.Rise = { Below = 25, For = 120 } -- intensité < 25 pendant 120 s
 DirectorConfig.Peak = { Above = 75, For = 90, PauseMin = 60, PauseMax = 90 } -- pause imposée
 DirectorConfig.Act1 = { IsolatedDistance = 200, IsolatedFor = 60, GuaranteedSightings = 1, GuaranteedSigns = 2 }
 DirectorConfig.Act2MaxDeaths = { Normal = 1, Hard = 2, Nightmare = math.huge }
-DirectorConfig.Act3 = { MinAttackAttempts = 2, MaxDeathsPer = 1, Window = 3 * 60 }
+-- 19.5 (J12) : si, 10 min après le début de l'acte 3, il y a eu moins de 2 tentatives d'attaque,
+-- le directeur impose BHV_Attack sur la meilleure cible
+DirectorConfig.Act3 = { MinAttackAttempts = 2, MaxDeathsPer = 1, Window = 3 * 60, ForceAttackAfter = 10 * 60 }
 DirectorConfig.Act4 = { AllCreatures = true, NoPause = true }
 
 -- 10.1 : règles de mise en scène
@@ -1794,7 +1861,8 @@ return DirectorConfig
 local GoreConfig = {}
 
 -- 11.2 : "Restricted" ou "Moderate". Le même jeu peut être publié en deux expériences, une par label.
--- TODO(BIBLE): 19.4 « Bloquant — Restricted 18+ » : profil à publier. PROVISOIRE : "Moderate" (le plus prudent).
+-- 19.5 (C35) : l'expérience principale « PISTE FROIDE (test) » est publiée en profil Moderate. Restricted reste
+-- dans le code pour une seconde expérience, plus tard (18 ans vérifiés ; contenu en version 2).
 -- Le questionnaire de maturité est rempli par Gabriel, jamais par Claude Code (11.1).
 GoreConfig.Profile = "Moderate"
 
@@ -1838,7 +1906,7 @@ GoreConfig.Blood = {
 }
 GoreConfig.Ragdoll = { AnchorAfterStill = 10 } -- le corps passe ancré après 10 s immobile
 
--- TODO(BIBLE): taille d'une flaque et d'une petite tache (13.5 : decals à créer). PROVISOIRE : 4 et 1,5 studs.
+-- DÉFAUT (C39) : taille d'affichage d'une flaque et d'une petite tache (studs) — visuel seulement
 GoreConfig.PoolSize = { Restricted = 4, Moderate = 1.5 }
 
 return GoreConfig
@@ -2000,6 +2068,8 @@ ItemConfig.Items = {
 	AMMO_WPN_Rifle = { name = "Balles de fusil", weight = 0, stack = 99, ammoFor = "WPN_Rifle" },
 	AMMO_WPN_Revolver = { name = "Balles de revolver", weight = 0, stack = 99, ammoFor = "WPN_Revolver" },
 	AMMO_WPN_Shotgun = { name = "Cartouches", weight = 0, stack = 99, ammoFor = "WPN_Shotgun" },
+	-- 19.5 (C12) : réserve du pistolet lance-fusées (« 2 en réserve »)
+	AMMO_WPN_FlareGun = { name = "Fusées", weight = 0, stack = 99, ammoFor = "WPN_FlareGun" },
 }
 -- TODO(BIBLE): poids des preuves (carte mémoire, moulage, etc.) et des munitions. PROVISOIRE : 0 kg.
 -- DÉFAUT : pile de 99 munitions (valeur technique de rangement).
@@ -2065,8 +2135,15 @@ ItemConfig.FireVisuals = {
 	CampfireAhead = 3, -- devant le joueur
 }
 
--- TODO(BIBLE): distance et vitesse d'un lancer (pierre, branche). PROVISOIRE : 40 studs/s, 1 s de vol.
-ItemConfig.Throw = { Speed = 40, Flight = 1 }
+-- 19.5 (C10) : lancer d'un joueur — portée maximale 60 studs, 70 studs/s, trajectoire balistique,
+-- bruit 50 à l'impact
+ItemConfig.Throw = {
+	MaxRange = 60,
+	Speed = 70,
+	ImpactNoise = 50,
+	SimStep = 0.05, -- DÉFAUT (technique) : pas du calcul de la trajectoire (s)
+	MaxFlight = 5, -- DÉFAUT (technique) : durée maximale simulée (s)
+}
 -- TODO(BIBLE): bruit du piège à bruit du Pyrotechnicien (boîte de conserve + corde). Sans valeur : pas de piège.
 ItemConfig.NoiseTrapRadius = nil
 
@@ -2285,23 +2362,31 @@ LoreConfig.Prompts = {
 	SkinShop = "Tenues", -- DÉFAUT (magasin, L04)
 	Records = "Records", -- DÉFAUT (diner, L05 ; 4.5 « records »)
 	EvidenceBoard = "Preuves", -- DÉFAUT (musée, L03 ; 15.6 « Preuves »)
+	Carry = "Porter", -- 19.5 (C6 : « Porter un blessé »)
+	PutDown = "Poser", -- 19.5 (C6 : « pour le poser »)
+	Descend = "Descendre", -- 8.1 (ITM_Rope : « Descendre dans le puits P21 »)
 }
 
--- 5.3 : fins (titres de la colonne « Fin » ; texte : colonne « Récompense » quand elle est rédigée)
--- TODO(BIBLE): textes de fin affichés dans ResultsGui > EndingText (seul « Silence » en a un)
+-- 19.5 (C25) : fins, titre et texte affichés dans ResultsGui (EndingTitle, EndingText)
 LoreConfig.Endings = {
-	Survie = { title = "Survie", text = "" },
-	Preuve = { title = "Preuve", text = "" },
-	Verite = { title = "La vérité", text = "" },
-	Ordonnance = { title = "Ordonnance 69-01", text = "" },
-	Silence = { title = "Silence", text = "Le podcast est publié… incomplet" },
+	Survie = { title = "Sortis", text = "Vous avez quitté la forêt avant l'aube. Personne ne vous croira." },
+	Preuve = {
+		title = "La preuve",
+		text = "Une vidéo. Assez pour que le monde en parle, pas assez pour qu'il y croie.",
+	},
+	Verite = { title = "La vérité", text = "Ils n'ont pas commencé. Ils ont répondu." },
+	Ordonnance = {
+		title = "Ordonnance 69-01",
+		text = "Vous l'avez tué. Le comté de Skamania appelle ça un crime.",
+	},
+	Silence = { title = "Silence", text = "Le dernier épisode de Cold Trail s'arrête au milieu d'une phrase." },
 }
 
--- 15.6 : libellés courts absents du tableau → DÉFAUT (statuts de ResultsGui > Survivors)
+-- 19.5 (C25) : statut par joueur dans ResultsGui > Survivors
 LoreConfig.Status = {
-	Extracted = "Extrait", -- DÉFAUT
-	Dead = "Mort", -- DÉFAUT
-	Missing = "Disparu", -- 5.1 : « disparus »
+	Extracted = "En vie",
+	Dead = "Mort",
+	Missing = "Disparu",
 }
 
 -- 4.2 : dialogue du ranger Dale Hollis (bulles, 3 choix)
@@ -2325,55 +2410,55 @@ LoreConfig.Dialogue = {
 	},
 }
 
--- 4.3 : le récit réel au musée (8 panneaux). source : ligne « Source » avec l'adresse du site.
--- TODO(BIBLE): adresse source de chaque panneau (4.3 l'exige, sans la donner panneau par panneau).
+-- 4.3 : le récit réel au musée (8 panneaux). source : ligne « Source » (19.5, C36 : publication
+-- et titre seulement, aucune adresse web dans le jeu)
 LoreConfig.Museum = {
 	M1 = {
 		title = "Juillet 1924",
 		body = "Des prospecteurs travaillent près d'une gorge au sud-est du volcan. Ils disent avoir vu des créatures d'environ deux mètres. L'un d'eux tire. La nuit suivante, leur cabane est bombardée de pierres jusqu'à l'aube.",
-		source = "",
+		source = "Wikipedia, « Ape Canyon » ; Atlas Obscura, « Ape Canyon »",
 		image = "Img_Museum_M1",
 		voice = "VO_Museum_01",
 	},
 	M2 = {
 		title = "L'enquête",
 		body = "Deux rangers descendent dans la gorge. Ils ne trouvent rien et montrent que les empreintes peuvent être truquées. La presse, elle, baptise l'endroit Ape Canyon.",
-		source = "",
+		source = "Wikipedia, « Ape Canyon »",
 		image = "Img_Museum_M2",
 		voice = "VO_Museum_02",
 	},
 	M3 = {
 		title = "Le témoin",
 		body = "Fred Beck racontera l'histoire toute sa vie. En 1967, son livre y ajoute une dimension spirituelle absente des récits de 1924.",
-		source = "",
+		source = "F. Beck et R. A. Beck, I Fought the Apemen of Mt. St. Helens (1967)",
 		image = "Img_Museum_M3",
 		voice = "VO_Museum_03",
 	},
 	M4 = {
 		title = "Ape Cave",
 		body = "Un tube de lave de près de 4 km, formé il y a 2 000 ans, découvert en 1947 par un bûcheron. Son nom vient d'un groupe local, les St. Helens Apes.",
-		source = "",
+		source = "The Columbian, 7 août 2022",
 		image = "Img_Museum_M4",
 		voice = "VO_Museum_04",
 	},
 	M5 = {
 		title = "L'ordonnance 69-01",
 		body = "Le 1er avril 1969, le comté de Skamania fait du meurtre d'un Sasquatch un crime. Ce n'est pas une blague. En 1984, le comté devient un refuge.",
-		source = "",
+		source = "Comté de Skamania, ordonnances 69-01 (1969) et 1984-02 (1984)",
 		image = "Img_Museum_M5",
 		voice = "VO_Museum_05",
 	},
 	M6 = {
 		title = "18 mai 1980",
 		body = "À 8 h 32, le flanc nord s'effondre. 57 personnes meurent. Au nord, la forêt est couchée sur 600 km² et le lac Spirit se couvre de troncs.",
-		source = "",
+		source = "Wikipedia, « Mount St. Helens » et « Spirit Lake »",
 		image = "Img_Museum_M6",
 		voice = "VO_Museum_06",
 	},
 	M7 = {
 		title = "Lawetlat'la",
 		body = "Pour les Cowlitz, le volcan est Lawetlat'la, « celui qui fume » ; pour les Klickitat, Loowit. Plusieurs peuples du Nord-Ouest racontent aussi des êtres de la forêt dont on évite de dire le nom. Ces récits appartiennent à des cultures vivantes.",
-		source = "",
+		source = "The Columbian, 6 septembre 2015 ; Native Languages of the Americas, « Stick Indians »",
 		image = "Img_Museum_M7",
 		voice = "VO_Museum_07",
 	},
@@ -2381,7 +2466,7 @@ LoreConfig.Museum = {
 	M8 = {
 		title = "Disparus (fiction)",
 		body = "Il y a 21 jours, quatre géologues ont cessé de répondre. Les recherches sont suspendues. Leur dernier message parlait de pierres lancées sur leur camp.",
-		source = "",
+		source = "Fiction",
 		image = "Img_Museum_M8",
 		voice = "VO_Museum_08",
 		fiction = true,
@@ -2584,8 +2669,33 @@ MapConfig.FixedItems = {
 	{ item = "ITM_SampleBag", places = { "P09" } },
 	{ item = "ITM_PhotoCamera", places = { "P09" } },
 	{ item = "ITM_TabletGeo", places = { "P09" } }, -- tente de Leah Brandt
+	-- 19.5 (C15) : une seule machette, fixe, dans la cabane du chantier P10, prenable par tous
+	{ item = "MEL_Machete", places = { Vector3.new(-1390, 72, 3285) } },
 }
 MapConfig.PhotoCameraCluePoints = { "C03", "C04", "C05", "C06" } -- 8.1 : appareil photo aussi en C03–C06
+
+-- 19.5 (C7) : 4 « marques de mineurs », visibles seulement par la Descendante à 8 studs
+-- (PlayerConfig.Abilities.Descendant.HiddenClueRange), et seulement si elle est dans le groupe.
+-- Les parties Workspace taguées CrawlSpace (vide sanitaire sous P05c) et Ford (gué de HC3) sont posées
+-- à la main en B1 ; sans elles, le point de la marque sert de repli (DÉFAUT).
+MapConfig.HiddenClues = {
+	-- gros bloc du lahar : affiche l'emplacement de la boîte de munitions sur la tablette
+	HC1 = { pos = Vector3.new(2140, 262, 380), effect = "AmmoBoxMarker" },
+	-- plancher de la cabane : trappe vers un vide sanitaire pour 2 joueurs, invisibles à la vue de la créature
+	HC2 = { place = "P05c", effect = "CrawlSpace", capacity = 2, tag = "CrawlSpace" },
+	-- pierre près du pont P16 : gué 60 studs en aval, passage silencieux (bruit ×0,4)
+	HC3 = {
+		pos = Vector3.new(3420, 100, 1660),
+		effect = "Ford",
+		downstream = 60,
+		noiseFactor = 0.4,
+		tag = "Ford",
+	},
+	-- puits P21 : anneau scellé dans la roche, descente sans corde
+	HC4 = { place = "P21", effect = "Ring" },
+}
+MapConfig.HiddenClueMarkSize = Vector3.new(2, 2, 0.2) -- DÉFAUT (technique) : marque MANQUANT_HiddenMark
+MapConfig.WellDescentLift = 3 -- DÉFAUT (technique) : hauteur de pose au fond du puits P21 (studs)
 
 -- 2.7 : documents à emplacement fixe
 MapConfig.FixedDocuments = {
@@ -2645,6 +2755,15 @@ MapConfig.Paths = {
 		points = { "P01", { c = { 933, 2400 } }, { c = { 0, 1200 } }, "P09", "P12", "P07a" },
 	},
 	T3 = { kind = "Trail", width = 5, points = { "P09", { 0, -800 }, "P11", "P06" }, switchbacks = true },
+	-- 19.5 (C42) : lacets de T3 sous F01, 3 segments de 5 studs de large, de Y = 300 à Y = 340 (pente ≈ 8 %),
+	-- puis T3 continue vers P11
+	T3_Switchbacks = {
+		kind = "Switchbacks",
+		width = 5,
+		points = { { -80, -780 }, { 80, -830 }, { -80, -880 }, { 60, -930 } },
+		fromY = 300,
+		toY = 340,
+	},
 	T4 = { kind = "Trail", width = 4, points = { "P16", "P15", "P05" } },
 	T5 = { kind = "GameTrail", width = 0, points = { "P12", { -1500, -1000 }, { -900, -2300 }, "P25", "P06" } },
 }
@@ -2711,10 +2830,23 @@ MapConfig.Terrain = {
 	RiverDepthFactor = 0.35, -- profondeur = 0,35 × largeur + 4
 	RiverDepthBase = 4,
 	RiverBlendFactor = 3, -- raccord sur 3 × la largeur
+	-- 19.5 (C40) : largeur en haut (topWidth) et au fond (bottomWidth), parois à plus de 60°.
+	-- Ape Canyon se resserre à 9 studs au point P05s (narrowAt, largeur narrowWidth).
 	Gorges = {
-		ApeCanyon = { depth = 150, from = Vector2.new(2300, -600), to = Vector2.new(3000, -2200) },
-		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600 },
+		ApeCanyon = {
+			depth = 150,
+			from = Vector2.new(2300, -600),
+			to = Vector2.new(3000, -2200),
+			topWidth = 80,
+			bottomWidth = 20,
+			narrowAt = "P05s",
+			narrowWidth = 9,
+		},
+		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600, topWidth = 60, bottomWidth = 15 },
 	},
+	GorgeMinWallDegrees = 60,
+	-- DÉFAUT (géométrie) : le resserrement de P05s se fait sur une longueur égale à la largeur du haut
+	GorgeNarrowTaperFactor = 1,
 	FlattenBlendFactor = 1.5, -- raccord sur 1,5 fois le rayon
 	MaxRoadSlope = 0.08,
 	MaxTrailSlope = 0.15,
@@ -2735,10 +2867,7 @@ MapConfig.Terrain = {
 		},
 	},
 	SwiftReservoirZ = 4600, -- 3.8 : plan d'eau décoratif au-delà
-	-- TODO(BIBLE): largeur des gorges (Ape Canyon, Lava Canyon). PROVISOIRE : demi-largeurs 60 et 40 studs.
-	ApeCanyonHalfWidth = 60,
-	LavaCanyonHalfWidth = 40,
-	-- TODO(BIBLE): niveau du plan d'eau du réservoir Swift (3.8). PROVISOIRE : le bas de la pente (Y = 40).
+	-- DÉFAUT (C41) : niveau du plan d'eau décoratif du réservoir Swift (3.8) = le bas de la pente
 	ReservoirLevel = 40,
 	-- DÉFAUT (technique) : maille de calcul du relief, blocs écrits par TerrainBuilder, bloc gris par lieu,
 	-- hauteur du mur invisible des limites
@@ -2863,6 +2992,13 @@ PlayerConfig.Downed = {
 	ReviveTime = 6,
 	RoleReviveTime = { Medic = 3 },
 	ReviveLimbFraction = 0.2, -- le joueur revient avec 20 % sur le membre touché
+}
+
+-- 19.5 (C6) : porter un coéquipier à terre (vitesse, bruit et endurance : Movement.Carry, Stamina)
+PlayerConfig.Carry = {
+	PickUpTime = 2, -- maintenir Utiliser 2 s pour le charger sur l'épaule
+	PutDownTime = 1, -- Utiliser 1 s pour le poser
+	DownedTimeFactor = 0.5, -- le compte à rebours du joueur porté avance deux fois moins vite
 }
 
 -- 6.3 : caméra de mort (sans coupe), puis spectateur
@@ -3016,11 +3152,16 @@ PlayerConfig.Technical = {
 	HoldTolerance = 0.3, -- marge (s) sur le temps de maintien vérifié par le serveur
 	VideoCheckInterval = 0.25, -- s entre deux contrôles de la vidéo de classe A
 	DownedDamageKills = true, -- TODO(BIBLE): un coup reçu à terre tue-t-il ? PROVISOIRE : oui
+	-- DÉFAUT (19.5, C6) : Porter et Poser ont leur propre touche, pour ne pas se confondre avec Relever
+	CarryKey = Enum.KeyCode.G,
+	CarryGamepadKey = Enum.KeyCode.ButtonY,
+	CarryOffset = Vector3.new(0, 1.5, 0.5), -- position du joueur porté sur l'épaule (studs)
+	TapCycleTime = 0.3, -- écran tactile : un appui plus court change d'invite au lieu d'agir
 }
 
--- TODO(BIBLE): qu'est-ce qui déclenche une hémorragie légère ou grave (seuil de dégâts, type d'attaque) ?
--- Tant que ces seuils valent nil, seules les attaques qui le précisent font saigner.
-PlayerConfig.BleedOnDamage = { LightAt = nil, HeavyAt = nil }
+-- 19.5 (C2) : un coup de 20 à 34 → hémorragie légère ; 35 ou plus → grave ; moins de 20 → aucune.
+-- Saisie tenue plus de 2 s → légère. Les pierres ne causent jamais d'hémorragie grave.
+PlayerConfig.BleedOnDamage = { LightAt = 20, HeavyAt = 35, GrabLightAfter = 2, StoneMax = "Light" }
 
 -- TODO(BIBLE): sur quel membre agissent le bandage (+10 PV) et la trousse (+40 PV) ?
 -- PROVISOIRE : le membre le plus abîmé (en proportion).
@@ -3082,11 +3223,21 @@ ProgressionConfig.XPGains = {
 }
 
 -- 7.1 : déblocage des skins : A dès le début, B après 5 parties jouées, C après 1 survie
--- TODO(BIBLE): conditions de déblocage des accessoires (bonnet, frontale colorée, sac)
 ProgressionConfig.SkinUnlocks = {
 	A = { stat = nil, need = 0 },
 	B = { stat = "plays", need = 5 },
 	C = { stat = "survivals", need = 1 },
+}
+
+-- 19.5 (C38) : accessoires cosmétiques, choisis dans SkinShopGui (Accessories). stat : champ des données
+-- (16.4 ; evidenceBOut = preuves de classe B sorties, DÉFAUT : compteur ajouté aux données).
+-- Les identifiants sont des DÉFAUT (noms des boutons de SkinShopGui > Accessories).
+ProgressionConfig.AccessoryIds = { "Beanie", "AmberHeadlamp", "ColdTrailBag" }
+ProgressionConfig.AccessoryUnlocks = {
+	-- TODO(BIBLE): les 3 couleurs du bonnet (asset à créer, 13.3)
+	Beanie = { stat = "plays", need = 3, colors = 3 }, -- bonnet (3 couleurs) après 3 parties
+	AmberHeadlamp = { stat = "plays", need = 10 }, -- frontale ambre après 10 parties
+	ColdTrailBag = { stat = "evidenceBOut", need = 1 }, -- sac « Cold Trail » : 1re preuve de classe B sortie
 }
 
 -- 17.2 : menu Réglages. Valeurs possibles et défaut PC / mobile ; enregistrés dans settings (16.4).
@@ -3101,7 +3252,7 @@ ProgressionConfig.Settings = {
 	DepthOfField = { options = { true, false }, pc = true, mobile = false },
 	Particles = { options = { "Low", "Normal" }, pc = "Normal", mobile = "Low" },
 	FieldOfView = { min = 60, max = 90, pc = 70, mobile = 70 },
-	-- TODO(BIBLE): plage de la sensibilité (17.2 : « — »). PROVISOIRE : 0,1 à 3.
+	-- DÉFAUT (C37) : plage de la sensibilité (17.2 : « — ») — préférence du joueur, pas une valeur de jeu
 	Sensitivity = { min = 0.1, max = 3, pc = 1.0, mobile = 1.0 },
 	InvertY = { options = { true, false }, pc = false, mobile = false },
 	TouchButtonSize = { min = 80, max = 130, pc = 100, mobile = 100 },
@@ -3182,6 +3333,8 @@ local WeaponConfig = {}
 local WHOLE_MAP = math.ceil(8000 * math.sqrt(2))
 
 -- 8.2 : armes. fireInterval = 1 tir toutes les n s ; reload = s par munition
+-- 19.5 (C12) : au départ, armes chargées à pleine capacité (magazine, sinon ammo), aucune réserve sauf
+-- startReserve. Seule réserve possible ensuite : la boîte de munitions A1–A5.
 WeaponConfig.Weapons = {
 	WPN_Rifle = {
 		name = "Fusil à verrou",
@@ -3209,20 +3362,22 @@ WeaponConfig.Weapons = {
 		fireInterval = 1.0,
 		reloadPerRound = 0.9,
 		pellets = 8,
-		damagePerPellet = 18, -- jusqu'à 15 studs, puis −70 % à 40 studs
+		-- 19.5 (C13) : 8 plombs × 18 jusqu'à 15 studs ; baisse linéaire jusqu'à 30 % à 40 studs ; 0 au-delà de 60
+		damagePerPellet = 18,
 		fullDamageRange = 15,
 		reducedRange = 40,
 		reducedFactor = 0.3,
-		-- TODO(BIBLE): forme de la baisse entre 15 et 40 studs (linéaire en attendant) et portée au-delà de 40
+		zeroBeyond = 60,
 		friendlyPerPellet = 15,
 		noise = WHOLE_MAP,
-		-- TODO(BIBLE): écart des plombs (degrés). PROVISOIRE : 0 = tous dans l'axe
-		spreadDegrees = 0,
+		spreadDegrees = 6, -- 19.5 (C13) : cône de 6°
 	},
 	WPN_FlareGun = {
 		name = "Pistolet lance-fusées",
 		owner = "Pyrotechnician",
 		ammo = 3,
+		magazine = 1, -- 19.5 (C12) : 1 fusée chargée + 2 en réserve (AMMO_WPN_FlareGun)
+		startReserve = 2,
 		reloadTime = 2,
 		damage = 20,
 		blindDuration = 3,
@@ -3230,6 +3385,7 @@ WeaponConfig.Weapons = {
 		friendlyDamage = 30, -- + brûlure
 		noise = 1200,
 		-- TODO(BIBLE): cadence du pistolet lance-fusées (« — » dans 8.2) et effet de la brûlure sur un coéquipier
+		-- (C14 ; les munitions sont réglées par C12)
 	},
 	MEL_Axe = {
 		name = "Hache",
@@ -3249,7 +3405,8 @@ WeaponConfig.Weapons = {
 		grabReleaseHits = 2, -- deux coups = lâcher
 		friendlyDamage = 20,
 		noise = 30,
-		-- TODO(BIBLE): qui porte la machette au départ, ou où se trouve-t-elle ?
+		-- 19.5 (C15) : pas d'objet de départ ; une seule, fixe, dans la cabane du chantier P10
+		-- (MapConfig.FixedItems), prenable par tous
 	},
 }
 
@@ -5023,6 +5180,8 @@ return RoleService
           <string name="Source"><![CDATA[-- ServerScriptService/Services/SkinService (Lobby)
 -- Sections 4.5 et 7.1 : équiper les skins débloqués par personnage. A dès le début, B après 5 parties
 -- jouées, C après 1 survie. RE_EquipSkin (C → S) : (roleId, skinId). Données : skins, equipped (16.4).
+-- 19.5 (C38) : accessoires. DÉFAUT : RE_EquipSkin (roleId, accessoryId[, color]) porte ou retire un
+-- accessoire débloqué (données accessories, equippedAccessories ; color : 1 à 3 pour le bonnet).
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -5042,6 +5201,11 @@ local function unlocked(data, skinId)
 	return rule ~= nil and (rule.stat == nil or (data[rule.stat] or 0) >= rule.need)
 end
 
+local function accessoryUnlocked(data, id)
+	local rule = ProgressionConfig.AccessoryUnlocks[id]
+	return rule ~= nil and (data[rule.stat] or 0) >= rule.need
+end
+
 -- met à jour les déblocages enregistrés
 local function refresh(player)
 	local data = services.DataService:GetData(player)
@@ -5056,12 +5220,36 @@ local function refresh(player)
 			end
 		end
 	end
+	for _, id in ProgressionConfig.AccessoryIds do
+		if accessoryUnlocked(data, id) then
+			data.accessories[id] = true
+		end
+	end
 	services.DataService:Save(player)
 end
 
-local function onEquip(player, roleId, skinId)
+local function onEquipAccessory(player, data, roleId, id, color)
+	if not data.accessories[id] then
+		return
+	end
+	data.equippedAccessories[roleId] = data.equippedAccessories[roleId] or {}
+	local current = data.equippedAccessories[roleId][id]
+	local colors = ProgressionConfig.AccessoryUnlocks[id].colors
+	if type(color) == "number" and colors and color >= 1 and color <= colors then
+		data.equippedAccessories[roleId][id] = math.floor(color)
+	else
+		data.equippedAccessories[roleId][id] = if current then nil else true
+	end
+	services.DataService:Save(player)
+end
+
+local function onEquip(player, roleId, skinId, color)
 	local data = services.DataService:GetData(player)
 	if data == nil or type(roleId) ~= "string" or type(skinId) ~= "string" then
+		return
+	end
+	if ProgressionConfig.AccessoryUnlocks[skinId] then
+		onEquipAccessory(player, data, roleId, skinId, color)
 		return
 	end
 	if data.skins[roleId] == nil or not data.skins[roleId][skinId] then
@@ -5455,6 +5643,10 @@ local function buildDefaultData()
 		notebookPages = Util.deepCopy(ProgressionConfig.DefaultNotebookPages),
 		museumRead = museumRead,
 		nightmareUnlocked = false,
+		-- 19.5 (C38) : accessoires débloqués et portés (DÉFAUT : champs ajoutés à 16.4)
+		evidenceBOut = 0,
+		accessories = {},
+		equippedAccessories = {},
 		-- 17.2 : les défauts PC / mobile sont appliqués par le client (SettingsController) ; seules les
 		-- valeurs changées par le joueur sont enregistrées
 		settings = {},
@@ -5523,7 +5715,17 @@ end
 
 -- DÉFAUT : quelques compteurs publiés en attributs pour l'interface (lecture seule côté client)
 local PUBLISHED = { "xp", "plays", "survivals", "nightmareUnlocked" }
-local PUBLISHED_JSON = { "settings", "evidence", "notebookPages", "museumRead", "skins", "equipped", "endings" }
+local PUBLISHED_JSON = {
+	"settings",
+	"evidence",
+	"notebookPages",
+	"museumRead",
+	"skins",
+	"equipped",
+	"endings",
+	"accessories",
+	"equippedAccessories",
+}
 local function publishAttributes(player, data)
 	for _, key in PUBLISHED do
 		player:SetAttribute(key, data[key])
@@ -23588,7 +23790,8 @@ end
 
 function CinematicController:Play(id, extra)
 	local def = CinematicConfig.Cinematics[id]
-	if def == nil or root == nil then
+	-- 19.5 (C23) : une vidéo de tablette est jouée par TabletController, sans prise de caméra
+	if def == nil or root == nil or def.inTablet then
 		return
 	end
 	local token = {}
@@ -23708,6 +23911,7 @@ return CinematicController
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
+local CinematicConfig = require(Config:WaitForChild("CinematicConfig"))
 local LoreConfig = require(Config:WaitForChild("LoreConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
@@ -23743,7 +23947,8 @@ function NotificationController:Show(text)
 end
 
 function NotificationController:ShowMessage(key, params)
-	local text = LoreConfig.Messages[key]
+	-- clés : messages de 4.6, ou identifiant de cinématique pour le message radio de 19.5 (C24)
+	local text = LoreConfig.Messages[key] or CinematicConfig.OutOfRangeRadioText[key]
 	if text == nil then
 		warn("NotificationController : message inconnu " .. tostring(key))
 		return

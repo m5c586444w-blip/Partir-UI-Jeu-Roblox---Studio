@@ -133,23 +133,31 @@ LoreConfig.Prompts = {
 	SkinShop = "Tenues", -- DÉFAUT (magasin, L04)
 	Records = "Records", -- DÉFAUT (diner, L05 ; 4.5 « records »)
 	EvidenceBoard = "Preuves", -- DÉFAUT (musée, L03 ; 15.6 « Preuves »)
+	Carry = "Porter", -- 19.5 (C6 : « Porter un blessé »)
+	PutDown = "Poser", -- 19.5 (C6 : « pour le poser »)
+	Descend = "Descendre", -- 8.1 (ITM_Rope : « Descendre dans le puits P21 »)
 }
 
--- 5.3 : fins (titres de la colonne « Fin » ; texte : colonne « Récompense » quand elle est rédigée)
--- TODO(BIBLE): textes de fin affichés dans ResultsGui > EndingText (seul « Silence » en a un)
+-- 19.5 (C25) : fins, titre et texte affichés dans ResultsGui (EndingTitle, EndingText)
 LoreConfig.Endings = {
-	Survie = { title = "Survie", text = "" },
-	Preuve = { title = "Preuve", text = "" },
-	Verite = { title = "La vérité", text = "" },
-	Ordonnance = { title = "Ordonnance 69-01", text = "" },
-	Silence = { title = "Silence", text = "Le podcast est publié… incomplet" },
+	Survie = { title = "Sortis", text = "Vous avez quitté la forêt avant l'aube. Personne ne vous croira." },
+	Preuve = {
+		title = "La preuve",
+		text = "Une vidéo. Assez pour que le monde en parle, pas assez pour qu'il y croie.",
+	},
+	Verite = { title = "La vérité", text = "Ils n'ont pas commencé. Ils ont répondu." },
+	Ordonnance = {
+		title = "Ordonnance 69-01",
+		text = "Vous l'avez tué. Le comté de Skamania appelle ça un crime.",
+	},
+	Silence = { title = "Silence", text = "Le dernier épisode de Cold Trail s'arrête au milieu d'une phrase." },
 }
 
--- 15.6 : libellés courts absents du tableau → DÉFAUT (statuts de ResultsGui > Survivors)
+-- 19.5 (C25) : statut par joueur dans ResultsGui > Survivors
 LoreConfig.Status = {
-	Extracted = "Extrait", -- DÉFAUT
-	Dead = "Mort", -- DÉFAUT
-	Missing = "Disparu", -- 5.1 : « disparus »
+	Extracted = "En vie",
+	Dead = "Mort",
+	Missing = "Disparu",
 }
 
 -- 4.2 : dialogue du ranger Dale Hollis (bulles, 3 choix)
@@ -173,55 +181,55 @@ LoreConfig.Dialogue = {
 	},
 }
 
--- 4.3 : le récit réel au musée (8 panneaux). source : ligne « Source » avec l'adresse du site.
--- TODO(BIBLE): adresse source de chaque panneau (4.3 l'exige, sans la donner panneau par panneau).
+-- 4.3 : le récit réel au musée (8 panneaux). source : ligne « Source » (19.5, C36 : publication
+-- et titre seulement, aucune adresse web dans le jeu)
 LoreConfig.Museum = {
 	M1 = {
 		title = "Juillet 1924",
 		body = "Des prospecteurs travaillent près d'une gorge au sud-est du volcan. Ils disent avoir vu des créatures d'environ deux mètres. L'un d'eux tire. La nuit suivante, leur cabane est bombardée de pierres jusqu'à l'aube.",
-		source = "",
+		source = "Wikipedia, « Ape Canyon » ; Atlas Obscura, « Ape Canyon »",
 		image = "Img_Museum_M1",
 		voice = "VO_Museum_01",
 	},
 	M2 = {
 		title = "L'enquête",
 		body = "Deux rangers descendent dans la gorge. Ils ne trouvent rien et montrent que les empreintes peuvent être truquées. La presse, elle, baptise l'endroit Ape Canyon.",
-		source = "",
+		source = "Wikipedia, « Ape Canyon »",
 		image = "Img_Museum_M2",
 		voice = "VO_Museum_02",
 	},
 	M3 = {
 		title = "Le témoin",
 		body = "Fred Beck racontera l'histoire toute sa vie. En 1967, son livre y ajoute une dimension spirituelle absente des récits de 1924.",
-		source = "",
+		source = "F. Beck et R. A. Beck, I Fought the Apemen of Mt. St. Helens (1967)",
 		image = "Img_Museum_M3",
 		voice = "VO_Museum_03",
 	},
 	M4 = {
 		title = "Ape Cave",
 		body = "Un tube de lave de près de 4 km, formé il y a 2 000 ans, découvert en 1947 par un bûcheron. Son nom vient d'un groupe local, les St. Helens Apes.",
-		source = "",
+		source = "The Columbian, 7 août 2022",
 		image = "Img_Museum_M4",
 		voice = "VO_Museum_04",
 	},
 	M5 = {
 		title = "L'ordonnance 69-01",
 		body = "Le 1er avril 1969, le comté de Skamania fait du meurtre d'un Sasquatch un crime. Ce n'est pas une blague. En 1984, le comté devient un refuge.",
-		source = "",
+		source = "Comté de Skamania, ordonnances 69-01 (1969) et 1984-02 (1984)",
 		image = "Img_Museum_M5",
 		voice = "VO_Museum_05",
 	},
 	M6 = {
 		title = "18 mai 1980",
 		body = "À 8 h 32, le flanc nord s'effondre. 57 personnes meurent. Au nord, la forêt est couchée sur 600 km² et le lac Spirit se couvre de troncs.",
-		source = "",
+		source = "Wikipedia, « Mount St. Helens » et « Spirit Lake »",
 		image = "Img_Museum_M6",
 		voice = "VO_Museum_06",
 	},
 	M7 = {
 		title = "Lawetlat'la",
 		body = "Pour les Cowlitz, le volcan est Lawetlat'la, « celui qui fume » ; pour les Klickitat, Loowit. Plusieurs peuples du Nord-Ouest racontent aussi des êtres de la forêt dont on évite de dire le nom. Ces récits appartiennent à des cultures vivantes.",
-		source = "",
+		source = "The Columbian, 6 septembre 2015 ; Native Languages of the Americas, « Stick Indians »",
 		image = "Img_Museum_M7",
 		voice = "VO_Museum_07",
 	},
@@ -229,7 +237,7 @@ LoreConfig.Museum = {
 	M8 = {
 		title = "Disparus (fiction)",
 		body = "Il y a 21 jours, quatre géologues ont cessé de répondre. Les recherches sont suspendues. Leur dernier message parlait de pierres lancées sur leur camp.",
-		source = "",
+		source = "Fiction",
 		image = "Img_Museum_M8",
 		voice = "VO_Museum_08",
 		fiction = true,

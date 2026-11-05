@@ -3,7 +3,8 @@
 local GoreConfig = {}
 
 -- 11.2 : "Restricted" ou "Moderate". Le même jeu peut être publié en deux expériences, une par label.
--- TODO(BIBLE): 19.4 « Bloquant — Restricted 18+ » : profil à publier. PROVISOIRE : "Moderate" (le plus prudent).
+-- 19.5 (C35) : l'expérience principale « PISTE FROIDE (test) » est publiée en profil Moderate. Restricted reste
+-- dans le code pour une seconde expérience, plus tard (18 ans vérifiés ; contenu en version 2).
 -- Le questionnaire de maturité est rempli par Gabriel, jamais par Claude Code (11.1).
 GoreConfig.Profile = "Moderate"
 
@@ -47,7 +48,7 @@ GoreConfig.Blood = {
 }
 GoreConfig.Ragdoll = { AnchorAfterStill = 10 } -- le corps passe ancré après 10 s immobile
 
--- TODO(BIBLE): taille d'une flaque et d'une petite tache (13.5 : decals à créer). PROVISOIRE : 4 et 1,5 studs.
+-- DÉFAUT (C39) : taille d'affichage d'une flaque et d'une petite tache (studs) — visuel seulement
 GoreConfig.PoolSize = { Restricted = 4, Moderate = 1.5 }
 
 return GoreConfig

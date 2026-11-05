@@ -41,7 +41,7 @@ function RadioController:Start()
 			channel.Visible = holding
 		end
 		if talking then
-			-- TODO(BIBLE): ce qui allume « Talking » (chat vocal de proximité, 19.4 : décision en attente)
+			-- DÉFAUT (C22) : « Talking » reste caché tant que le chat vocal (19.4) n'est pas décidé
 			talking.Visible = false
 		end
 		local root = Util.characterRoot(player)

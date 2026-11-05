@@ -154,6 +154,12 @@ local function tick(dt)
 	end
 end
 
+-- repère posé par le jeu (19.5, C7 : indice caché HC1, gué de HC3) ; hors de la limite des joueurs
+function TabletService:AddMarker(position)
+	table.insert(markers, { x = position.X, z = position.Z })
+	Util.getMatchState():SetAttribute("markers", Util.encode(markers))
+end
+
 function TabletService:Init(allServices)
 	services = allServices
 end

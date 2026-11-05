@@ -4,6 +4,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
+local ActConfig = require(Config:WaitForChild("ActConfig"))
 local CreatureConfig = require(Config:WaitForChild("CreatureConfig"))
 local MapConfig = require(Config:WaitForChild("MapConfig"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
@@ -39,21 +40,27 @@ function Behavior.step(brain)
 	local angle = (os.clock() / B.maxRadius) + (if brain.id == "CRT_Alpha" then 0 else math.pi)
 	local radius = (B.minRadius + B.maxRadius) / 2
 	brain:MoveTo(cabin + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius), "Walk")
-	local interval = require(Config:WaitForChild("ActConfig")).Siege.StoneInterval
-	if os.clock() - (brain.lastThrowAt or -math.huge) < interval then
+	-- 19.5 (C20, C34) : cadence selon la phase du siège (heure serveur du début : siegeStartedAt)
+	local startedAt = Util.getMatchState():GetAttribute("siegeStartedAt")
+	local phase = startedAt and ActConfig.siegePhase(workspace:GetServerTimeNow() - startedAt)
+	if phase == nil or phase.silence then
 		return
 	end
-	brain.lastThrowAt = os.clock()
+	if os.clock() < (brain.nextSiegeThrowAt or 0) then
+		return
+	end
+	local jitter = phase.jitter and (math.random() * 2 - 1) * phase.jitter or 0
+	brain.nextSiegeThrowAt = os.clock() + phase.interval + jitter
 	local outside = outsidePlayer(brain)
 	if outside then
 		brain.target = outside
 		brain:Attack("ATK_Throw", outside)
 		return
 	end
-	-- tester les barricades : une ouverture clouée reçoit une pierre ; une ouverture cédée → bras
+	-- tester les barricades (3:20–5:00) : une ouverture cédée → bras ; une ouverture clouée reçoit une pierre
 	local openings = brain.services.GameStateService:GetOpenings()
 	for _, part in openings do
-		if part:GetAttribute("planks") == 0 then
+		if phase.barricadeAttempts and part:GetAttribute("planks") == 0 then
 			for _, player in brain:Candidates() do
 				local root = Util.characterRoot(player)
 				if
@@ -74,6 +81,9 @@ function Behavior.step(brain)
 	end
 	if #nailed > 0 then
 		brain:Attack("ATK_Throw", nailed[math.random(1, #nailed)])
+	else
+		-- impact cosmétique sur le toit (19.5 : sans effet hors des ouvertures)
+		brain.ai.CreatureAnimator:PlaySoundAt(CreatureConfig.Attacks.ATK_Throw.sound, cabin)
 	end
 end
 

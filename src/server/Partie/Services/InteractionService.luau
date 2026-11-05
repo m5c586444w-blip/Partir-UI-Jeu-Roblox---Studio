@@ -25,21 +25,25 @@ local function durationFor(opts, player)
 	return (opts.roleHoldDuration and opts.roleHoldDuration[role]) or opts.holdDuration or 0
 end
 
+-- hide_<UserId> : l'invite n'est pas affichée à ce joueur (InteractController l'ignore)
 local function refresh(prompt, opts)
 	for _, player in Players:GetPlayers() do
 		prompt:SetAttribute("hold_" .. player.UserId, durationFor(opts, player))
+		local hidden = opts.visibleTo ~= nil and not opts.visibleTo(player)
+		prompt:SetAttribute("hide_" .. player.UserId, if hidden then true else nil)
 	end
 end
 
 -- crée une invite sur `parent` (BasePart ou Attachment). opts : action, object, holdDuration,
--- roleHoldDuration, durationFor(player), canUse(player), onTriggered(player), maxDistance
+-- roleHoldDuration, durationFor(player), canUse(player), onTriggered(player), maxDistance,
+-- key, gamepadKey (touches propres à l'invite), visibleTo(player) (masquée aux autres)
 function InteractionService:CreatePrompt(parent, opts)
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.Style = Enum.ProximityPromptStyle.Custom
 	prompt.ActionText = opts.action or ""
 	prompt.ObjectText = opts.object or ""
-	prompt.KeyboardKeyCode = KEY
-	prompt.GamepadKeyCode = GAMEPAD_KEY
+	prompt.KeyboardKeyCode = opts.key or KEY
+	prompt.GamepadKeyCode = opts.gamepadKey or GAMEPAD_KEY
 	prompt.HoldDuration = opts.holdDuration or 0
 	prompt.MaxActivationDistance = opts.maxDistance or ItemConfig.PickupDistance
 	prompt.RequiresLineOfSight = false

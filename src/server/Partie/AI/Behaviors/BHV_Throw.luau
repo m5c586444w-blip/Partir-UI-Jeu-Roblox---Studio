@@ -38,9 +38,9 @@ function Behavior.step(brain)
 		return
 	end
 	brain:Stop()
-	local interval = require(Config:WaitForChild("ActConfig")).Siege.StoneInterval
-	if os.clock() - (brain.lastThrowAt or -math.huge) >= interval then
-		brain.lastThrowAt = os.clock()
+	-- 19.5 (C10) : 1 lancer toutes les 3 à 5 s hors siège
+	if os.clock() >= (brain.nextThrowAt or 0) then
+		brain.nextThrowAt = os.clock() + B.intervalMin + math.random() * (B.intervalMax - B.intervalMin)
 		brain:Attack("ATK_Throw", t)
 	end
 end

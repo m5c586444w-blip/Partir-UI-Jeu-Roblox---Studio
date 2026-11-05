@@ -103,12 +103,14 @@ AmbienceConfig.Wind = {
 	Clear = { base = { 6, 0, -3 }, gust = 10, gustIntervalMin = 8, gustIntervalMax = 15 },
 	Fog = { base = { 2, 0, -1 }, gust = 0 },
 	Rain = { base = { 14, 0, -6 }, gust = 20, sine = true }, -- cycle en sinus comme l'exemple de la doc
-	Snow = { base = { 10, 0, -8 }, gust = 12 },
+	-- DÉFAUT (C21) : rafales de neige au même intervalle que par temps clair
+	Snow = { base = { 10, 0, -8 }, gust = 12, gustIntervalMin = 8, gustIntervalMax = 15 },
 }
--- TODO(BIBLE): période du cycle en sinus des rafales de pluie, et intervalle des rafales de neige
-AmbienceConfig.WindSinePeriod = nil
--- TODO(BIBLE): durée d'une rafale. PROVISOIRE : 1 s
-AmbienceConfig.GustDuration = 1
+-- DÉFAUT (C21, C27) : les rafales gardent la direction du vent (l'odorat de la créature, 9.4, ne lit que
+-- la direction) ; ce sont donc des valeurs d'ambiance, ni texte ni gameplay ni asset (section 0).
+AmbienceConfig.WindSinePeriod = 12 -- période du cycle en sinus de la pluie (s)
+AmbienceConfig.WindSineStep = 0.5 -- pas de mise à jour du vent en sinus (s)
+AmbienceConfig.GustDuration = 1 -- durée d'une rafale (s)
 AmbienceConfig.TreeWindRange = 120 -- 12.4 : arbres animés par leurs os à moins de 120 studs (réglage Élevé)
 
 -- 12.5 : réverbération par zone (SoundService.AmbientReverb)

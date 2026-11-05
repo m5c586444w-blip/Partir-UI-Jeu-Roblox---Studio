@@ -247,6 +247,9 @@ function EvidenceService:CommitForSurvivor(player)
 		for _, e in carried do
 			table.insert(data.evidence, { class = e.class, kind = e.kind, date = os.time() })
 			xp += ProgressionConfig.XPGains["Evidence" .. e.class] or 0
+			if e.class == "B" then
+				data.evidenceBOut = (data.evidenceBOut or 0) + 1 -- 19.5 (C38) : sac « Cold Trail »
+			end
 		end
 		-- DÉFAUT : au-delà de 200, les plus anciennes sont retirées
 		while #data.evidence > ProgressionConfig.MaxEvidence do

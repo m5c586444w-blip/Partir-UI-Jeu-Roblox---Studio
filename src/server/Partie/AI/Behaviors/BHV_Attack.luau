@@ -13,10 +13,18 @@ local Behavior = {}
 
 local Attacks = CreatureConfig.Attacks
 
+-- 19.5 (J12) : attaque imposée par le directeur (prioritaire, sans durée minimale)
+function Behavior.isUrgent(brain)
+	return brain.id ~= "CRT_Female" and brain.ai.TensionDirector:ForcedAttack(brain)
+end
+
 function Behavior.score(brain)
 	local t = brain.target
 	if t == nil or brain.id == "CRT_Female" then
 		return 0
+	end
+	if brain.ai.TensionDirector:ForcedAttack(brain) then
+		return 1
 	end
 	if not brain.ai.TensionDirector:AllowAttack(brain, t) then
 		return 0

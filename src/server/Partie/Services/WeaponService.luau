@@ -120,6 +120,10 @@ local function onFire(player, origin, direction, _timestamp)
 	end
 	local head = player.Character and player.Character:FindFirstChild("Head")
 	local entry, weapon = heldWeapon(player)
+	-- 19.5 (C6) : pas d'arme à feu pendant le portage
+	if weapon and not weapon.melee and player:GetAttribute("carrying") ~= nil then
+		return
+	end
 	if head == nil or entry == nil then
 		return
 	end
@@ -160,10 +164,11 @@ local function onFire(player, origin, direction, _timestamp)
 				(math.random() - 0.5) * spread,
 				0
 			)).LookVector
-			local result = cast(player, origin, dir, MAX_RANGE)
+			local result = cast(player, origin, dir, weapon.zeroBeyond or MAX_RANGE)
 			if result then
 				local distance = (result.Position - origin).Magnitude
-				-- 8.2 : plein dégât jusqu'à 15 studs, −70 % à 40 studs (linéaire entre les deux, PROVISOIRE)
+				-- 19.5 (C13) : plein dégât jusqu'à 15 studs, baisse linéaire jusqu'à 30 % à 40 studs,
+				-- 30 % jusqu'à 60 studs, 0 au-delà (portée du rayon)
 				local factor = 1
 				if distance > weapon.fullDamageRange then
 					local t = math.clamp(
@@ -206,7 +211,8 @@ local function onReload(player)
 	end
 	player:SetAttribute("isReloading", true)
 	reloading[player] = task.spawn(function()
-		while (entry.ammo or 0) < weapon.ammo and services.InventoryService:Count(player, ammoId) > 0 do
+		local capacity = weapon.magazine or weapon.ammo
+		while (entry.ammo or 0) < capacity and services.InventoryService:Count(player, ammoId) > 0 do
 			task.wait(perRound)
 			local current = heldWeapon(player)
 			if current ~= entry or not services.InventoryService:Remove(player, ammoId, 1) then

@@ -43,17 +43,84 @@ local extracted = {} -- [Player] = routeId
 local extractionDone = false
 local openings = {} -- [name] = part
 
-local function setObjective(text)
-	state:SetAttribute("objective", text or "")
-	local list = Util.decode(state:GetAttribute("objectives"), {})
-	if text and text ~= "" and list[#list] ~= text then
-		table.insert(list, text)
-		state:SetAttribute("objectives", Util.encode(list))
+-- 19.5 (C19) : objectifs séquentiels. Chaque étape : { text, done = fn, count = fn }.
+-- MatchState.objective = étape en cours (+ ligne facultative) ; objectives = liste de la tablette.
+local objectiveSteps = nil
+local objectiveExtra = nil -- fonction qui rend un texte facultatif ou nil (E4)
+local objectiveHistory = {} -- textes des étapes terminées
+local currentStep = nil
+
+local function stepText(step)
+	if step.count then
+		return Util.formatMessage(step.text, { n = step.count() })
 	end
+	return step.text
+end
+
+local function setObjective(text, extra)
+	local shown = text or ""
+	if extra then
+		shown ..= "\n" .. extra -- DÉFAUT : la ligne facultative sous l'objectif en cours
+	end
+	if state:GetAttribute("objective") == shown then
+		return
+	end
+	state:SetAttribute("objective", shown)
+	local list = table.clone(objectiveHistory)
+	if text and text ~= "" then
+		table.insert(list, text)
+	end
+	if extra then
+		table.insert(list, extra)
+	end
+	state:SetAttribute("objectives", Util.encode(list))
 	local remote = Util.getRemote("RE_Objective")
 	if remote then
-		remote:FireAllClients(act, text)
+		remote:FireAllClients(act, shown)
 	end
+end
+
+local function updateObjectives()
+	if objectiveSteps == nil then
+		return
+	end
+	local current = objectiveSteps[#objectiveSteps]
+	for _, step in objectiveSteps do
+		if not (step.done and step.done()) then
+			current = step
+			break
+		end
+	end
+	if currentStep and currentStep ~= current then
+		table.insert(objectiveHistory, stepText(currentStep))
+	end
+	currentStep = current
+	setObjective(stepText(current), objectiveExtra and objectiveExtra())
+end
+
+-- texts : liste de textes de la bible ; rules : { [i] = { done = fn, count = fn } }
+local function setObjectives(texts, rules, extra)
+	if currentStep then
+		table.insert(objectiveHistory, stepText(currentStep))
+		currentStep = nil
+	end
+	objectiveSteps = {}
+	for i, text in texts do
+		local rule = rules and rules[i] or {}
+		table.insert(objectiveSteps, { text = text, done = rule.done, count = rule.count })
+	end
+	objectiveExtra = extra
+	updateObjectives()
+end
+
+-- un joueur du groupe porte cet objet
+local function groupHas(itemId)
+	for _, player in Players:GetPlayers() do
+		if services.HealthService:IsAlive(player) and services.InventoryService:Has(player, itemId) then
+			return true
+		end
+	end
+	return false
 end
 
 local function elapsedInAct()
@@ -109,6 +176,7 @@ end
 local function step()
 	task.wait(PlayerConfig.Technical.Tick)
 	updateClock()
+	updateObjectives()
 end
 
 local function alivePlayers()
@@ -205,32 +273,63 @@ function GameStateService:OnAlphaKilled()
 	state:SetAttribute("alphaKilled", true)
 end
 
+local function cluesCount()
+	local found = 0
+	for _ in cluesFound do
+		found += 1
+	end
+	return found
+end
+
 local function runAct1()
 	setAct(1)
-	setObjective(ActConfig.Objectives[1])
-	local tabletRead = false
+	local tabletRead = function()
+		return services.DocumentService:HasRead("DOC_07")
+	end
+	-- DÉFAUT : « Fouiller le camp » est fait quand le camp est atteint et qu'un indice ou la tablette
+	-- y a été trouvé
+	setObjectives(ActConfig.Objectives[1], {
+		{
+			done = function()
+				return campEntered and (cluesCount() > 0 or tabletRead())
+			end,
+		},
+		{ done = tabletRead },
+		{
+			done = function()
+				return cluesCount() >= ActConfig.Act1.CluesNeeded
+			end,
+			count = function()
+				return math.min(cluesCount(), ActConfig.Act1.CluesNeeded)
+			end,
+		},
+	})
 	while true do
 		if not campEntered and anyInside(MapConfig.Places[ActConfig.Act1.CampPlace]) then
 			campEntered = true
 			services.CinematicService:Play("CS_04") -- 1re entrée dans P09
 		end
-		tabletRead = services.DocumentService:HasRead("DOC_07")
-		local found = 0
-		for _ in cluesFound do
-			found += 1
-		end
-		if tabletRead and state:GetAttribute("objective") ~= ActConfig.Objectives.Cabin then
-			-- 5.2 : la tablette indique le point de repli : la cabane de 1924
-			setObjective(ActConfig.Objectives.Cabin)
-		end
-		if extractionDone or (tabletRead and found >= ActConfig.Act1.CluesNeeded and minReached()) or maxReached() then
+		local found = cluesCount()
+		-- 5.2 : la tablette indique le point de repli ; l'objectif de la cabane vient une fois l'acte fini
+		if
+			extractionDone
+			or (tabletRead() and found >= ActConfig.Act1.CluesNeeded and minReached())
+			or maxReached()
+		then
 			break
 		end
 		step()
 	end
-	if state:GetAttribute("objective") ~= ActConfig.Objectives.Cabin then
-		setObjective(ActConfig.Objectives.Cabin)
+end
+
+local function barricaded()
+	local n = 0
+	for _, part in openings do
+		if (part:GetAttribute("planks") or 0) > 0 then
+			n += 1
+		end
 	end
+	return n
 end
 
 local function runAct2()
@@ -238,6 +337,21 @@ local function runAct2()
 	services.WeatherService:SiegeChange() -- 5.2 : la météo se dégrade
 	local siege = ActConfig.Siege
 	local cabin = MapConfig.Places[siege.CabinPlace]
+	setObjectives(ActConfig.Objectives[2], {
+		{
+			done = function()
+				return cabinEnteredAt ~= nil or state:GetAttribute("siegeActive") == true
+			end,
+		},
+		{
+			-- DÉFAUT : l'étape passe à « Tenir » quand les 3 ouvertures sont barricadées ou que le siège commence
+			done = function()
+				return barricaded() >= #siege.Openings or state:GetAttribute("siegeActive") == true
+			end,
+			count = barricaded,
+		},
+		{},
+	})
 	-- le siège commence 60 s après l'entrée du premier joueur, ou à 23 h 05 si personne n'y est
 	while true do
 		if cabinEnteredAt == nil and anyInside(cabin) then
@@ -253,6 +367,7 @@ local function runAct2()
 		step()
 	end
 	state:SetAttribute("siegeActive", true)
+	state:SetAttribute("siegeStartedAt", workspace:GetServerTimeNow())
 	GameStateService.SiegeStarted:Fire()
 	services.CinematicService:Play("CS_06")
 	local started = os.clock()
@@ -276,15 +391,67 @@ local function runAct2()
 		end
 	end
 	local route = services.ExtractionService:DrawMainRoute(info.seed)
-	local routeText = ActConfig.Objectives.Extraction[route]
-	services.CinematicService:PlayAndWait("CS_07", nil, { text = routeText })
-	setObjective(routeText)
+	services.CinematicService:PlayAndWait("CS_07", nil, { text = ActConfig.RouteAnnounce[route] })
+end
+
+-- 19.5 (C19) : ligne facultative de E4 si DOC_07 a été lu
+local function secretLine(actNumber)
+	return function()
+		local secret = ActConfig.SecretRoute
+		if services.DocumentService:HasRead(secret.requiresDocument) then
+			return ActConfig.Objectives[actNumber][secret.id][1]
+		end
+		return nil
+	end
+end
+
+-- règles d'avancement des objectifs de l'acte 3 (DÉFAUT : objet porté par un joueur du groupe)
+local function act3Rules(route)
+	local prepared = function()
+		return services.ExtractionService:IsPrepared(route)
+	end
+	local has = function(itemId)
+		return function()
+			return prepared() or groupHas(itemId)
+		end
+	end
+	if route == "E1" then
+		return { { done = has("ITM_Keys") }, { done = has("ITM_Jack") }, { done = prepared } }
+	elseif route == "E2" then
+		local p11 = MapConfig.Places.P11
+		return {
+			{ done = has("ITM_CoaxCable") },
+			{
+				-- la batterie est à la tour : un joueur qui la porte est dans P11
+				done = function()
+					if prepared() then
+						return true
+					end
+					for _, player in Players:GetPlayers() do
+						local root = Util.characterRoot(player)
+						if
+							root
+							and services.InventoryService:Has(player, "ITM_CarBattery")
+							and (root.Position - p11.pos).Magnitude <= p11.radius
+						then
+							return true
+						end
+					end
+					return false
+				end,
+			},
+			{ done = prepared },
+		}
+	end
+	return { { done = has("ITM_Jerrycan") }, { done = has("ITM_StarterRelay") }, { done = prepared } }
 end
 
 local function runAct3()
 	setAct(3) -- constante (numéro d'acte, 5.1)
 	services.CinematicService:Play("CS_08")
 	services.ExtractionService:Activate()
+	local mainRoute = services.ExtractionService:GetMainRoute()
+	setObjectives(ActConfig.Objectives[3][mainRoute], act3Rules(mainRoute), secretLine(3)) -- constante (acte 3)
 	while true do
 		local route = services.ExtractionService:GetMainRoute()
 		if extractionDone or (services.ExtractionService:IsPrepared(route) and minReached()) or maxReached() then
@@ -294,9 +461,22 @@ local function runAct3()
 	end
 end
 
+local ACT_DAWN = 4 -- constante (numéro de l'acte 4, 5.1)
+
 local function runAct4()
 	setAct(4) -- constante (numéro d'acte, 5.1)
 	services.CinematicService:Play("CS_09")
+	local mainRoute = services.ExtractionService:GetMainRoute()
+	local hold = ActConfig.Routes.E2.holdTime
+	setObjectives(ActConfig.Objectives[ACT_DAWN][mainRoute], {
+		{
+			-- E2 : secondes restantes avant l'hélicoptère (durée entière avant l'appel)
+			count = function()
+				local at = state:GetAttribute("helicopterAt")
+				return if at then math.max(0, math.ceil(at - workspace:GetServerTimeNow())) else hold
+			end,
+		},
+	}, secretLine(ACT_DAWN))
 	-- 5.2 : à 05 h 00, dernier assaut
 	state:SetAttribute("finalAssault", true)
 	services.ExtractionService:OpenTriggers()
@@ -451,7 +631,7 @@ local function run()
 
 	-- acte 0 : arrivée, 3 min fixes
 	setAct(0)
-	setObjective(ActConfig.Objectives[0])
+	setObjectives(ActConfig.Objectives[0])
 	services.CinematicService:Play(CinematicConfig.StartCinematic[info.start] or CinematicConfig.StartCinematic.S1)
 	if info.start == "S3" then
 		campEntered = true -- 5.2 : déjà au camp si départ S3

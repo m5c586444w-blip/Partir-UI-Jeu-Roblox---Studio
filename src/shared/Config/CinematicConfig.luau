@@ -69,8 +69,10 @@ CinematicConfig.Cinematics = {
 		subtitle = "… Oh non.",
 		subtitleNearestPlayer = true,
 	},
-	-- TODO(BIBLE): CS_05 dure 25 s alors que 6 « en partie, elles durent 12 s au plus » — exception de la vidéo ?
+	-- 19.5 (C23) : CS_05 joue dans la tablette (TabletGui), sans prise de caméra ; le joueur reste dans
+	-- le monde et peut fermer à tout moment. La limite de 12 s et l'invulnérabilité ne s'appliquent pas.
 	CS_05 = {
+		inTablet = true,
 		trigger = "Vidéo de la tablette (DOC_08)",
 		duration = 25,
 		scope = "Local",
@@ -79,6 +81,8 @@ CinematicConfig.Cinematics = {
 		screenText = "Point de repli de l'équipe : cabane des mineurs",
 		timestamp = "J-17 02:14",
 		noMusic = true,
+		subtitleShot = 3, -- 6.2 : « 3. Whitcombe : Éteins ça. Éteins ça ! »
+		screenTextShot = 6, -- 6.2 : « 6. Écran : Point de repli… »
 	},
 	CS_06 = { trigger = "Début du siège", duration = 6, scope = "Place", place = "P05c", shots = 2 },
 	CS_07 = { trigger = "Fin du siège", duration = 10, scope = "Place", place = "P05c", shots = 2, routeText = true },
@@ -115,7 +119,12 @@ CinematicConfig.Cinematics = {
 -- 3.3 et 5.2 : cinématique d'arrivée selon le départ tiré
 CinematicConfig.StartCinematic = { S1 = "CS_02a", S2 = "CS_02b", S3 = "CS_02c" }
 
--- TODO(BIBLE): texte du « message radio » entendu par les joueurs hors du rayon d'une cinématique de lieu (6.1)
-CinematicConfig.OutOfRangeRadioText = nil
+-- 19.5 (C24) : message radio entendu hors du rayon d'une cinématique de lieu, dit par le personnage
+-- du joueur le plus proche du lieu. Autres cinématiques : aucun message.
+CinematicConfig.OutOfRangeRadioText = {
+	CS_04 = "{player} : On a trouvé le camp. Il y a… quelqu'un. Venez.",
+	CS_06 = "{player} : Ça tombe sur la cabane ! Rejoignez-nous !",
+	CS_07 = "{player} : Ça s'est arrêté. Je crois.",
+}
 
 return CinematicConfig

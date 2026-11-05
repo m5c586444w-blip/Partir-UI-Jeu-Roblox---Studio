@@ -48,6 +48,10 @@ function Attack.run(brain, target)
 			brain.model
 		)
 		heldFor += step
+		-- 19.5 (C2) : saisie tenue plus de 2 s → hémorragie légère
+		if heldFor > PlayerConfig.BleedOnDamage.GrabLightAfter then
+			brain.services.HealthService:StartBleed(target, "Light")
+		end
 		if heldFor >= A.dragAfter then
 			break -- BHV_Drag prend le relais
 		end

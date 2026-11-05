@@ -64,6 +64,22 @@ function TensionDirector:AttackAttempts(act)
 	return attackAttempts[act] or 0
 end
 
+-- 19.5 (J12) : attaque imposée à l'acte 3 (10 min passées, moins de 2 tentatives)
+local act3StartedAt = nil
+function TensionDirector:ForcedAttack(brain)
+	local state = Util.getMatchState()
+	if state:GetAttribute("act") ~= 3 or act3StartedAt == nil then -- constante (numéro d'acte)
+		return false
+	end
+	if os.clock() - act3StartedAt < DirectorConfig.Act3.ForceAttackAfter then
+		return false
+	end
+	if self:AttackAttempts(3) >= DirectorConfig.Act3.MinAttackAttempts then -- constante (numéro d'acte)
+		return false
+	end
+	return brain.target ~= nil and self:AllowAttack(brain, brain.target)
+end
+
 -- règles d'acte (9.12) : la créature peut-elle attaquer ce joueur maintenant ?
 function TensionDirector:AllowAttack(brain, player)
 	local state = Util.getMatchState()
@@ -181,6 +197,12 @@ function TensionDirector:Init(allServices, aiModules)
 end
 
 function TensionDirector:Start()
+	local state = Util.getMatchState()
+	state:GetAttributeChangedSignal("act"):Connect(function()
+		if state:GetAttribute("act") == 3 then -- constante (numéro d'acte)
+			act3StartedAt = os.clock()
+		end
+	end)
 	services.HealthService.Died:Connect(function(player)
 		local act = Util.getMatchState():GetAttribute("act") or 0
 		deathsInAct[act] = (deathsInAct[act] or 0) + 1

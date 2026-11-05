@@ -74,6 +74,13 @@ PlayerConfig.Downed = {
 	ReviveLimbFraction = 0.2, -- le joueur revient avec 20 % sur le membre touché
 }
 
+-- 19.5 (C6) : porter un coéquipier à terre (vitesse, bruit et endurance : Movement.Carry, Stamina)
+PlayerConfig.Carry = {
+	PickUpTime = 2, -- maintenir Utiliser 2 s pour le charger sur l'épaule
+	PutDownTime = 1, -- Utiliser 1 s pour le poser
+	DownedTimeFactor = 0.5, -- le compte à rebours du joueur porté avance deux fois moins vite
+}
+
 -- 6.3 : caméra de mort (sans coupe), puis spectateur
 PlayerConfig.DeathCamera = { Duration = 4, TiltDegrees = 10, Height = 3 } -- Height : DÉFAUT (studs au-dessus du corps)
 
@@ -225,11 +232,16 @@ PlayerConfig.Technical = {
 	HoldTolerance = 0.3, -- marge (s) sur le temps de maintien vérifié par le serveur
 	VideoCheckInterval = 0.25, -- s entre deux contrôles de la vidéo de classe A
 	DownedDamageKills = true, -- TODO(BIBLE): un coup reçu à terre tue-t-il ? PROVISOIRE : oui
+	-- DÉFAUT (19.5, C6) : Porter et Poser ont leur propre touche, pour ne pas se confondre avec Relever
+	CarryKey = Enum.KeyCode.G,
+	CarryGamepadKey = Enum.KeyCode.ButtonY,
+	CarryOffset = Vector3.new(0, 1.5, 0.5), -- position du joueur porté sur l'épaule (studs)
+	TapCycleTime = 0.3, -- écran tactile : un appui plus court change d'invite au lieu d'agir
 }
 
--- TODO(BIBLE): qu'est-ce qui déclenche une hémorragie légère ou grave (seuil de dégâts, type d'attaque) ?
--- Tant que ces seuils valent nil, seules les attaques qui le précisent font saigner.
-PlayerConfig.BleedOnDamage = { LightAt = nil, HeavyAt = nil }
+-- 19.5 (C2) : un coup de 20 à 34 → hémorragie légère ; 35 ou plus → grave ; moins de 20 → aucune.
+-- Saisie tenue plus de 2 s → légère. Les pierres ne causent jamais d'hémorragie grave.
+PlayerConfig.BleedOnDamage = { LightAt = 20, HeavyAt = 35, GrabLightAfter = 2, StoneMax = "Light" }
 
 -- TODO(BIBLE): sur quel membre agissent le bandage (+10 PV) et la trousse (+40 PV) ?
 -- PROVISOIRE : le membre le plus abîmé (en proportion).

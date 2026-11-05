@@ -44,11 +44,21 @@ ProgressionConfig.XPGains = {
 }
 
 -- 7.1 : déblocage des skins : A dès le début, B après 5 parties jouées, C après 1 survie
--- TODO(BIBLE): conditions de déblocage des accessoires (bonnet, frontale colorée, sac)
 ProgressionConfig.SkinUnlocks = {
 	A = { stat = nil, need = 0 },
 	B = { stat = "plays", need = 5 },
 	C = { stat = "survivals", need = 1 },
+}
+
+-- 19.5 (C38) : accessoires cosmétiques, choisis dans SkinShopGui (Accessories). stat : champ des données
+-- (16.4 ; evidenceBOut = preuves de classe B sorties, DÉFAUT : compteur ajouté aux données).
+-- Les identifiants sont des DÉFAUT (noms des boutons de SkinShopGui > Accessories).
+ProgressionConfig.AccessoryIds = { "Beanie", "AmberHeadlamp", "ColdTrailBag" }
+ProgressionConfig.AccessoryUnlocks = {
+	-- TODO(BIBLE): les 3 couleurs du bonnet (asset à créer, 13.3)
+	Beanie = { stat = "plays", need = 3, colors = 3 }, -- bonnet (3 couleurs) après 3 parties
+	AmberHeadlamp = { stat = "plays", need = 10 }, -- frontale ambre après 10 parties
+	ColdTrailBag = { stat = "evidenceBOut", need = 1 }, -- sac « Cold Trail » : 1re preuve de classe B sortie
 }
 
 -- 17.2 : menu Réglages. Valeurs possibles et défaut PC / mobile ; enregistrés dans settings (16.4).
@@ -63,7 +73,7 @@ ProgressionConfig.Settings = {
 	DepthOfField = { options = { true, false }, pc = true, mobile = false },
 	Particles = { options = { "Low", "Normal" }, pc = "Normal", mobile = "Low" },
 	FieldOfView = { min = 60, max = 90, pc = 70, mobile = 70 },
-	-- TODO(BIBLE): plage de la sensibilité (17.2 : « — »). PROVISOIRE : 0,1 à 3.
+	-- DÉFAUT (C37) : plage de la sensibilité (17.2 : « — ») — préférence du joueur, pas une valeur de jeu
 	Sensitivity = { min = 0.1, max = 3, pc = 1.0, mobile = 1.0 },
 	InvertY = { options = { true, false }, pc = false, mobile = false },
 	TouchButtonSize = { min = 80, max = 130, pc = 100, mobile = 100 },

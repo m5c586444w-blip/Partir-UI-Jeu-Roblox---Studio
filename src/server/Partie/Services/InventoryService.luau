@@ -32,8 +32,7 @@ InventoryService.ProjectileLanded = Signal.new() -- (player, itemId, position)
 local services = nil
 local inventories = {} -- [Player] = { quick = {}, bag = {}, selected = 1 }
 
-local THROW_SPEED = ItemConfig.Throw.Speed
-local THROW_FLIGHT = ItemConfig.Throw.Flight
+local THROW = ItemConfig.Throw
 local NOISE_TRAP_RADIUS = ItemConfig.NoiseTrapRadius
 
 local function itemDef(id)
@@ -113,9 +112,10 @@ local function newEntry(id, count, extra)
 	if def and (def.light or def.recordMinutes) then
 		entry.battery = 1
 	end
-	if WeaponConfig.Weapons[id] and WeaponConfig.Weapons[id].ammo then
-		-- TODO(BIBLE): munitions au départ (chargeur plein, réserve ?). PROVISOIRE : chargeur plein, réserve 0.
-		entry.ammo = WeaponConfig.Weapons[id].ammo
+	local weapon = WeaponConfig.Weapons[id]
+	if weapon and weapon.ammo then
+		-- 19.5 (C12) : arme chargée à pleine capacité
+		entry.ammo = weapon.magazine or weapon.ammo
 	end
 	if extra then
 		for k, v in extra do
@@ -367,7 +367,9 @@ local function lightEntry(player)
 		return nil
 	end
 	local held = inv.quick[inv.selected]
-	if held and itemDef(held.id) and itemDef(held.id).light then
+	-- 19.5 (C6) : pas de lampe en main pendant le portage (la frontale marche)
+	local handsBusy = player:GetAttribute("carrying") ~= nil
+	if held and itemDef(held.id) and itemDef(held.id).light and not handsBusy then
 		return held
 	end
 	for _, list in { inv.quick, inv.bag } do
@@ -488,16 +490,47 @@ local function placeSource(position, duration, opts)
 	return part
 end
 
-local function throw(player, entry, slot)
+-- 19.5 (C10) : trajectoire balistique à 70 studs/s (gravité du moteur), portée horizontale de 60 studs
+-- au plus ; bruit 50 à l'impact. Rend le point d'impact et la durée du vol.
+local function ballistic(player, origin, direction)
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Exclude
+	params.FilterDescendantsInstances = { player.Character }
+	local velocity = direction.Unit * THROW.Speed
+	local gravity = Vector3.new(0, -workspace.Gravity, 0)
+	local position, t = origin, 0
+	while t < THROW.MaxFlight do
+		local nextVelocity = velocity + gravity * THROW.SimStep
+		local delta = (velocity + nextVelocity) / 2 * THROW.SimStep
+		local flat = (position + delta - origin) * Vector3.new(1, 0, 1)
+		if flat.Magnitude > THROW.MaxRange then
+			-- portée maximale atteinte : l'objet tombe à la verticale de ce point
+			local down = workspace:Raycast(position, Vector3.new(0, -THROW.MaxRange, 0), params)
+			return (down and down.Position) or position, t
+		end
+		local hit = workspace:Raycast(position, delta, params)
+		t += THROW.SimStep
+		if hit then
+			return hit.Position, t
+		end
+		position += delta
+		velocity = nextVelocity
+	end
+	return position, t
+end
+
+local function throw(player, entry, slot, aim)
 	local root = Util.characterRoot(player)
-	if root == nil then
+	local head = player.Character and player.Character:FindFirstChild("Head")
+	if root == nil or head == nil then
 		return
 	end
 	local def = itemDef(entry.id)
-	local landing = root.Position + root.CFrame.LookVector * THROW_SPEED * THROW_FLIGHT
+	local direction = if typeof(aim) == "Vector3" and aim.Magnitude > 0 then aim else root.CFrame.LookVector
+	local landing, flight = ballistic(player, head.Position, direction)
 	consumeUse(player, entry, slot)
-	task.delay(THROW_FLIGHT, function()
-		local noise = def.impactNoise or def.breakNoise
+	task.delay(flight, function()
+		local noise = def.impactNoise or def.breakNoise or THROW.ImpactNoise
 		services.NoiseService:Emit(landing, noise, NoiseTypes.Impact, player)
 		InventoryService.ProjectileLanded:Fire(player, entry.id, landing)
 	end)
@@ -629,7 +662,7 @@ local function useAbility(player)
 	InventoryService.AbilityUsed:Fire(player, role)
 end
 
-function InventoryService:Use(player, slot)
+function InventoryService:Use(player, slot, aim)
 	if not services.HealthService:IsUp(player) then
 		return
 	end
@@ -646,7 +679,7 @@ function InventoryService:Use(player, slot)
 		return
 	end
 	if def.throwable then
-		throw(player, entry, slot)
+		throw(player, entry, slot, aim)
 	elseif def.effect and EFFECTS[def.effect] then
 		local root = Util.characterRoot(player)
 		if def.noise and root and def.effect ~= "Flare" and def.effect ~= "BearSpray" then
@@ -699,6 +732,12 @@ function InventoryService:GiveStarting(player, weaponId)
 	if weaponId and WeaponConfig.Weapons[weaponId] then
 		self:Add(player, weaponId, 1)
 	end
+	-- 19.5 (C12) : réserve de départ (pistolet lance-fusées : 2 fusées)
+	for id, weapon in WeaponConfig.Weapons do
+		if weapon.startReserve and self:Has(player, id) then
+			self:Add(player, "AMMO_" .. id, weapon.startReserve)
+		end
+	end
 end
 
 function InventoryService:Init(allServices)
@@ -721,8 +760,8 @@ function InventoryService:Start()
 		RE_EquipSlot = function(player, slot)
 			self:Equip(player, slot)
 		end,
-		RE_UseItem = function(player, slot)
-			self:Use(player, slot)
+		RE_UseItem = function(player, slot, aim)
+			self:Use(player, slot, if typeof(aim) == "Vector3" then aim else nil)
 		end,
 		RE_DropItem = function(player, slot)
 			self:Drop(player, slot)

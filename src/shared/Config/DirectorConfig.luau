@@ -10,7 +10,9 @@ DirectorConfig.Rise = { Below = 25, For = 120 } -- intensité < 25 pendant 120 s
 DirectorConfig.Peak = { Above = 75, For = 90, PauseMin = 60, PauseMax = 90 } -- pause imposée
 DirectorConfig.Act1 = { IsolatedDistance = 200, IsolatedFor = 60, GuaranteedSightings = 1, GuaranteedSigns = 2 }
 DirectorConfig.Act2MaxDeaths = { Normal = 1, Hard = 2, Nightmare = math.huge }
-DirectorConfig.Act3 = { MinAttackAttempts = 2, MaxDeathsPer = 1, Window = 3 * 60 }
+-- 19.5 (J12) : si, 10 min après le début de l'acte 3, il y a eu moins de 2 tentatives d'attaque,
+-- le directeur impose BHV_Attack sur la meilleure cible
+DirectorConfig.Act3 = { MinAttackAttempts = 2, MaxDeathsPer = 1, Window = 3 * 60, ForceAttackAfter = 10 * 60 }
 DirectorConfig.Act4 = { AllCreatures = true, NoPause = true }
 
 -- 10.1 : règles de mise en scène

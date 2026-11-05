@@ -54,7 +54,13 @@ end
 local function gustLoop()
 	while true do
 		local wind = AmbienceConfig.Wind[current]
-		if wind == nil or (wind.gust or 0) <= 0 or wind.gustIntervalMin == nil then
+		if wind and wind.sine and (wind.gust or 0) > 0 then
+			-- pluie : force du vent en sinus autour du vent de base (DÉFAUT, C21)
+			local base = Vector3.new(table.unpack(wind.base))
+			local phase = os.clock() / AmbienceConfig.WindSinePeriod * math.pi * 2
+			workspace.GlobalWind = base + base.Unit * wind.gust * (0.5 + 0.5 * math.sin(phase))
+			task.wait(AmbienceConfig.WindSineStep)
+		elseif wind == nil or (wind.gust or 0) <= 0 or wind.gustIntervalMin == nil then
 			task.wait(AmbienceConfig.Wind.Clear.gustIntervalMin)
 		else
 			task.wait(random:NextNumber(wind.gustIntervalMin, wind.gustIntervalMax))

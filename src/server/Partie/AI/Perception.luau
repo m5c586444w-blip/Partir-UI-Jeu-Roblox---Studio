@@ -65,7 +65,8 @@ end
 -- 7.6 et 8.3 : coefficient de visibilité du joueur
 function Perception:VisibilityOf(player, distance)
 	local root = Util.characterRoot(player)
-	if root == nil then
+	-- 19.5 (C7, HC2) : dans le vide sanitaire, invisible à la vue (pas à l'ouïe ni à l'odorat)
+	if root == nil or player:GetAttribute("hiddenFromSight") then
 		return 0
 	end
 	local stance = player:GetAttribute("stance")

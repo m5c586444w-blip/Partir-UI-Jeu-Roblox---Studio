@@ -25,7 +25,8 @@ HealthService.Died = Signal.new() -- (player, cause)
 HealthService.BloodTrail = {}
 
 local services = nil
-local state = {} -- [Player] = { downedLimb, lastTrail, revivePrompt, downedThread }
+local state = {} -- [Player] = { downedLimb, lastTrail, revivePrompt, carryPrompt, downedRemaining }
+local carryWeld = {} -- [Player porté] = WeldConstraint
 
 local function attr(limb)
 	return "hp" .. limb
@@ -126,10 +127,115 @@ local function clearRevivePrompt(player)
 		s.revivePrompt:Destroy()
 		s.revivePrompt = nil
 	end
-	if s and s.downedThread then
-		task.cancel(s.downedThread)
-		s.downedThread = nil
+	if s and s.carryPrompt then
+		s.carryPrompt:Destroy()
+		s.carryPrompt = nil
 	end
+	if s then
+		s.downedRemaining = nil
+	end
+end
+
+local function playerById(userId)
+	return if userId then Players:GetPlayerByUserId(userId) else nil
+end
+
+-- le corps porté n'a plus de masse ni de collision ; les collisions d'origine sont rendues ensuite
+local savedCollide = {} -- [Player porté] = { [BasePart] = CanCollide }
+local function setCarriedPhysics(player, carried)
+	local character = player.Character
+	if character == nil then
+		return
+	end
+	local saved = savedCollide[player] or {}
+	for _, part in character:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.Massless = carried
+			if carried then
+				saved[part] = part.CanCollide
+				part.CanCollide = false
+			elseif saved[part] ~= nil then
+				part.CanCollide = saved[part]
+			end
+		end
+	end
+	savedCollide[player] = if carried then saved else nil
+end
+
+-- 19.5 (C6) : poser le joueur porté (ou le lâcher si le porteur tombe, meurt ou part)
+function HealthService:PutDown(carried)
+	local carrier = playerById(carried:GetAttribute("carriedBy"))
+	local weld = carryWeld[carried]
+	if weld then
+		weld:Destroy()
+		carryWeld[carried] = nil
+	end
+	carried:SetAttribute("carriedBy", nil)
+	setCarriedPhysics(carried, false)
+	if carrier then
+		carrier:SetAttribute("carrying", nil)
+		local s = state[carrier]
+		if s and s.putDownPrompt then
+			s.putDownPrompt:Destroy()
+			s.putDownPrompt = nil
+		end
+	end
+end
+
+-- 19.5 (C6) : charger un coéquipier à terre sur l'épaule
+function HealthService:PickUp(carrier, carried)
+	local carrierRoot = carrier.Character and carrier.Character:FindFirstChild("HumanoidRootPart")
+	local carriedRoot = carried.Character and carried.Character:FindFirstChild("HumanoidRootPart")
+	if carrierRoot == nil or carriedRoot == nil then
+		return
+	end
+	if carrier:GetAttribute("carrying") ~= nil or carried:GetAttribute("carriedBy") ~= nil then
+		return
+	end
+	setCarriedPhysics(carried, true)
+	carriedRoot.CFrame = carrierRoot.CFrame * CFrame.new(PlayerConfig.Technical.CarryOffset)
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = carrierRoot
+	weld.Part1 = carriedRoot
+	weld.Parent = carrierRoot
+	carryWeld[carried] = weld
+	carrier:SetAttribute("carrying", carried.UserId)
+	carried:SetAttribute("carriedBy", carrier.UserId)
+	-- ni arme à feu ni lampe en main : la lampe tenue s'éteint (la frontale reste)
+	if services.InventoryService and carrier:GetAttribute("lightOn") then
+		services.InventoryService:SetLight(carrier, true)
+	end
+	-- poser : Utiliser 1 s, invite visible du seul porteur
+	local s = state[carrier]
+	if s and services.InteractionService then
+		s.putDownPrompt = services.InteractionService:CreatePrompt(carriedRoot, {
+			action = LoreConfig.Prompts.PutDown,
+			holdDuration = PlayerConfig.Carry.PutDownTime,
+			key = PlayerConfig.Technical.CarryKey,
+			gamepadKey = PlayerConfig.Technical.CarryGamepadKey,
+			visibleTo = function(other)
+				return other == carrier
+			end,
+			canUse = function(other)
+				return other == carrier
+			end,
+			onTriggered = function()
+				HealthService:PutDown(carried)
+			end,
+		})
+	end
+end
+
+-- lâche tout portage lié à ce joueur (porteur ou porté)
+local function releaseCarry(player)
+	if player:GetAttribute("carriedBy") ~= nil then
+		HealthService:PutDown(player)
+	end
+	local carried = playerById(player:GetAttribute("carrying"))
+	if carried then
+		HealthService:PutDown(carried)
+	end
+	player:SetAttribute("carrying", nil)
 end
 
 function HealthService:Kill(player, cause)
@@ -137,6 +243,7 @@ function HealthService:Kill(player, cause)
 		return
 	end
 	clearRevivePrompt(player)
+	releaseCarry(player)
 	player:SetAttribute("isDead", true)
 	player:SetAttribute("isDowned", false)
 	player:SetAttribute("downedEnd", nil)
@@ -159,6 +266,7 @@ function HealthService:Revive(player, rescuer)
 	end
 	local s = state[player]
 	clearRevivePrompt(player)
+	releaseCarry(player)
 	-- 7.3 : le joueur revient avec 20 % sur le membre touché
 	local limb = s and s.downedLimb
 	if limb == "Blood" then
@@ -183,6 +291,9 @@ function HealthService:SetDowned(player, limb)
 	local duration = ActConfig.difficulty(info.difficulty).downedTime
 	local s = state[player]
 	s.downedLimb = limb
+	s.downedRemaining = duration
+	-- un porteur qui tombe lâche le joueur porté
+	releaseCarry(player)
 	player:SetAttribute("isDowned", true)
 	player:SetAttribute("downedEnd", workspace:GetServerTimeNow() + duration)
 	self.Downed:Fire(player)
@@ -194,18 +305,52 @@ function HealthService:SetDowned(player, limb)
 			action = LoreConfig.Prompts.Revive,
 			holdDuration = PlayerConfig.Downed.ReviveTime,
 			roleHoldDuration = PlayerConfig.Downed.RoleReviveTime,
+			-- 19.5 (C6) : pas de relèvement pendant le portage
 			canUse = function(rescuer)
-				return rescuer ~= player and HealthService:IsUp(rescuer)
+				return rescuer ~= player and HealthService:IsUp(rescuer) and player:GetAttribute("carriedBy") == nil
+			end,
+			visibleTo = function(rescuer)
+				return rescuer ~= player
 			end,
 			onTriggered = function(rescuer)
 				HealthService:Revive(player, rescuer)
 			end,
 		})
+		-- 19.5 (C6) : porter — n'importe quel joueur, maintenir 2 s
+		s.carryPrompt = services.InteractionService:CreatePrompt(root, {
+			action = LoreConfig.Prompts.Carry,
+			holdDuration = PlayerConfig.Carry.PickUpTime,
+			key = PlayerConfig.Technical.CarryKey,
+			gamepadKey = PlayerConfig.Technical.CarryGamepadKey,
+			canUse = function(rescuer)
+				return rescuer ~= player
+					and HealthService:IsUp(rescuer)
+					and rescuer:GetAttribute("carrying") == nil
+					and player:GetAttribute("carriedBy") == nil
+			end,
+			visibleTo = function(rescuer)
+				return rescuer ~= player
+			end,
+			onTriggered = function(rescuer)
+				HealthService:PickUp(rescuer, player)
+			end,
+		})
 	end
-	s.downedThread = task.delay(duration, function()
-		s.downedThread = nil
+end
+
+-- compte à rebours d'un joueur à terre (deux fois moins vite s'il est porté, C6)
+local function downedTick(player, dt)
+	local s = state[player]
+	if s == nil or s.downedRemaining == nil or not player:GetAttribute("isDowned") then
+		return
+	end
+	local speed = if player:GetAttribute("carriedBy") ~= nil then PlayerConfig.Carry.DownedTimeFactor else 1
+	s.downedRemaining -= dt * speed
+	if s.downedRemaining <= 0 then
 		HealthService:Kill(player, "DownedTimeout")
-	end)
+		return
+	end
+	player:SetAttribute("downedEnd", workspace:GetServerTimeNow() + s.downedRemaining / speed)
 end
 
 local function setBleed(player, level)
@@ -253,8 +398,9 @@ function HealthService:Splint(player)
 	player:SetAttribute("splinted", true)
 end
 
--- dégâts sur un membre ; `bleed` optionnel ("Light" / "Heavy")
-function HealthService:Damage(player, limb, amount, source, bleed)
+-- dégâts sur un membre ; `bleed` optionnel ("Light" / "Heavy") impose le niveau ;
+-- `maxBleed` optionnel plafonne le niveau tiré des seuils (19.5, C2 : pierres → légère au plus)
+function HealthService:Damage(player, limb, amount, source, bleed, maxBleed)
 	if not self:IsAlive(player) or amount <= 0 then
 		return
 	end
@@ -270,11 +416,13 @@ function HealthService:Damage(player, limb, amount, source, bleed)
 	end
 	local value = math.max(0, (player:GetAttribute(attr(limb)) or 0) - amount)
 	player:SetAttribute(attr(limb), value)
+	-- 19.5 (C2) : 20 à 34 → légère ; 35 ou plus → grave
+	local onDamage = PlayerConfig.BleedOnDamage
 	if bleed then
 		setBleed(player, bleed)
-	elseif PlayerConfig.BleedOnDamage.HeavyAt and amount >= PlayerConfig.BleedOnDamage.HeavyAt then
+	elseif amount >= onDamage.HeavyAt and maxBleed ~= "Light" then
 		setBleed(player, "Heavy")
-	elseif PlayerConfig.BleedOnDamage.LightAt and amount >= PlayerConfig.BleedOnDamage.LightAt then
+	elseif amount >= onDamage.LightAt then
 		setBleed(player, "Light")
 	end
 	if player:GetAttribute("splinted") and (limb == "LegL" or limb == "LegR") then
@@ -294,6 +442,7 @@ end
 
 local function tick(dt)
 	for _, player in Players:GetPlayers() do
+		downedTick(player, dt)
 		if HealthService:IsAlive(player) then
 			local bleed = player:GetAttribute("bleed")
 			if bleed ~= "None" then
@@ -341,6 +490,7 @@ function HealthService:Start()
 	end)
 	Players.PlayerRemoving:Connect(function(player)
 		clearRevivePrompt(player)
+		releaseCarry(player)
 		state[player] = nil
 	end)
 	task.spawn(function()

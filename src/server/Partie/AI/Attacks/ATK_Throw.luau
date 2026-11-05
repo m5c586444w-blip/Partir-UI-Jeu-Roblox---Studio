@@ -16,6 +16,15 @@ local function damageFactor(brain)
 	return ActConfig.difficulty(brain.services.PartyLoaderService:GetMatchInfo().difficulty).creatureDamage
 end
 
+-- 19.5 (C10) : erreur de visée = 3 % de la distance, réduite en Difficile et Cauchemar
+local function aimError(brain, distance)
+	local difficulty = brain.services.PartyLoaderService:GetMatchInfo().difficulty
+	local radius = distance * A.aimError * (A.aimErrorFactor[difficulty] or 1)
+	local angle = math.random() * math.pi * 2
+	local r = radius * math.sqrt(math.random())
+	return Vector3.new(math.cos(angle) * r, 0, math.sin(angle) * r)
+end
+
 local function randomLimb()
 	return PlayerConfig.Limbs[math.random(1, #PlayerConfig.Limbs)]
 end
@@ -40,6 +49,9 @@ function Attack.run(brain, target)
 	end
 	local from = brain:Position() + Vector3.new(0, brain.def.height, 0)
 	local landing = root.Position
+	if isPlayer then
+		landing += aimError(brain, (landing - from).Magnitude)
+	end
 	brain.ai.CreatureAnimator:Play(brain.model, "ThrowOverhand")
 	local flight = (landing - from).Magnitude / CreatureConfig.StoneSpeed
 	-- signal : sifflement de la pierre, audible avant l'impact
@@ -55,16 +67,25 @@ function Attack.run(brain, target)
 		)
 		return
 	end
+	-- la pierre file vers le point visé (au lâcher) : un joueur qui a bougé l'esquive ;
 	-- couvert : un obstacle entre le point de lancer et la cible arrête la pierre
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
 	params.FilterDescendantsInstances = { brain.model }
-	local hit = workspace:Raycast(from, root.Position - from, params)
-	if hit and not hit.Instance:IsDescendantOf(target.Character) then
+	local hit = workspace:Raycast(from, (landing - from).Unit * A.maxRange, params)
+	if hit == nil or target.Character == nil or not hit.Instance:IsDescendantOf(target.Character) then
 		return
 	end
 	local damage = A.damageMin + math.random() * (A.damageMax - A.damageMin)
-	brain.services.HealthService:Damage(target, randomLimb(), damage * damageFactor(brain), brain.model)
+	-- 19.5 (C2) : une pierre ne cause jamais d'hémorragie grave
+	brain.services.HealthService:Damage(
+		target,
+		randomLimb(),
+		damage * damageFactor(brain),
+		brain.model,
+		nil,
+		PlayerConfig.BleedOnDamage.StoneMax
+	)
 end
 
 local _ = { damageFactor, randomLimb, Util, A }

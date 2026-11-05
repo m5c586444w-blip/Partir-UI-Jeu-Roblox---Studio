@@ -387,7 +387,8 @@ local function choose(self)
 		local def = CreatureConfig.Behaviors[current]
 		local minDuration = def and def.minDuration or 0
 		local currentScore = self.scores[current] or 0
-		local urgent = behaviors[best].urgent == true
+		local module = behaviors[best]
+		local urgent = module.urgent == true or (module.isUrgent ~= nil and module.isUrgent(self) == true)
 		if not urgent and os.clock() - self.behaviorStartedAt < minDuration and currentScore > 0 then
 			return
 		end

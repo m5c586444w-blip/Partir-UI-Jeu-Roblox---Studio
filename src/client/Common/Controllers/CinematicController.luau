@@ -49,7 +49,8 @@ end
 
 function CinematicController:Play(id, extra)
 	local def = CinematicConfig.Cinematics[id]
-	if def == nil or root == nil then
+	-- 19.5 (C23) : une vidéo de tablette est jouée par TabletController, sans prise de caméra
+	if def == nil or root == nil or def.inTablet then
 		return
 	end
 	local token = {}

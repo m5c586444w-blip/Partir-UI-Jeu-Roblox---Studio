@@ -100,7 +100,9 @@ function FamilyBrain:Score(brain, player)
 	)
 	local P = math.clamp(1 - brain:DistanceTo(player) / Target.ProximityDistance, 0, 1)
 	local C = if services.EvidenceService:CarriesClassA(player) then 1 else 0
-	return w.I * I + w.B * B + w.N * N + w.L * L + w.R * R + w.P * P + w.C * C
+	-- 19.5 (C6) : le porteur d'un blessé a +0,5
+	local carrier = if player:GetAttribute("carrying") ~= nil then Target.CarrierBonus else 0
+	return w.I * I + w.B * B + w.N * N + w.L * L + w.R * R + w.P * P + w.C * C + carrier
 end
 
 -- la cible change seulement si un autre joueur dépasse le score actuel de 20 %

@@ -19,6 +19,15 @@ function NoiseService:Emit(position, radius, kind, source)
 	if radius == nil or radius <= 0 then
 		return
 	end
+	-- 19.5 (C7, HC3) : passage silencieux (attribut noiseFactor) — bruits de déplacement seulement (DÉFAUT)
+	if
+		typeof(source) == "Instance"
+		and source:IsA("Player")
+		and source:GetAttribute("noiseFactor")
+		and (kind == NoiseTypes.Footstep or kind == NoiseTypes.Jump)
+	then
+		radius *= source:GetAttribute("noiseFactor")
+	end
 	local noise = {
 		position = position,
 		radius = radius,

@@ -180,8 +180,33 @@ MapConfig.FixedItems = {
 	{ item = "ITM_SampleBag", places = { "P09" } },
 	{ item = "ITM_PhotoCamera", places = { "P09" } },
 	{ item = "ITM_TabletGeo", places = { "P09" } }, -- tente de Leah Brandt
+	-- 19.5 (C15) : une seule machette, fixe, dans la cabane du chantier P10, prenable par tous
+	{ item = "MEL_Machete", places = { Vector3.new(-1390, 72, 3285) } },
 }
 MapConfig.PhotoCameraCluePoints = { "C03", "C04", "C05", "C06" } -- 8.1 : appareil photo aussi en C03–C06
+
+-- 19.5 (C7) : 4 « marques de mineurs », visibles seulement par la Descendante à 8 studs
+-- (PlayerConfig.Abilities.Descendant.HiddenClueRange), et seulement si elle est dans le groupe.
+-- Les parties Workspace taguées CrawlSpace (vide sanitaire sous P05c) et Ford (gué de HC3) sont posées
+-- à la main en B1 ; sans elles, le point de la marque sert de repli (DÉFAUT).
+MapConfig.HiddenClues = {
+	-- gros bloc du lahar : affiche l'emplacement de la boîte de munitions sur la tablette
+	HC1 = { pos = Vector3.new(2140, 262, 380), effect = "AmmoBoxMarker" },
+	-- plancher de la cabane : trappe vers un vide sanitaire pour 2 joueurs, invisibles à la vue de la créature
+	HC2 = { place = "P05c", effect = "CrawlSpace", capacity = 2, tag = "CrawlSpace" },
+	-- pierre près du pont P16 : gué 60 studs en aval, passage silencieux (bruit ×0,4)
+	HC3 = {
+		pos = Vector3.new(3420, 100, 1660),
+		effect = "Ford",
+		downstream = 60,
+		noiseFactor = 0.4,
+		tag = "Ford",
+	},
+	-- puits P21 : anneau scellé dans la roche, descente sans corde
+	HC4 = { place = "P21", effect = "Ring" },
+}
+MapConfig.HiddenClueMarkSize = Vector3.new(2, 2, 0.2) -- DÉFAUT (technique) : marque MANQUANT_HiddenMark
+MapConfig.WellDescentLift = 3 -- DÉFAUT (technique) : hauteur de pose au fond du puits P21 (studs)
 
 -- 2.7 : documents à emplacement fixe
 MapConfig.FixedDocuments = {
@@ -241,6 +266,15 @@ MapConfig.Paths = {
 		points = { "P01", { c = { 933, 2400 } }, { c = { 0, 1200 } }, "P09", "P12", "P07a" },
 	},
 	T3 = { kind = "Trail", width = 5, points = { "P09", { 0, -800 }, "P11", "P06" }, switchbacks = true },
+	-- 19.5 (C42) : lacets de T3 sous F01, 3 segments de 5 studs de large, de Y = 300 à Y = 340 (pente ≈ 8 %),
+	-- puis T3 continue vers P11
+	T3_Switchbacks = {
+		kind = "Switchbacks",
+		width = 5,
+		points = { { -80, -780 }, { 80, -830 }, { -80, -880 }, { 60, -930 } },
+		fromY = 300,
+		toY = 340,
+	},
 	T4 = { kind = "Trail", width = 4, points = { "P16", "P15", "P05" } },
 	T5 = { kind = "GameTrail", width = 0, points = { "P12", { -1500, -1000 }, { -900, -2300 }, "P25", "P06" } },
 }
@@ -307,10 +341,23 @@ MapConfig.Terrain = {
 	RiverDepthFactor = 0.35, -- profondeur = 0,35 × largeur + 4
 	RiverDepthBase = 4,
 	RiverBlendFactor = 3, -- raccord sur 3 × la largeur
+	-- 19.5 (C40) : largeur en haut (topWidth) et au fond (bottomWidth), parois à plus de 60°.
+	-- Ape Canyon se resserre à 9 studs au point P05s (narrowAt, largeur narrowWidth).
 	Gorges = {
-		ApeCanyon = { depth = 150, from = Vector2.new(2300, -600), to = Vector2.new(3000, -2200) },
-		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600 },
+		ApeCanyon = {
+			depth = 150,
+			from = Vector2.new(2300, -600),
+			to = Vector2.new(3000, -2200),
+			topWidth = 80,
+			bottomWidth = 20,
+			narrowAt = "P05s",
+			narrowWidth = 9,
+		},
+		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600, topWidth = 60, bottomWidth = 15 },
 	},
+	GorgeMinWallDegrees = 60,
+	-- DÉFAUT (géométrie) : le resserrement de P05s se fait sur une longueur égale à la largeur du haut
+	GorgeNarrowTaperFactor = 1,
 	FlattenBlendFactor = 1.5, -- raccord sur 1,5 fois le rayon
 	MaxRoadSlope = 0.08,
 	MaxTrailSlope = 0.15,
@@ -331,10 +378,7 @@ MapConfig.Terrain = {
 		},
 	},
 	SwiftReservoirZ = 4600, -- 3.8 : plan d'eau décoratif au-delà
-	-- TODO(BIBLE): largeur des gorges (Ape Canyon, Lava Canyon). PROVISOIRE : demi-largeurs 60 et 40 studs.
-	ApeCanyonHalfWidth = 60,
-	LavaCanyonHalfWidth = 40,
-	-- TODO(BIBLE): niveau du plan d'eau du réservoir Swift (3.8). PROVISOIRE : le bas de la pente (Y = 40).
+	-- DÉFAUT (C41) : niveau du plan d'eau décoratif du réservoir Swift (3.8) = le bas de la pente
 	ReservoirLevel = 40,
 	-- DÉFAUT (technique) : maille de calcul du relief, blocs écrits par TerrainBuilder, bloc gris par lieu,
 	-- hauteur du mur invisible des limites

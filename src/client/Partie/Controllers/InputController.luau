@@ -60,7 +60,8 @@ local function primary()
 	if held and WeaponConfig.Weapons[held] then
 		fire("RE_FireWeapon", camera.CFrame.Position, camera.CFrame.LookVector, workspace:GetServerTimeNow())
 	elseif held and ItemConfig.Items[held] then
-		fire("RE_UseItem", selectedSlot())
+		-- direction de visée : sert au lancer balistique (19.5, C10)
+		fire("RE_UseItem", selectedSlot(), camera.CFrame.LookVector)
 	end
 end
 
