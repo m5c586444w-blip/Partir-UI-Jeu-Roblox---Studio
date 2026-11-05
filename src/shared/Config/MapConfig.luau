@@ -138,8 +138,8 @@ MapConfig.CluePoints = {
 		contents = { "ITM_Battery", "ITM_Splint" },
 	},
 }
--- TODO(BIBLE): quantité de chaque objet sur les points C09 à C12. PROVISOIRE : 1 de chaque.
-MapConfig.ClueItemQuantity = 1
+-- 19.6 (C17) : quantités sur les points C09–C12, selon ce que le point peut contenir (3.4)
+MapConfig.ClueItemQuantity = { ITM_Battery = 2, ITM_Bandage = 2, ITM_Flare = 1, ITM_Rope = 1, ITM_Splint = 1 }
 
 -- 3.4 : objets clés (un emplacement tiré par objet ; R3 et R7 fixes).
 -- Un emplacement donné par un lieu seul (« P26 cabine », « P22 coffre ») utilise la position du lieu.
@@ -166,9 +166,12 @@ MapConfig.KeyItems = {
 }
 
 -- 8.1, colonne « Où » : objets posés à un lieu fixe (un exemplaire par lieu cité)
--- TODO(BIBLE): quantités aux lieux fixes. PROVISOIRE : 1 par lieu (6 planches dans la cabane : donné par 8.1).
+-- 19.6 (C17) : 1 objet par lieu fixe, sauf 6 planches (P05c), 3 bandages et 2 piles au poste P17.
+-- Branches et pierres : partout au sol (posées dans le décor, Part taguées « GroundItem », B1).
 MapConfig.FixedItems = {
 	{ item = "ITM_Splint", places = { "P17" } },
+	{ item = "ITM_Bandage", places = { "P17" }, count = 3 },
+	{ item = "ITM_Battery", places = { "P17" }, count = 2 },
 	{ item = "ITM_Matches", places = { "P17", "P10" } },
 	{ item = "ITM_Rope", places = { "P15" } },
 	{ item = "ITM_Plank", places = { "P05c" }, count = 6 },

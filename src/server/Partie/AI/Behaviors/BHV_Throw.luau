@@ -26,9 +26,6 @@ function Behavior.score(brain)
 		return 0
 	end
 	local factor = if brain.personality == "Playful" then CreatureConfig.Personalities.Playful.stones else 1
-	if brain.memory.shotsTaken >= CreatureConfig.Memory.ShotsToAdapt then
-		factor *= CreatureConfig.Memory.ThrowMoreFactor -- 9.8 : « lance plus »
-	end
 	return math.clamp(B.baseScore * factor, 0, 1)
 end
 
@@ -40,7 +37,12 @@ function Behavior.step(brain)
 	brain:Stop()
 	-- 19.5 (C10) : 1 lancer toutes les 3 à 5 s hors siège
 	if os.clock() >= (brain.nextThrowAt or 0) then
-		brain.nextThrowAt = os.clock() + B.intervalMin + math.random() * (B.intervalMax - B.intervalMin)
+		local interval = B.intervalMin + math.random() * (B.intervalMax - B.intervalMin)
+		-- 9.8 et 19.6 (C31) : « lance plus » après 2 tirs reçus = fréquence ×1,5
+		if brain.memory.shotsTaken >= CreatureConfig.Memory.ShotsToAdapt then
+			interval /= CreatureConfig.Memory.ThrowMoreFactor
+		end
+		brain.nextThrowAt = os.clock() + interval
 		brain:Attack("ATK_Throw", t)
 	end
 end

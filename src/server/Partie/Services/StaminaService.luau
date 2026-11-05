@@ -141,7 +141,7 @@ local function tick(dt)
 				if (player:GetAttribute("fear") or 0) >= PlayerConfig.Fear.MisplacedSoundsAt then
 					regen *= PlayerConfig.Fear.StaminaRegenFactorAt80
 				end
-				-- TODO(BIBLE): 12.3 « endurance ×0,85 » par neige — PROVISOIRE : appliqué à la récupération
+				-- 12.3 et 19.6 (C18) : « endurance ×0,85 » par neige s'applique à la récupération
 				if weatherEntry and weatherEntry.staminaFactor then
 					regen *= weatherEntry.staminaFactor
 				end

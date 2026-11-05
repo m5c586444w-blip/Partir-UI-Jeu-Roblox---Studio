@@ -157,11 +157,33 @@ DirectorConfig.Events = {
 	},
 }
 -- 10 : le directeur tire les événements du catalogue « bas »
--- TODO(BIBLE): quels événements forment le catalogue « bas » ? PROVISOIRE : tous ceux de 10.2.
-DirectorConfig.LowCatalog = nil
--- TODO(BIBLE): distance d'un « au loin » (coups, cris) et d'un « tout près » (pas en écho, caillou). PROVISOIRE : 150 et 15 studs.
-DirectorConfig.FarDistance = 150
-DirectorConfig.NearDistance = 15
+-- 19.6 (C32) : catalogue « bas ». Les autres suivent leurs propres règles (acte, lieu, comportement)
+DirectorConfig.LowCatalog = {
+	"EVT_01",
+	"EVT_02",
+	"EVT_03",
+	"EVT_04",
+	"EVT_07",
+	"EVT_10",
+	"EVT_11",
+	"EVT_13",
+	"EVT_16",
+	"EVT_17",
+	"EVT_18",
+	"EVT_20",
+	"EVT_21",
+}
+-- 19.6 (C33) : « au loin » tiré entre 150 et 300 studs ; « tout près » entre 10 et 20 studs
+DirectorConfig.Far = { min = 150, max = 300 }
+DirectorConfig.Near = { min = 10, max = 20 }
+
+function DirectorConfig.farDistance()
+	return DirectorConfig.Far.min + math.random() * (DirectorConfig.Far.max - DirectorConfig.Far.min)
+end
+
+function DirectorConfig.nearDistance()
+	return DirectorConfig.Near.min + math.random() * (DirectorConfig.Near.max - DirectorConfig.Near.min)
+end
 
 -- 10.3 : ce que le joueur ne doit jamais avoir (rappel, appliqué par le code)
 DirectorConfig.Never = { "DangerGauge", "CreatureArrow", "SourcelessCreatureSound", "DeathWithoutSignal" }

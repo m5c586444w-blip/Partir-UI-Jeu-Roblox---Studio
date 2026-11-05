@@ -153,12 +153,11 @@ SETUP.E1 = function(route)
 			return routes.E1.prepared and triggersOpen and hasItems(player, part.Position, { "ITM_Keys" })
 		end,
 		onTriggered = function(player)
-			-- 5.2 : démarrage bruyant ; les joueurs autour du van partent (P01, rayon 60)
-			-- TODO(BIBLE): rayon du bruit du démarrage du van
-			local noise = ActConfig.Routes.E1.startNoise
-			if noise then
-				services.NoiseService:Emit(part.Position, noise, NoiseTypes.Vehicle, player)
-			end
+			-- 5.2 et 19.6 (C26) : démarrage bruyant (1 500 studs) ; le directeur autorise une attaque immédiate
+			-- sur le van (attribut vanStartedAt lu par TensionDirector:AllowAttack) ; les joueurs autour du van
+			-- partent (P01, rayon 60)
+			services.NoiseService:Emit(part.Position, ActConfig.Routes.E1.startNoise, NoiseTypes.Vehicle, player)
+			Util.getMatchState():SetAttribute("vanStartedAt", workspace:GetServerTimeNow())
 			extract("E1", playersNear(MapConfig.Places.P01.pos, MapConfig.Places.P01.radius))
 		end,
 	})

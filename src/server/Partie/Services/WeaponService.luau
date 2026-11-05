@@ -95,8 +95,17 @@ local function applyHit(shooter, weaponId, weapon, result, creatureDamage, frien
 	end
 	local victim = playerFrom(result.Instance)
 	if victim and victim ~= shooter and friendlyFireOn() then
-		-- 8.2 : tir allié (torse)
-		services.HealthService:Damage(victim, "Torso", friendlyDamage, shooter)
+		-- 8.2 : tir allié (torse) ; 19.6 (C14) : lance-fusées = brûlure, jamais d'hémorragie grave
+		local maxBleed = if weapon.burnPerSecond then "Light" else nil
+		services.HealthService:Damage(victim, "Torso", friendlyDamage, shooter, nil, maxBleed)
+		if weapon.burnPerSecond then
+			task.spawn(function()
+				for _ = 1, weapon.burnDuration do
+					task.wait(1) -- constante (une brûlure par seconde)
+					services.HealthService:Damage(victim, "Torso", weapon.burnPerSecond, shooter, nil, "Light", "Burn")
+				end
+			end)
+		end
 	end
 end
 
@@ -156,7 +165,7 @@ local function onFire(player, origin, direction, _timestamp)
 	lastShot[player] = os.clock()
 
 	if weapon.melee then
-		local result = cast(player, origin, direction, WeaponConfig.MeleeRange)
+		local result = cast(player, origin, direction, WeaponConfig.MeleeRange[entry.id])
 		applyHit(player, entry.id, weapon, result, weapon.damage, weapon.friendlyDamage)
 		services.NoiseService:Emit(head.Position, weapon.noise, NoiseTypes.Melee, player)
 		return

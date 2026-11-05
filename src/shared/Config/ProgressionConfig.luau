@@ -55,8 +55,13 @@ ProgressionConfig.SkinUnlocks = {
 -- Les identifiants sont des DÉFAUT (noms des boutons de SkinShopGui > Accessories).
 ProgressionConfig.AccessoryIds = { "Beanie", "AmberHeadlamp", "ColdTrailBag" }
 ProgressionConfig.AccessoryUnlocks = {
-	-- TODO(BIBLE): les 3 couleurs du bonnet (C43 ; asset à créer, 13.3)
-	Beanie = { stat = "plays", need = 3, colors = 3 }, -- bonnet (3 couleurs) après 3 parties
+	-- bonnet (3 couleurs) après 3 parties ; 19.6 (C43) : rouge brique, vert mousse, gris anthracite
+	Beanie = {
+		stat = "plays",
+		need = 3,
+		colors = 3,
+		palette = { Color3.fromHex("#7A2E24"), Color3.fromHex("#4F6B45"), Color3.fromHex("#3A3A3A") },
+	},
 	AmberHeadlamp = { stat = "plays", need = 10 }, -- frontale ambre après 10 parties
 	ColdTrailBag = { stat = "evidenceBOut", need = 1 }, -- sac « Cold Trail » : 1re preuve de classe B sortie
 }

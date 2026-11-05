@@ -117,8 +117,21 @@ function SkinShopController:Start()
 	local remote = Util.getRemote("RE_EquipSkin")
 	find("Equip").Activated:Connect(function()
 		if remote then
-			-- DÉFAUT (C38) : un accessoire passe par RE_EquipSkin (roleId, accessoryId)
-			remote:FireServer(role, accessory or skin)
+			-- DÉFAUT (C38) : un accessoire passe par RE_EquipSkin (roleId, accessoryId[, couleur]).
+			-- 19.6 (C43) : Équiper sur le bonnet passe d'une couleur à la suivante, puis le retire
+			local rule = accessory and ProgressionConfig.AccessoryUnlocks[accessory]
+			if rule and rule.colors then
+				local worn = Util.decode(player:GetAttribute("equippedAccessoriesJson"), {})
+				local current = worn[role] and worn[role][accessory]
+				local nextColor = (if type(current) == "number" then current else 0) + 1
+				if nextColor <= rule.colors then
+					remote:FireServer(role, accessory, nextColor)
+				else
+					remote:FireServer(role, accessory)
+				end
+			else
+				remote:FireServer(role, accessory or skin)
+			end
 		end
 	end)
 	player:GetAttributeChangedSignal("skinsJson"):Connect(refresh)

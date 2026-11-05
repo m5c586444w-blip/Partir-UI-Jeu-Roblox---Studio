@@ -347,10 +347,8 @@ def lock_label(text, visible=True):
     el = label("Lock", (0, 0, 1, 1), text=text, align="Center", visible=visible, color=TEXT2)
     el.props.update({"BackgroundColor3": PANEL, "BackgroundTransparency": 0, "ZIndex": 2})
     el.add(corner())
-    # 15.6 et 15.7 donnent « Verrouillé » et le modèle « Verrouillé — 5 parties jouées » ; les autres
-    # conditions reprennent ce modèle avec les valeurs de la bible (5.4, 7.1, 19.5 C38) : DÉFAUT
-    if text not in ("", "Verrouillé", "Verrouillé — 5 parties jouées"):
-        el.defaut = text
+    # 15.6, 15.7 et 19.6 : « Verrouillé », « Verrouillé — 5 parties jouées », et les conditions validées
+    # le 5 novembre (« — 3 parties jouées », « — 10 parties jouées », « — 1 preuve de classe B », « — 1 survie »)
     return el
 
 
@@ -561,7 +559,7 @@ def vote_gui():
     return two_layouts("VoteGui", "VoteController", build, menu=True)
 
 
-# 19.5 (C38) : accessoires ; conditions affichées sur le verrou (modèle de 15.7 : « Verrouillé — 5 parties jouées »)
+# 19.5 (C38) : accessoires ; textes des verrous validés en 19.6
 ACCESSORIES = [("Beanie", "Bonnet", "Verrouillé — 3 parties jouées"),
                ("AmberHeadlamp", "Frontale ambre", "Verrouillé — 10 parties jouées"),
                ("ColdTrailBag", "Sac « Cold Trail »", "Verrouillé — 1 preuve de classe B")]

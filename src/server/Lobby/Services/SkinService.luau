@@ -57,7 +57,9 @@ local function onEquipAccessory(player, data, roleId, id, color)
 	local current = data.equippedAccessories[roleId][id]
 	local colors = ProgressionConfig.AccessoryUnlocks[id].colors
 	if type(color) == "number" and colors and color >= 1 and color <= colors then
-		data.equippedAccessories[roleId][id] = math.floor(color)
+		data.equippedAccessories[roleId][id] = math.floor(color) -- 19.6 (C43) : index dans palette
+	elseif colors and type(current) == "number" then
+		data.equippedAccessories[roleId][id] = nil
 	else
 		data.equippedAccessories[roleId][id] = if current then nil else true
 	end

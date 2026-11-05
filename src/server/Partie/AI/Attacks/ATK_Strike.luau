@@ -36,7 +36,12 @@ function Attack.run(brain, target)
 	if root and A.knockback then
 		local push = (root.Position - brain:Position()) * Vector3.new(1, 0, 1)
 		if push.Magnitude > 0 then
-			root.AssemblyLinearVelocity += push.Unit * CreatureConfig.KnockbackForce
+			-- 19.6 (C30) : 40 studs/s vers l'arrière + 15 studs/s vers le haut
+			root.AssemblyLinearVelocity += push.Unit * CreatureConfig.KnockbackForce + Vector3.new(
+				0,
+				CreatureConfig.KnockbackUp,
+				0
+			)
 		end
 	end
 end

@@ -1003,8 +1003,8 @@ ActConfig.Routes = {
 		repairTime = 20,
 		roleRepairTime = { Mechanic = 10 },
 		cinematic = "CS_10",
-		-- TODO(BIBLE): rayon du bruit du « démarrage bruyant » du van (sans valeur : pas de bruit émis)
-		startNoise = nil,
+		-- 19.6 (C26) : bruit de 1 500 studs ; le directeur autorise une attaque immédiate sur le van
+		startNoise = 1500,
 	},
 	E2 = {
 		place = "P11",
@@ -1448,7 +1448,7 @@ CreatureConfig.LairPlace = "P07b"
 
 -- 9.2 : régénération hors combat, jusqu'à 70 % du maximum
 CreatureConfig.Regen = { PerSecond = 2, MaxFraction = 0.7 }
--- TODO(BIBLE): « hors combat » = combien de secondes sans dégâts ni attaque ? PROVISOIRE : 10 s (fenêtre de BHV_Retreat)
+-- 19.6 (C29) : « hors combat » = 10 s sans dégâts reçus ni attaque lancée
 CreatureConfig.OutOfCombatAfter = 10
 
 -- 9.2 : allures (studs/s) et bruit
@@ -1588,7 +1588,7 @@ CreatureConfig.Memory = {
 	FlareFleeLater = 4, -- …réduite à 4 s à partir de la 2e fusée
 	TightGroupRadius = 25,
 	TightGroupFor = 120,
-	-- TODO(BIBLE): « lance plus » après 2 tirs reçus : de combien ? PROVISOIRE : ×1,5
+	-- 19.6 (C31) : fréquence des lancers ×1,5 après 2 tirs reçus
 	ThrowMoreFactor = 1.5,
 }
 -- 9.8 : imitation (éclaireurs) — sons préenregistrés uniquement
@@ -1628,8 +1628,9 @@ CreatureConfig.Attacks = {
 }
 -- 19.5 (C10) : pierres à 90 studs/s
 CreatureConfig.StoneSpeed = 90
--- TODO(BIBLE): force du recul de ATK_Strike (C30, la vitesse des pierres est réglée par C10). PROVISOIRE : 40.
+-- 19.6 (C30) : recul de ATK_Strike : 40 studs/s vers l'arrière + 15 studs/s vers le haut
 CreatureConfig.KnockbackForce = 40
+CreatureConfig.KnockbackUp = 15
 
 -- 7.3 : la créature traîne un joueur à terre à 10 studs/s vers une réserve
 CreatureConfig.DragSpeed = 10
@@ -1840,11 +1841,33 @@ DirectorConfig.Events = {
 	},
 }
 -- 10 : le directeur tire les événements du catalogue « bas »
--- TODO(BIBLE): quels événements forment le catalogue « bas » ? PROVISOIRE : tous ceux de 10.2.
-DirectorConfig.LowCatalog = nil
--- TODO(BIBLE): distance d'un « au loin » (coups, cris) et d'un « tout près » (pas en écho, caillou). PROVISOIRE : 150 et 15 studs.
-DirectorConfig.FarDistance = 150
-DirectorConfig.NearDistance = 15
+-- 19.6 (C32) : catalogue « bas ». Les autres suivent leurs propres règles (acte, lieu, comportement)
+DirectorConfig.LowCatalog = {
+	"EVT_01",
+	"EVT_02",
+	"EVT_03",
+	"EVT_04",
+	"EVT_07",
+	"EVT_10",
+	"EVT_11",
+	"EVT_13",
+	"EVT_16",
+	"EVT_17",
+	"EVT_18",
+	"EVT_20",
+	"EVT_21",
+}
+-- 19.6 (C33) : « au loin » tiré entre 150 et 300 studs ; « tout près » entre 10 et 20 studs
+DirectorConfig.Far = { min = 150, max = 300 }
+DirectorConfig.Near = { min = 10, max = 20 }
+
+function DirectorConfig.farDistance()
+	return DirectorConfig.Far.min + math.random() * (DirectorConfig.Far.max - DirectorConfig.Far.min)
+end
+
+function DirectorConfig.nearDistance()
+	return DirectorConfig.Near.min + math.random() * (DirectorConfig.Near.max - DirectorConfig.Near.min)
+end
 
 -- 10.3 : ce que le joueur ne doit jamais avoir (rappel, appliqué par le code)
 DirectorConfig.Never = { "DangerGauge", "CreatureArrow", "SourcelessCreatureSound", "DeathWithoutSignal" }
@@ -2048,16 +2071,23 @@ ItemConfig.Items = {
 	-- 8.4 : carte mémoire créée après une vidéo de classe A = preuve A
 	ITM_SDCard = { name = "Carte mémoire", weight = 0, stack = 1, evidence = { class = "A", kind = "Video" } },
 	-- 8.4 : preuves B et C (objets d'inventaire ; noms du tableau 8.4)
-	EVD_Cast = { name = "Moulage d'empreinte", weight = 0, stack = 1, evidence = { class = "B", kind = "Cast" } },
+	EVD_Cast = { name = "Moulage d'empreinte", weight = 1.0, stack = 1, evidence = { class = "B", kind = "Cast" } },
 	EVD_Call = { name = "Enregistrement d'un cri", weight = 0, stack = 1, evidence = { class = "B", kind = "Call" } },
-	EVD_Hair = { name = "Poils", weight = 0, stack = 1, evidence = { class = "B", kind = "Hair" } },
+	EVD_Hair = { name = "Poils", weight = 0.05, stack = 1, evidence = { class = "B", kind = "Hair" } },
 	EVD_PhotoCreature = {
 		name = "Photo de la créature",
 		weight = 0,
 		stack = 1,
 		evidence = { class = "B", kind = "Photo" },
 	},
-	EVD_Document = { name = "Document", weight = 0, stack = 1, evidence = { class = "C", kind = "Document" } },
+	-- 19.6 (C9) : document papier 0,05 kg ; cassette 0,1 kg (documents de type « Tape »)
+	EVD_Document = {
+		name = "Document",
+		weight = 0.05,
+		tapeWeight = 0.1,
+		stack = 1,
+		evidence = { class = "C", kind = "Document" },
+	},
 	EVD_PhotoCharnier = {
 		name = "Photo du charnier P19",
 		weight = 0,
@@ -2071,7 +2101,8 @@ ItemConfig.Items = {
 	-- 19.5 (C12) : réserve du pistolet lance-fusées (« 2 en réserve »)
 	AMMO_WPN_FlareGun = { name = "Fusées", weight = 0, stack = 99, ammoFor = "WPN_FlareGun" },
 }
--- TODO(BIBLE): poids des preuves (carte mémoire, moulage, etc.) et des munitions. PROVISOIRE : 0 kg.
+-- 19.6 (C9) : munitions 0 kg (elles vont dans la réserve de l'arme), carte mémoire 0 kg, moulage 1,0 kg,
+-- sachet de poils 0,05 kg ; les photos ne sont pas pesées par 19.6 (0 kg).
 -- DÉFAUT : pile de 99 munitions (valeur technique de rangement).
 
 -- 8.1, colonne « Où » : objets de départ par rôle (quantité = nombre d'unités)
@@ -2088,8 +2119,7 @@ ItemConfig.StartingItems = {
 		Descendant = { ITM_Headlamp = 1, ITM_Notebook = 1 },
 		Geologist = { ITM_PowerLight = 1, ITM_Compass = 1 },
 		RadioOperator = { ITM_RadioScanner = 1, ITM_AudioRecorder = 1 },
-		-- TODO(BIBLE): combien de fusées à main pour le Pyrotechnicien au départ ? (1 en attendant)
-		Pyrotechnician = { ITM_Flare = 1 },
+		Pyrotechnician = { ITM_Flare = 2 }, -- 19.6 (C8) : 2 fusées à main, en plus du lance-fusées
 	},
 }
 
@@ -2144,8 +2174,16 @@ ItemConfig.Throw = {
 	SimStep = 0.05, -- DÉFAUT (technique) : pas du calcul de la trajectoire (s)
 	MaxFlight = 5, -- DÉFAUT (technique) : durée maximale simulée (s)
 }
--- TODO(BIBLE): bruit du piège à bruit du Pyrotechnicien (boîte de conserve + corde). Sans valeur : pas de piège.
-ItemConfig.NoiseTrapRadius = nil
+-- 19.6 (C11) : piège à bruit du Pyrotechnicien — posé en 6 s ; se déclenche au passage de la créature
+-- ou d'un joueur ; bruit de 150 studs pendant 3 s ; un seul piège posé à la fois par Pyrotechnicien
+ItemConfig.NoiseTrap = {
+	PlaceTime = 6,
+	Radius = 150,
+	Duration = 3,
+	MaxPerPlayer = 1,
+	TriggerRadius = 4, -- DÉFAUT (technique) : distance de passage qui déclenche le piège (studs)
+	EmitInterval = 0.5, -- DÉFAUT (technique) : le bruit est réémis toutes les 0,5 s pendant 3 s
+}
 
 -- 13.3 : modèles d'objets dans ReplicatedStorage/Items (Item_<Nom>) ; absent → bloc gris MANQUANT_<ID>
 ItemConfig.ModelsFolder = "Items"
@@ -2627,8 +2665,8 @@ MapConfig.CluePoints = {
 		contents = { "ITM_Battery", "ITM_Splint" },
 	},
 }
--- TODO(BIBLE): quantité de chaque objet sur les points C09 à C12. PROVISOIRE : 1 de chaque.
-MapConfig.ClueItemQuantity = 1
+-- 19.6 (C17) : quantités sur les points C09–C12, selon ce que le point peut contenir (3.4)
+MapConfig.ClueItemQuantity = { ITM_Battery = 2, ITM_Bandage = 2, ITM_Flare = 1, ITM_Rope = 1, ITM_Splint = 1 }
 
 -- 3.4 : objets clés (un emplacement tiré par objet ; R3 et R7 fixes).
 -- Un emplacement donné par un lieu seul (« P26 cabine », « P22 coffre ») utilise la position du lieu.
@@ -2655,9 +2693,12 @@ MapConfig.KeyItems = {
 }
 
 -- 8.1, colonne « Où » : objets posés à un lieu fixe (un exemplaire par lieu cité)
--- TODO(BIBLE): quantités aux lieux fixes. PROVISOIRE : 1 par lieu (6 planches dans la cabane : donné par 8.1).
+-- 19.6 (C17) : 1 objet par lieu fixe, sauf 6 planches (P05c), 3 bandages et 2 piles au poste P17.
+-- Branches et pierres : partout au sol (posées dans le décor, Part taguées « GroundItem », B1).
 MapConfig.FixedItems = {
 	{ item = "ITM_Splint", places = { "P17" } },
+	{ item = "ITM_Bandage", places = { "P17" }, count = 3 },
+	{ item = "ITM_Battery", places = { "P17" }, count = 2 },
 	{ item = "ITM_Matches", places = { "P17", "P10" } },
 	{ item = "ITM_Rope", places = { "P15" } },
 	{ item = "ITM_Plank", places = { "P05c" }, count = 6 },
@@ -2992,6 +3033,9 @@ PlayerConfig.Downed = {
 	ReviveTime = 6,
 	RoleReviveTime = { Medic = 3 },
 	ReviveLimbFraction = 0.2, -- le joueur revient avec 20 % sur le membre touché
+	-- 19.6 (C3) : une attaque de la créature tue un joueur à terre ; une pierre ou un tir allié retire 10 s
+	-- à son compte à rebours, sans le tuer
+	HitPenalty = 10,
 }
 
 -- 19.5 (C6) : porter un coéquipier à terre (vitesse, bruit et endurance : Movement.Carry, Stamina)
@@ -3049,10 +3093,12 @@ PlayerConfig.Fear = {
 	InvoluntaryScreamAt = 100,
 	InvoluntaryScreamNoise = 200,
 	InvoluntaryScreamCooldown = 60,
-	-- TODO(BIBLE): distance à laquelle un joueur « voit » un corps (+15) et la créature (+20 à +35).
-	-- Tant qu'elles valent nil, ces hausses ne sont pas appliquées.
-	SeeBodyRange = nil,
-	SeeCreatureRange = nil,
+	-- 19.6 (C1) : en ligne de vue ; un corps à 40 studs ou moins ; la créature jusqu'à 150 studs,
+	-- +20 à 150 studs montant linéairement jusqu'à +35 à 20 studs ou moins, au plus toutes les 10 s par créature
+	SeeBodyRange = 40,
+	SeeCreatureRange = 150,
+	SeeCreatureCloseRange = 20,
+	SeeCreatureCooldown = 10,
 }
 
 -- 7.6 : visibilité pour la créature (coefficient multiplié à sa portée de vue)
@@ -3151,7 +3197,6 @@ PlayerConfig.Technical = {
 	InteractGamepadKey = Enum.KeyCode.ButtonX,
 	HoldTolerance = 0.3, -- marge (s) sur le temps de maintien vérifié par le serveur
 	VideoCheckInterval = 0.25, -- s entre deux contrôles de la vidéo de classe A
-	DownedDamageKills = true, -- TODO(BIBLE): un coup reçu à terre tue-t-il ? PROVISOIRE : oui
 	-- DÉFAUT (19.5, C6) : Porter et Poser ont leur propre touche, pour ne pas se confondre avec Relever
 	CarryKey = Enum.KeyCode.G,
 	CarryGamepadKey = Enum.KeyCode.ButtonY,
@@ -3163,12 +3208,12 @@ PlayerConfig.Technical = {
 -- Saisie tenue plus de 2 s → légère. Les pierres ne causent jamais d'hémorragie grave.
 PlayerConfig.BleedOnDamage = { LightAt = 20, HeavyAt = 35, GrabLightAfter = 2, StoneMax = "Light" }
 
--- TODO(BIBLE): sur quel membre agissent le bandage (+10 PV) et la trousse (+40 PV) ?
--- PROVISOIRE : le membre le plus abîmé (en proportion).
+-- 19.6 (C4) : bandage et trousse soignent le membre le plus abîmé en proportion ; l'arrêt d'hémorragie
+-- s'applique quel que soit le membre
 PlayerConfig.HealTarget = "MostDamaged"
 
--- TODO(BIBLE): sang rendu au joueur relevé après être tombé faute de sang. PROVISOIRE : le seuil (20).
-PlayerConfig.ReviveBlood = 20
+-- 19.6 (C5) : un joueur relevé après être tombé faute de sang revient à 45 de sang
+PlayerConfig.ReviveBlood = 45
 
 return PlayerConfig
 ]]></string>
@@ -3234,8 +3279,13 @@ ProgressionConfig.SkinUnlocks = {
 -- Les identifiants sont des DÉFAUT (noms des boutons de SkinShopGui > Accessories).
 ProgressionConfig.AccessoryIds = { "Beanie", "AmberHeadlamp", "ColdTrailBag" }
 ProgressionConfig.AccessoryUnlocks = {
-	-- TODO(BIBLE): les 3 couleurs du bonnet (C43 ; asset à créer, 13.3)
-	Beanie = { stat = "plays", need = 3, colors = 3 }, -- bonnet (3 couleurs) après 3 parties
+	-- bonnet (3 couleurs) après 3 parties ; 19.6 (C43) : rouge brique, vert mousse, gris anthracite
+	Beanie = {
+		stat = "plays",
+		need = 3,
+		colors = 3,
+		palette = { Color3.fromHex("#7A2E24"), Color3.fromHex("#4F6B45"), Color3.fromHex("#3A3A3A") },
+	},
 	AmberHeadlamp = { stat = "plays", need = 10 }, -- frontale ambre après 10 parties
 	ColdTrailBag = { stat = "evidenceBOut", need = 1 }, -- sac « Cold Trail » : 1re preuve de classe B sortie
 }
@@ -3382,10 +3432,12 @@ WeaponConfig.Weapons = {
 		damage = 20,
 		blindDuration = 3,
 		creatureFleeDuration = 8,
-		friendlyDamage = 30, -- + brûlure
+		friendlyDamage = 30,
+		-- 19.6 (C14) : cadence = rechargement (2 s) ; sur un coéquipier, brûlure de 5/s pendant 3 s,
+		-- jamais d'hémorragie grave
+		burnPerSecond = 5,
+		burnDuration = 3,
 		noise = 1200,
-		-- TODO(BIBLE): cadence du pistolet lance-fusées (« — » dans 8.2) et effet de la brûlure sur un coéquipier
-		-- (C14 ; les munitions sont réglées par C12)
 	},
 	MEL_Axe = {
 		name = "Hache",
@@ -3410,8 +3462,8 @@ WeaponConfig.Weapons = {
 	},
 }
 
--- TODO(BIBLE): portée des armes de mêlée (studs). PROVISOIRE : 7, la portée du coup de la créature (9.10)
-WeaponConfig.MeleeRange = 7
+-- 19.6 (C16) : portée de mêlée
+WeaponConfig.MeleeRange = { MEL_Axe = 7, MEL_Machete = 6 }
 
 -- 8.2 : armes à feu selon la taille du groupe (1–3, 4–6, 7–10)
 WeaponConfig.FirearmsByGroupSize = {
@@ -5397,7 +5449,9 @@ local function onEquipAccessory(player, data, roleId, id, color)
 	local current = data.equippedAccessories[roleId][id]
 	local colors = ProgressionConfig.AccessoryUnlocks[id].colors
 	if type(color) == "number" and colors and color >= 1 and color <= colors then
-		data.equippedAccessories[roleId][id] = math.floor(color)
+		data.equippedAccessories[roleId][id] = math.floor(color) -- 19.6 (C43) : index dans palette
+	elseif colors and type(current) == "number" then
+		data.equippedAccessories[roleId][id] = nil
 	else
 		data.equippedAccessories[roleId][id] = if current then nil else true
 	end
@@ -42695,8 +42749,21 @@ function SkinShopController:Start()
 	local remote = Util.getRemote("RE_EquipSkin")
 	find("Equip").Activated:Connect(function()
 		if remote then
-			-- DÉFAUT (C38) : un accessoire passe par RE_EquipSkin (roleId, accessoryId)
-			remote:FireServer(role, accessory or skin)
+			-- DÉFAUT (C38) : un accessoire passe par RE_EquipSkin (roleId, accessoryId[, couleur]).
+			-- 19.6 (C43) : Équiper sur le bonnet passe d'une couleur à la suivante, puis le retire
+			local rule = accessory and ProgressionConfig.AccessoryUnlocks[accessory]
+			if rule and rule.colors then
+				local worn = Util.decode(player:GetAttribute("equippedAccessoriesJson"), {})
+				local current = worn[role] and worn[role][accessory]
+				local nextColor = (if type(current) == "number" then current else 0) + 1
+				if nextColor <= rule.colors then
+					remote:FireServer(role, accessory, nextColor)
+				else
+					remote:FireServer(role, accessory)
+				end
+			else
+				remote:FireServer(role, accessory or skin)
+			end
 		end
 	end)
 	player:GetAttributeChangedSignal("skinsJson"):Connect(refresh)

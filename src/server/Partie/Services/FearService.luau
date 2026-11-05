@@ -96,13 +96,40 @@ function FearService:OnWoodKnock(player)
 	self:Add(player, Fear.WoodKnock)
 end
 
--- 7.5 : voir la créature (+20 à +35, plus si proche) ; appelé par l'IA
+-- 7.5 et 19.6 (C1) : voir la créature : +20 à 150 studs, montant linéairement jusqu'à +35 à 20 studs
 function FearService:OnSeeCreature(player, distance)
-	if Fear.SeeCreatureRange == nil or distance > Fear.SeeCreatureRange then
+	if distance > Fear.SeeCreatureRange then
 		return
 	end
-	local closeness = 1 - distance / Fear.SeeCreatureRange
+	local closeness =
+		math.clamp((Fear.SeeCreatureRange - distance) / (Fear.SeeCreatureRange - Fear.SeeCreatureCloseRange), 0, 1)
 	self:Add(player, Fear.SeeCreatureMin + (Fear.SeeCreatureMax - Fear.SeeCreatureMin) * closeness)
+end
+
+-- ligne de vue depuis la tête du joueur vers `target` (Model) ; feuillages « Foliage » transparents (DÉFAUT,
+-- comme pour la vue de la créature). RaycastParams construits une fois par personnage (TaggedSet).
+local sightParams = setmetatable({}, { __mode = "k" })
+local function canSee(player, target, position)
+	local character = player.Character
+	local head = character and character:FindFirstChild("Head")
+	if head == nil then
+		return false
+	end
+	-- DÉFAUT : « voir » = la cible est devant le joueur (demi-espace de son regard)
+	if head.CFrame.LookVector:Dot(position - head.Position) <= 0 then
+		return false
+	end
+	local cache = sightParams[character]
+	if cache == nil then
+		cache = TaggedSet.excludeParams({ character }, { "Foliage" })
+		sightParams[character] = cache
+	end
+	local hit = workspace:Raycast(head.Position, position - head.Position, cache:Get())
+	return hit == nil or hit.Instance:IsDescendantOf(target)
+end
+
+local function pivotOf(instance)
+	return if instance:IsA("Model") then instance:GetPivot().Position else instance.Position
 end
 
 -- 7.7 : ordre du Meneur : −20 aux coéquipiers à 15 studs, recharge 90 s
@@ -146,15 +173,33 @@ local function tick(dt)
 			if nearFire(position) then
 				delta += Fear.NearFirePerSecond
 			end
-			-- 7.5 : voir un corps (+15 une fois par corps), si la portée est donnée par la bible
-			if Fear.SeeBodyRange then
-				for _, corpse in TaggedSet.list("Corpse") do
-					local s = state[player]
-					local pivot = corpse:IsA("Model") and corpse:GetPivot().Position or corpse.Position
-					if not s.seenBodies[corpse] and (pivot - position).Magnitude <= Fear.SeeBodyRange then
-						s.seenBodies[corpse] = true
-						FearService:Add(player, Fear.SeeBody)
-					end
+			-- 7.5 et 19.6 (C1) : voir un corps à 40 studs ou moins, en ligne de vue (+15 une fois par corps)
+			local s = state[player]
+			for _, corpse in TaggedSet.list("Corpse") do
+				local pivot = pivotOf(corpse)
+				if
+					not s.seenBodies[corpse]
+					and corpse ~= player.Character
+					and (pivot - position).Magnitude <= Fear.SeeBodyRange
+					and canSee(player, corpse, pivot)
+				then
+					s.seenBodies[corpse] = true
+					FearService:Add(player, Fear.SeeBody)
+				end
+			end
+			-- voir la créature en ligne de vue jusqu'à 150 studs, au plus toutes les 10 s par créature
+			for _, creature in TaggedSet.list("Creature") do
+				local pivot = pivotOf(creature)
+				local distance = (pivot - position).Magnitude
+				local last = s.seenCreatures[creature]
+				if
+					distance <= Fear.SeeCreatureRange
+					and (last == nil or os.clock() - last >= Fear.SeeCreatureCooldown)
+					and creature.Parent == workspace
+					and canSee(player, creature, pivot)
+				then
+					s.seenCreatures[creature] = os.clock()
+					FearService:OnSeeCreature(player, distance)
 				end
 			end
 			FearService:Add(player, delta * dt)
@@ -168,7 +213,7 @@ end
 
 function FearService:Start()
 	services.CharacterService.Spawned:Connect(function(player)
-		state[player] = { seenBodies = {} }
+		state[player] = { seenBodies = {}, seenCreatures = {} }
 		player:SetAttribute("fear", 0)
 	end)
 	Players.PlayerRemoving:Connect(function(player)

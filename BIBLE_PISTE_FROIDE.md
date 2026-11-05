@@ -1903,3 +1903,32 @@ Statut par joueur : « En vie », « Mort », « Disparu ».
 | M6 | Wikipedia, « Mount St. Helens » et « Spirit Lake » |
 | M7 | The Columbian, 6 septembre 2015 ; Native Languages of the Americas, « Stick Indians » |
 | M8 | Fiction |
+
+### 19.6 Réponses aux dernières questions (5 novembre 2026, soir)
+
+Ces réponses retirent tous les marqueurs PROVISOIRE restants. Elles font foi en cas de conflit.
+
+| Code | Sujet | Réponse |
+| --- | --- | --- |
+| C1 | Distance pour « voir » | Un corps : à 40 studs ou moins, en ligne de vue (+15, une fois par corps). La créature : en ligne de vue jusqu'à 150 studs ; +20 à 150 studs, montant linéairement jusqu'à +35 à 20 studs ou moins ; au plus une fois toutes les 10 s par créature |
+| C3 | Coup reçu à terre | Une attaque de la créature sur un joueur à terre le tue. Une pierre ou un tir allié retire 10 s à son compte à rebours, sans le tuer |
+| C4 | Membre soigné | Bandage et trousse soignent le membre le plus abîmé en proportion ; l'arrêt d'hémorragie s'applique quel que soit le membre |
+| C5 | Sang au relèvement | Un joueur relevé après être tombé faute de sang revient à 45 de sang |
+| C8 | Fusées du Pyrotechnicien | 2 fusées à main au départ, en plus du lance-fusées |
+| C9 | Poids | Munitions : 0 kg (elles vont directement dans la réserve de l'arme). Carte mémoire 0 kg. Moulage 1,0 kg. Sachet de poils 0,05 kg. Document papier 0,05 kg. Cassette 0,1 kg |
+| C11 | Piège à bruit | Posé en 6 s ; se déclenche au passage de la créature ou d'un joueur ; bruit de 150 studs pendant 3 s ; un seul piège posé à la fois par Pyrotechnicien |
+| C14 | Lance-fusées | Cadence = rechargement (2 s). Sur un coéquipier : 30 dégâts + brûlure de 5 par seconde pendant 3 s, jamais d'hémorragie grave |
+| C16 | Portée de mêlée | Hache 7 studs, machette 6 studs |
+| C17 | Quantités | Points C09–C12 : 2 piles, 2 bandages, 1 fusée, 1 corde, 1 attelle selon ce que le point peut contenir (3.4). Lieux fixes : 1 objet, sauf 6 planches (P05c), 3 bandages et 2 piles au poste P17. Branches et pierres : partout au sol |
+| C18 | Neige | « Endurance ×0,85 » s'applique à la récupération |
+| C26 | Démarrage du van | Bruit de 1 500 studs ; le directeur autorise une attaque immédiate sur le van |
+| C29 | Hors combat | 10 s sans dégâts reçus ni attaque lancée |
+| C30 | Recul de ATK\_Strike | 40 studs/s vers l'arrière + 15 studs/s vers le haut |
+| C31 | « Lance plus » | Fréquence des lancers ×1,5 après 2 tirs reçus |
+| C32 | Catalogue « bas » du directeur | EVT\_01, 02, 03, 04, 07, 10, 11, 13, 16, 17, 18, 20, 21. Les autres suivent leurs propres règles (acte, lieu, comportement) |
+| C33 | Distances des événements | « Au loin » : tiré entre 150 et 300 studs. « Tout près » : tiré entre 10 et 20 studs |
+| C43 | Couleurs du bonnet | Rouge brique #7A2E24, vert mousse #4F6B45, gris anthracite #3A3A3A |
+
+**Textes de verrous proposés par Claude Code :** validés tels quels (« Verrouillé — 3 parties jouées », « Verrouillé — 10 parties jouées », « Verrouillé — 1 preuve de classe B », « Verrouillé — 1 survie »).
+
+**Interprétations notées dans SUIVI.md :** les quatre sont validées (bruit le plus fort des 10 dernières secondes ; Médecin deux fois plus rapide ; un acte dure au moins sa durée minimale ; « conditions d'extraction réunies » = voie principale préparée, extraction à l'acte 4).

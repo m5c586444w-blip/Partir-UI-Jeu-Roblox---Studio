@@ -55,10 +55,12 @@ WeaponConfig.Weapons = {
 		damage = 20,
 		blindDuration = 3,
 		creatureFleeDuration = 8,
-		friendlyDamage = 30, -- + brûlure
+		friendlyDamage = 30,
+		-- 19.6 (C14) : cadence = rechargement (2 s) ; sur un coéquipier, brûlure de 5/s pendant 3 s,
+		-- jamais d'hémorragie grave
+		burnPerSecond = 5,
+		burnDuration = 3,
 		noise = 1200,
-		-- TODO(BIBLE): cadence du pistolet lance-fusées (« — » dans 8.2) et effet de la brûlure sur un coéquipier
-		-- (C14 ; les munitions sont réglées par C12)
 	},
 	MEL_Axe = {
 		name = "Hache",
@@ -83,8 +85,8 @@ WeaponConfig.Weapons = {
 	},
 }
 
--- TODO(BIBLE): portée des armes de mêlée (studs). PROVISOIRE : 7, la portée du coup de la créature (9.10)
-WeaponConfig.MeleeRange = 7
+-- 19.6 (C16) : portée de mêlée
+WeaponConfig.MeleeRange = { MEL_Axe = 7, MEL_Machete = 6 }
 
 -- 8.2 : armes à feu selon la taille du groupe (1–3, 4–6, 7–10)
 WeaponConfig.FirearmsByGroupSize = {

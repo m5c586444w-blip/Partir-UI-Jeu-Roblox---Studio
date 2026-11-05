@@ -19,16 +19,6 @@ Tout le reste (position, taille, couleurs, polices, disposition) se règle à la
 | --- | --- |
 | `PartyGui/Layout_Desktop/PartyFrame/Header/Title` | DÉFAUT appliqué : « Groupe » |
 | `PartyGui/Layout_Touch/PartyFrame/Header/Title` | DÉFAUT appliqué : « Groupe » |
-| `VoteGui/Layout_Desktop/Difficulty/Nightmare/Lock` | DÉFAUT appliqué : « Verrouillé — 1 survie » |
-| `VoteGui/Layout_Touch/Difficulty/Nightmare/Lock` | DÉFAUT appliqué : « Verrouillé — 1 survie » |
-| `SkinShopGui/Layout_Desktop/SkinGrid/Skin_C/Lock` | DÉFAUT appliqué : « Verrouillé — 1 survie » |
-| `SkinShopGui/Layout_Desktop/Accessories/Beanie/Lock` | DÉFAUT appliqué : « Verrouillé — 3 parties jouées » |
-| `SkinShopGui/Layout_Desktop/Accessories/AmberHeadlamp/Lock` | DÉFAUT appliqué : « Verrouillé — 10 parties jouées » |
-| `SkinShopGui/Layout_Desktop/Accessories/ColdTrailBag/Lock` | DÉFAUT appliqué : « Verrouillé — 1 preuve de classe B » |
-| `SkinShopGui/Layout_Touch/SkinGrid/Skin_C/Lock` | DÉFAUT appliqué : « Verrouillé — 1 survie » |
-| `SkinShopGui/Layout_Touch/Accessories/Beanie/Lock` | DÉFAUT appliqué : « Verrouillé — 3 parties jouées » |
-| `SkinShopGui/Layout_Touch/Accessories/AmberHeadlamp/Lock` | DÉFAUT appliqué : « Verrouillé — 10 parties jouées » |
-| `SkinShopGui/Layout_Touch/Accessories/ColdTrailBag/Lock` | DÉFAUT appliqué : « Verrouillé — 1 preuve de classe B » |
 | `SettingsGui/Layout_Desktop/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | DÉFAUT appliqué : « Petite » |
 | `SettingsGui/Layout_Desktop/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Large` | DÉFAUT appliqué : « Grande » |
 | `SettingsGui/Layout_Touch/Window/Pages/Accessibility/SubtitleSize/Options/Opt_Small` | DÉFAUT appliqué : « Petite » |

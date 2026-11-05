@@ -193,7 +193,7 @@ local function spawnAll(info)
 		local base = markerOr(code, MapConfig.CluePoints[code].pos)
 		for i, id in contents do
 			local offset = Vector3.new((i - 1) * ItemConfig.ClueItemSpacing, 0, 0)
-			local count = if string.match(id, "^DOC_") then 1 else MapConfig.ClueItemQuantity
+			local count = if string.match(id, "^DOC_") then 1 else MapConfig.ClueItemQuantity[id] or 1
 			ItemSpawnService:SpawnWorldItem(id, count, base + offset, nil, code)
 		end
 	end
@@ -244,6 +244,15 @@ local function spawnAll(info)
 			1,
 			markerOr(code, MapConfig.CluePoints[code].pos) + Vector3.new(0, 0, ItemConfig.ClueItemSpacing)
 		)
+	end
+
+	-- 19.6 (C17) : branches et pierres partout au sol — Part taguées « GroundItem » (attribut itemId,
+	-- ITM_Branch ou ITM_Stone) posées dans le décor ; DÉFAUT : une unité par Part
+	for _, marker in CollectionService:GetTagged("GroundItem") do
+		local id = marker:GetAttribute("itemId")
+		if marker:IsA("BasePart") and (id == "ITM_Branch" or id == "ITM_Stone") then
+			ItemSpawnService:SpawnWorldItem(id, 1, marker.Position)
+		end
 	end
 
 	-- documents à lieu fixe (2.7) ; DOC_09 est un message radio (rejoué par la tour, J9)

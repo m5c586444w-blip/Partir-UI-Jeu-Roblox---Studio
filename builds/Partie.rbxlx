@@ -1009,8 +1009,8 @@ ActConfig.Routes = {
 		repairTime = 20,
 		roleRepairTime = { Mechanic = 10 },
 		cinematic = "CS_10",
-		-- TODO(BIBLE): rayon du bruit du « démarrage bruyant » du van (sans valeur : pas de bruit émis)
-		startNoise = nil,
+		-- 19.6 (C26) : bruit de 1 500 studs ; le directeur autorise une attaque immédiate sur le van
+		startNoise = 1500,
 	},
 	E2 = {
 		place = "P11",
@@ -1454,7 +1454,7 @@ CreatureConfig.LairPlace = "P07b"
 
 -- 9.2 : régénération hors combat, jusqu'à 70 % du maximum
 CreatureConfig.Regen = { PerSecond = 2, MaxFraction = 0.7 }
--- TODO(BIBLE): « hors combat » = combien de secondes sans dégâts ni attaque ? PROVISOIRE : 10 s (fenêtre de BHV_Retreat)
+-- 19.6 (C29) : « hors combat » = 10 s sans dégâts reçus ni attaque lancée
 CreatureConfig.OutOfCombatAfter = 10
 
 -- 9.2 : allures (studs/s) et bruit
@@ -1594,7 +1594,7 @@ CreatureConfig.Memory = {
 	FlareFleeLater = 4, -- …réduite à 4 s à partir de la 2e fusée
 	TightGroupRadius = 25,
 	TightGroupFor = 120,
-	-- TODO(BIBLE): « lance plus » après 2 tirs reçus : de combien ? PROVISOIRE : ×1,5
+	-- 19.6 (C31) : fréquence des lancers ×1,5 après 2 tirs reçus
 	ThrowMoreFactor = 1.5,
 }
 -- 9.8 : imitation (éclaireurs) — sons préenregistrés uniquement
@@ -1634,8 +1634,9 @@ CreatureConfig.Attacks = {
 }
 -- 19.5 (C10) : pierres à 90 studs/s
 CreatureConfig.StoneSpeed = 90
--- TODO(BIBLE): force du recul de ATK_Strike (C30, la vitesse des pierres est réglée par C10). PROVISOIRE : 40.
+-- 19.6 (C30) : recul de ATK_Strike : 40 studs/s vers l'arrière + 15 studs/s vers le haut
 CreatureConfig.KnockbackForce = 40
+CreatureConfig.KnockbackUp = 15
 
 -- 7.3 : la créature traîne un joueur à terre à 10 studs/s vers une réserve
 CreatureConfig.DragSpeed = 10
@@ -1846,11 +1847,33 @@ DirectorConfig.Events = {
 	},
 }
 -- 10 : le directeur tire les événements du catalogue « bas »
--- TODO(BIBLE): quels événements forment le catalogue « bas » ? PROVISOIRE : tous ceux de 10.2.
-DirectorConfig.LowCatalog = nil
--- TODO(BIBLE): distance d'un « au loin » (coups, cris) et d'un « tout près » (pas en écho, caillou). PROVISOIRE : 150 et 15 studs.
-DirectorConfig.FarDistance = 150
-DirectorConfig.NearDistance = 15
+-- 19.6 (C32) : catalogue « bas ». Les autres suivent leurs propres règles (acte, lieu, comportement)
+DirectorConfig.LowCatalog = {
+	"EVT_01",
+	"EVT_02",
+	"EVT_03",
+	"EVT_04",
+	"EVT_07",
+	"EVT_10",
+	"EVT_11",
+	"EVT_13",
+	"EVT_16",
+	"EVT_17",
+	"EVT_18",
+	"EVT_20",
+	"EVT_21",
+}
+-- 19.6 (C33) : « au loin » tiré entre 150 et 300 studs ; « tout près » entre 10 et 20 studs
+DirectorConfig.Far = { min = 150, max = 300 }
+DirectorConfig.Near = { min = 10, max = 20 }
+
+function DirectorConfig.farDistance()
+	return DirectorConfig.Far.min + math.random() * (DirectorConfig.Far.max - DirectorConfig.Far.min)
+end
+
+function DirectorConfig.nearDistance()
+	return DirectorConfig.Near.min + math.random() * (DirectorConfig.Near.max - DirectorConfig.Near.min)
+end
 
 -- 10.3 : ce que le joueur ne doit jamais avoir (rappel, appliqué par le code)
 DirectorConfig.Never = { "DangerGauge", "CreatureArrow", "SourcelessCreatureSound", "DeathWithoutSignal" }
@@ -2054,16 +2077,23 @@ ItemConfig.Items = {
 	-- 8.4 : carte mémoire créée après une vidéo de classe A = preuve A
 	ITM_SDCard = { name = "Carte mémoire", weight = 0, stack = 1, evidence = { class = "A", kind = "Video" } },
 	-- 8.4 : preuves B et C (objets d'inventaire ; noms du tableau 8.4)
-	EVD_Cast = { name = "Moulage d'empreinte", weight = 0, stack = 1, evidence = { class = "B", kind = "Cast" } },
+	EVD_Cast = { name = "Moulage d'empreinte", weight = 1.0, stack = 1, evidence = { class = "B", kind = "Cast" } },
 	EVD_Call = { name = "Enregistrement d'un cri", weight = 0, stack = 1, evidence = { class = "B", kind = "Call" } },
-	EVD_Hair = { name = "Poils", weight = 0, stack = 1, evidence = { class = "B", kind = "Hair" } },
+	EVD_Hair = { name = "Poils", weight = 0.05, stack = 1, evidence = { class = "B", kind = "Hair" } },
 	EVD_PhotoCreature = {
 		name = "Photo de la créature",
 		weight = 0,
 		stack = 1,
 		evidence = { class = "B", kind = "Photo" },
 	},
-	EVD_Document = { name = "Document", weight = 0, stack = 1, evidence = { class = "C", kind = "Document" } },
+	-- 19.6 (C9) : document papier 0,05 kg ; cassette 0,1 kg (documents de type « Tape »)
+	EVD_Document = {
+		name = "Document",
+		weight = 0.05,
+		tapeWeight = 0.1,
+		stack = 1,
+		evidence = { class = "C", kind = "Document" },
+	},
 	EVD_PhotoCharnier = {
 		name = "Photo du charnier P19",
 		weight = 0,
@@ -2077,7 +2107,8 @@ ItemConfig.Items = {
 	-- 19.5 (C12) : réserve du pistolet lance-fusées (« 2 en réserve »)
 	AMMO_WPN_FlareGun = { name = "Fusées", weight = 0, stack = 99, ammoFor = "WPN_FlareGun" },
 }
--- TODO(BIBLE): poids des preuves (carte mémoire, moulage, etc.) et des munitions. PROVISOIRE : 0 kg.
+-- 19.6 (C9) : munitions 0 kg (elles vont dans la réserve de l'arme), carte mémoire 0 kg, moulage 1,0 kg,
+-- sachet de poils 0,05 kg ; les photos ne sont pas pesées par 19.6 (0 kg).
 -- DÉFAUT : pile de 99 munitions (valeur technique de rangement).
 
 -- 8.1, colonne « Où » : objets de départ par rôle (quantité = nombre d'unités)
@@ -2094,8 +2125,7 @@ ItemConfig.StartingItems = {
 		Descendant = { ITM_Headlamp = 1, ITM_Notebook = 1 },
 		Geologist = { ITM_PowerLight = 1, ITM_Compass = 1 },
 		RadioOperator = { ITM_RadioScanner = 1, ITM_AudioRecorder = 1 },
-		-- TODO(BIBLE): combien de fusées à main pour le Pyrotechnicien au départ ? (1 en attendant)
-		Pyrotechnician = { ITM_Flare = 1 },
+		Pyrotechnician = { ITM_Flare = 2 }, -- 19.6 (C8) : 2 fusées à main, en plus du lance-fusées
 	},
 }
 
@@ -2150,8 +2180,16 @@ ItemConfig.Throw = {
 	SimStep = 0.05, -- DÉFAUT (technique) : pas du calcul de la trajectoire (s)
 	MaxFlight = 5, -- DÉFAUT (technique) : durée maximale simulée (s)
 }
--- TODO(BIBLE): bruit du piège à bruit du Pyrotechnicien (boîte de conserve + corde). Sans valeur : pas de piège.
-ItemConfig.NoiseTrapRadius = nil
+-- 19.6 (C11) : piège à bruit du Pyrotechnicien — posé en 6 s ; se déclenche au passage de la créature
+-- ou d'un joueur ; bruit de 150 studs pendant 3 s ; un seul piège posé à la fois par Pyrotechnicien
+ItemConfig.NoiseTrap = {
+	PlaceTime = 6,
+	Radius = 150,
+	Duration = 3,
+	MaxPerPlayer = 1,
+	TriggerRadius = 4, -- DÉFAUT (technique) : distance de passage qui déclenche le piège (studs)
+	EmitInterval = 0.5, -- DÉFAUT (technique) : le bruit est réémis toutes les 0,5 s pendant 3 s
+}
 
 -- 13.3 : modèles d'objets dans ReplicatedStorage/Items (Item_<Nom>) ; absent → bloc gris MANQUANT_<ID>
 ItemConfig.ModelsFolder = "Items"
@@ -2633,8 +2671,8 @@ MapConfig.CluePoints = {
 		contents = { "ITM_Battery", "ITM_Splint" },
 	},
 }
--- TODO(BIBLE): quantité de chaque objet sur les points C09 à C12. PROVISOIRE : 1 de chaque.
-MapConfig.ClueItemQuantity = 1
+-- 19.6 (C17) : quantités sur les points C09–C12, selon ce que le point peut contenir (3.4)
+MapConfig.ClueItemQuantity = { ITM_Battery = 2, ITM_Bandage = 2, ITM_Flare = 1, ITM_Rope = 1, ITM_Splint = 1 }
 
 -- 3.4 : objets clés (un emplacement tiré par objet ; R3 et R7 fixes).
 -- Un emplacement donné par un lieu seul (« P26 cabine », « P22 coffre ») utilise la position du lieu.
@@ -2661,9 +2699,12 @@ MapConfig.KeyItems = {
 }
 
 -- 8.1, colonne « Où » : objets posés à un lieu fixe (un exemplaire par lieu cité)
--- TODO(BIBLE): quantités aux lieux fixes. PROVISOIRE : 1 par lieu (6 planches dans la cabane : donné par 8.1).
+-- 19.6 (C17) : 1 objet par lieu fixe, sauf 6 planches (P05c), 3 bandages et 2 piles au poste P17.
+-- Branches et pierres : partout au sol (posées dans le décor, Part taguées « GroundItem », B1).
 MapConfig.FixedItems = {
 	{ item = "ITM_Splint", places = { "P17" } },
+	{ item = "ITM_Bandage", places = { "P17" }, count = 3 },
+	{ item = "ITM_Battery", places = { "P17" }, count = 2 },
 	{ item = "ITM_Matches", places = { "P17", "P10" } },
 	{ item = "ITM_Rope", places = { "P15" } },
 	{ item = "ITM_Plank", places = { "P05c" }, count = 6 },
@@ -2998,6 +3039,9 @@ PlayerConfig.Downed = {
 	ReviveTime = 6,
 	RoleReviveTime = { Medic = 3 },
 	ReviveLimbFraction = 0.2, -- le joueur revient avec 20 % sur le membre touché
+	-- 19.6 (C3) : une attaque de la créature tue un joueur à terre ; une pierre ou un tir allié retire 10 s
+	-- à son compte à rebours, sans le tuer
+	HitPenalty = 10,
 }
 
 -- 19.5 (C6) : porter un coéquipier à terre (vitesse, bruit et endurance : Movement.Carry, Stamina)
@@ -3055,10 +3099,12 @@ PlayerConfig.Fear = {
 	InvoluntaryScreamAt = 100,
 	InvoluntaryScreamNoise = 200,
 	InvoluntaryScreamCooldown = 60,
-	-- TODO(BIBLE): distance à laquelle un joueur « voit » un corps (+15) et la créature (+20 à +35).
-	-- Tant qu'elles valent nil, ces hausses ne sont pas appliquées.
-	SeeBodyRange = nil,
-	SeeCreatureRange = nil,
+	-- 19.6 (C1) : en ligne de vue ; un corps à 40 studs ou moins ; la créature jusqu'à 150 studs,
+	-- +20 à 150 studs montant linéairement jusqu'à +35 à 20 studs ou moins, au plus toutes les 10 s par créature
+	SeeBodyRange = 40,
+	SeeCreatureRange = 150,
+	SeeCreatureCloseRange = 20,
+	SeeCreatureCooldown = 10,
 }
 
 -- 7.6 : visibilité pour la créature (coefficient multiplié à sa portée de vue)
@@ -3157,7 +3203,6 @@ PlayerConfig.Technical = {
 	InteractGamepadKey = Enum.KeyCode.ButtonX,
 	HoldTolerance = 0.3, -- marge (s) sur le temps de maintien vérifié par le serveur
 	VideoCheckInterval = 0.25, -- s entre deux contrôles de la vidéo de classe A
-	DownedDamageKills = true, -- TODO(BIBLE): un coup reçu à terre tue-t-il ? PROVISOIRE : oui
 	-- DÉFAUT (19.5, C6) : Porter et Poser ont leur propre touche, pour ne pas se confondre avec Relever
 	CarryKey = Enum.KeyCode.G,
 	CarryGamepadKey = Enum.KeyCode.ButtonY,
@@ -3169,12 +3214,12 @@ PlayerConfig.Technical = {
 -- Saisie tenue plus de 2 s → légère. Les pierres ne causent jamais d'hémorragie grave.
 PlayerConfig.BleedOnDamage = { LightAt = 20, HeavyAt = 35, GrabLightAfter = 2, StoneMax = "Light" }
 
--- TODO(BIBLE): sur quel membre agissent le bandage (+10 PV) et la trousse (+40 PV) ?
--- PROVISOIRE : le membre le plus abîmé (en proportion).
+-- 19.6 (C4) : bandage et trousse soignent le membre le plus abîmé en proportion ; l'arrêt d'hémorragie
+-- s'applique quel que soit le membre
 PlayerConfig.HealTarget = "MostDamaged"
 
--- TODO(BIBLE): sang rendu au joueur relevé après être tombé faute de sang. PROVISOIRE : le seuil (20).
-PlayerConfig.ReviveBlood = 20
+-- 19.6 (C5) : un joueur relevé après être tombé faute de sang revient à 45 de sang
+PlayerConfig.ReviveBlood = 45
 
 return PlayerConfig
 ]]></string>
@@ -3240,8 +3285,13 @@ ProgressionConfig.SkinUnlocks = {
 -- Les identifiants sont des DÉFAUT (noms des boutons de SkinShopGui > Accessories).
 ProgressionConfig.AccessoryIds = { "Beanie", "AmberHeadlamp", "ColdTrailBag" }
 ProgressionConfig.AccessoryUnlocks = {
-	-- TODO(BIBLE): les 3 couleurs du bonnet (C43 ; asset à créer, 13.3)
-	Beanie = { stat = "plays", need = 3, colors = 3 }, -- bonnet (3 couleurs) après 3 parties
+	-- bonnet (3 couleurs) après 3 parties ; 19.6 (C43) : rouge brique, vert mousse, gris anthracite
+	Beanie = {
+		stat = "plays",
+		need = 3,
+		colors = 3,
+		palette = { Color3.fromHex("#7A2E24"), Color3.fromHex("#4F6B45"), Color3.fromHex("#3A3A3A") },
+	},
 	AmberHeadlamp = { stat = "plays", need = 10 }, -- frontale ambre après 10 parties
 	ColdTrailBag = { stat = "evidenceBOut", need = 1 }, -- sac « Cold Trail » : 1re preuve de classe B sortie
 }
@@ -3388,10 +3438,12 @@ WeaponConfig.Weapons = {
 		damage = 20,
 		blindDuration = 3,
 		creatureFleeDuration = 8,
-		friendlyDamage = 30, -- + brûlure
+		friendlyDamage = 30,
+		-- 19.6 (C14) : cadence = rechargement (2 s) ; sur un coéquipier, brûlure de 5/s pendant 3 s,
+		-- jamais d'hémorragie grave
+		burnPerSecond = 5,
+		burnDuration = 3,
 		noise = 1200,
-		-- TODO(BIBLE): cadence du pistolet lance-fusées (« — » dans 8.2) et effet de la brûlure sur un coéquipier
-		-- (C14 ; les munitions sont réglées par C12)
 	},
 	MEL_Axe = {
 		name = "Hache",
@@ -3416,8 +3468,8 @@ WeaponConfig.Weapons = {
 	},
 }
 
--- TODO(BIBLE): portée des armes de mêlée (studs). PROVISOIRE : 7, la portée du coup de la créature (9.10)
-WeaponConfig.MeleeRange = 7
+-- 19.6 (C16) : portée de mêlée
+WeaponConfig.MeleeRange = { MEL_Axe = 7, MEL_Machete = 6 }
 
 -- 8.2 : armes à feu selon la taille du groupe (1–3, 4–6, 7–10)
 WeaponConfig.FirearmsByGroupSize = {
@@ -4735,7 +4787,12 @@ function Attack.run(brain, target)
 	if root and A.knockback then
 		local push = (root.Position - brain:Position()) * Vector3.new(1, 0, 1)
 		if push.Magnitude > 0 then
-			root.AssemblyLinearVelocity += push.Unit * CreatureConfig.KnockbackForce
+			-- 19.6 (C30) : 40 studs/s vers l'arrière + 15 studs/s vers le haut
+			root.AssemblyLinearVelocity += push.Unit * CreatureConfig.KnockbackForce + Vector3.new(
+				0,
+				CreatureConfig.KnockbackUp,
+				0
+			)
 		end
 	end
 end
@@ -4833,7 +4890,8 @@ function Attack.run(brain, target)
 		damage * damageFactor(brain),
 		brain.model,
 		nil,
-		PlayerConfig.BleedOnDamage.StoneMax
+		PlayerConfig.BleedOnDamage.StoneMax,
+		"Stone"
 	)
 end
 
@@ -5817,9 +5875,6 @@ function Behavior.score(brain)
 		return 0
 	end
 	local factor = if brain.personality == "Playful" then CreatureConfig.Personalities.Playful.stones else 1
-	if brain.memory.shotsTaken >= CreatureConfig.Memory.ShotsToAdapt then
-		factor *= CreatureConfig.Memory.ThrowMoreFactor -- 9.8 : « lance plus »
-	end
 	return math.clamp(B.baseScore * factor, 0, 1)
 end
 
@@ -5831,7 +5886,12 @@ function Behavior.step(brain)
 	brain:Stop()
 	-- 19.5 (C10) : 1 lancer toutes les 3 à 5 s hors siège
 	if os.clock() >= (brain.nextThrowAt or 0) then
-		brain.nextThrowAt = os.clock() + B.intervalMin + math.random() * (B.intervalMax - B.intervalMin)
+		local interval = B.intervalMin + math.random() * (B.intervalMax - B.intervalMin)
+		-- 9.8 et 19.6 (C31) : « lance plus » après 2 tirs reçus = fréquence ×1,5
+		if brain.memory.shotsTaken >= CreatureConfig.Memory.ShotsToAdapt then
+			interval /= CreatureConfig.Memory.ThrowMoreFactor
+		end
+		brain.nextThrowAt = os.clock() + interval
 		brain:Attack("ATK_Throw", t)
 	end
 end
@@ -6598,7 +6658,7 @@ HANDLERS.FaunaSilence = function(def, player)
 end
 
 HANDLERS.Sound = function(def, player)
-	local far = pointNear(player, if def.nearWater then DirectorConfig.NearDistance else DirectorConfig.FarDistance)
+	local far = pointNear(player, if def.nearWater then DirectorConfig.nearDistance() else DirectorConfig.farDistance())
 	if far == nil then
 		return false
 	end
@@ -6683,7 +6743,7 @@ HANDLERS.EchoSteps = function(def, player)
 		task.delay(def.delay, function()
 			ai.CreatureAnimator:PlaySoundAt(
 				def.sounds[1],
-				root.Position - root.CFrame.LookVector * DirectorConfig.NearDistance
+				root.Position - root.CFrame.LookVector * DirectorConfig.nearDistance()
 			)
 		end)
 		return true
@@ -6781,7 +6841,7 @@ function EventDirector:RequestLow(player)
 		return false
 	end
 	for _, p in players do
-		local ids = DirectorConfig.LowCatalog or Util.sortedKeys(DirectorConfig.Events)
+		local ids = table.clone(DirectorConfig.LowCatalog) -- 19.6 (C32) ; copie mélangée
 		for i = #ids, 2, -1 do
 			local j = math.random(1, i)
 			ids[i], ids[j] = ids[j], ids[i]
@@ -6793,6 +6853,45 @@ function EventDirector:RequestLow(player)
 				lastEvent[id] = os.clock()
 				lastForPlayer[p] = os.clock()
 				guarantees.signs += 1
+				return true
+			end
+		end
+	end
+	return false
+end
+
+-- 19.6 (C32) : les événements hors catalogue « bas » suivent leurs propres règles. DÉFAUT : un événement
+-- qui a des lieux (`places`) est tenté quand le joueur est dans l'un d'eux ; un événement sans lieu est tenté
+-- une fois par acte ; EVT_08 (imitation) est joué par BHV_Mimic. Les cadences de 10.1 s'appliquent.
+local ownTriedInAct = {} -- [id] = numéro d'acte de la dernière tentative
+local lowSet = {}
+for _, id in DirectorConfig.LowCatalog do
+	lowSet[id] = true
+end
+
+function EventDirector:RequestOwnRules(player)
+	local act = Util.getMatchState():GetAttribute("act") or 0
+	local root = Util.characterRoot(player)
+	if root == nil then
+		return false
+	end
+	for _, id in Util.sortedKeys(DirectorConfig.Events) do
+		local def = DirectorConfig.Events[id]
+		local handler = HANDLERS[def.kind]
+		if not lowSet[id] and def.kind ~= "Mimic" and handler and eligible(id, def, act, player) then
+			local wanted
+			if def.places then
+				wanted = false
+				for _, code in def.places do
+					wanted = wanted or ai.Perception:InPlace(root.Position, code)
+				end
+			else
+				wanted = ownTriedInAct[id] ~= act
+				ownTriedInAct[id] = act
+			end
+			if wanted and handler(def, player) then
+				lastEvent[id] = os.clock()
+				lastForPlayer[player] = os.clock()
 				return true
 			end
 		end
@@ -7005,7 +7104,8 @@ function FamilyBrain:IntimidationStep(brain, player)
 		animator:Play(brain.model, "WoodKnock")
 		animator:PlaySoundAt("SFX_WoodKnock", position)
 		for _, other in Players:GetPlayers() do
-			if brain:DistanceTo(other) <= DirectorConfig.FarDistance then
+			-- 19.6 (C33) : un coup « au loin » s'entend jusqu'à la distance « au loin » la plus grande
+			if brain:DistanceTo(other) <= DirectorConfig.Far.max then
 				services.FearService:OnWoodKnock(other)
 			end
 		end
@@ -7017,7 +7117,7 @@ function FamilyBrain:IntimidationStep(brain, player)
 	elseif kind == "NearThrow" and root then
 		-- branche ou pierre qui tombe à côté du joueur, pas sur lui
 		local landing = root.Position
-			+ Vector3.new(math.random() - 0.5, 0, math.random() - 0.5).Unit * DirectorConfig.NearDistance / 2
+			+ Vector3.new(math.random() - 0.5, 0, math.random() - 0.5).Unit * DirectorConfig.nearDistance()
 		animator:PlaySoundAt("SFX_StoneGround", landing)
 		services.NoiseService:Emit(
 			landing,
@@ -7028,7 +7128,7 @@ function FamilyBrain:IntimidationStep(brain, player)
 	elseif kind == "BranchSnap" and root then
 		animator:PlaySoundAt(
 			"SFX_BranchSnap",
-			root.Position + (position - root.Position).Unit * DirectorConfig.NearDistance
+			root.Position + (position - root.Position).Unit * DirectorConfig.nearDistance()
 		)
 	elseif kind == "ChestBeat" then
 		if brain.id == "CRT_Alpha" then
@@ -7881,6 +7981,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = ReplicatedStorage:WaitForChild("Config")
 local ActConfig = require(Config:WaitForChild("ActConfig"))
 local CreatureConfig = require(Config:WaitForChild("CreatureConfig"))
+local MapConfig = require(Config:WaitForChild("MapConfig"))
 local DirectorConfig = require(Config:WaitForChild("DirectorConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
@@ -7961,6 +8062,14 @@ function TensionDirector:AllowAttack(brain, player)
 		local root = Util.characterRoot(player)
 		if root == nil or not ai.Perception:InPlace(root.Position, "P07b") then
 			return false
+		end
+	end
+	-- 19.6 (C26) : après le démarrage du van, attaque immédiate autorisée sur les joueurs autour du van
+	if state:GetAttribute("vanStartedAt") then
+		local root = Util.characterRoot(player)
+		local p01 = MapConfig.Places.P01
+		if root and (root.Position - p01.pos).Magnitude <= p01.radius then
+			return true
 		end
 	end
 	if self:IsPaused() then
@@ -8060,6 +8169,10 @@ local function tick()
 	local state = Util.getMatchState()
 	if state:GetAttribute("act") == 1 then
 		ai.EventDirector:EnsureAct1Guarantees()
+	end
+	-- 19.6 (C32) : événements hors catalogue « bas », selon leurs propres règles (acte, lieu)
+	for _, player in Players:GetPlayers() do
+		ai.EventDirector:RequestOwnRules(player)
 	end
 end
 
@@ -9125,12 +9238,11 @@ SETUP.E1 = function(route)
 			return routes.E1.prepared and triggersOpen and hasItems(player, part.Position, { "ITM_Keys" })
 		end,
 		onTriggered = function(player)
-			-- 5.2 : démarrage bruyant ; les joueurs autour du van partent (P01, rayon 60)
-			-- TODO(BIBLE): rayon du bruit du démarrage du van
-			local noise = ActConfig.Routes.E1.startNoise
-			if noise then
-				services.NoiseService:Emit(part.Position, noise, NoiseTypes.Vehicle, player)
-			end
+			-- 5.2 et 19.6 (C26) : démarrage bruyant (1 500 studs) ; le directeur autorise une attaque immédiate
+			-- sur le van (attribut vanStartedAt lu par TensionDirector:AllowAttack) ; les joueurs autour du van
+			-- partent (P01, rayon 60)
+			services.NoiseService:Emit(part.Position, ActConfig.Routes.E1.startNoise, NoiseTypes.Vehicle, player)
+			Util.getMatchState():SetAttribute("vanStartedAt", workspace:GetServerTimeNow())
 			extract("E1", playersNear(MapConfig.Places.P01.pos, MapConfig.Places.P01.radius))
 		end,
 	})
@@ -9398,13 +9510,40 @@ function FearService:OnWoodKnock(player)
 	self:Add(player, Fear.WoodKnock)
 end
 
--- 7.5 : voir la créature (+20 à +35, plus si proche) ; appelé par l'IA
+-- 7.5 et 19.6 (C1) : voir la créature : +20 à 150 studs, montant linéairement jusqu'à +35 à 20 studs
 function FearService:OnSeeCreature(player, distance)
-	if Fear.SeeCreatureRange == nil or distance > Fear.SeeCreatureRange then
+	if distance > Fear.SeeCreatureRange then
 		return
 	end
-	local closeness = 1 - distance / Fear.SeeCreatureRange
+	local closeness =
+		math.clamp((Fear.SeeCreatureRange - distance) / (Fear.SeeCreatureRange - Fear.SeeCreatureCloseRange), 0, 1)
 	self:Add(player, Fear.SeeCreatureMin + (Fear.SeeCreatureMax - Fear.SeeCreatureMin) * closeness)
+end
+
+-- ligne de vue depuis la tête du joueur vers `target` (Model) ; feuillages « Foliage » transparents (DÉFAUT,
+-- comme pour la vue de la créature). RaycastParams construits une fois par personnage (TaggedSet).
+local sightParams = setmetatable({}, { __mode = "k" })
+local function canSee(player, target, position)
+	local character = player.Character
+	local head = character and character:FindFirstChild("Head")
+	if head == nil then
+		return false
+	end
+	-- DÉFAUT : « voir » = la cible est devant le joueur (demi-espace de son regard)
+	if head.CFrame.LookVector:Dot(position - head.Position) <= 0 then
+		return false
+	end
+	local cache = sightParams[character]
+	if cache == nil then
+		cache = TaggedSet.excludeParams({ character }, { "Foliage" })
+		sightParams[character] = cache
+	end
+	local hit = workspace:Raycast(head.Position, position - head.Position, cache:Get())
+	return hit == nil or hit.Instance:IsDescendantOf(target)
+end
+
+local function pivotOf(instance)
+	return if instance:IsA("Model") then instance:GetPivot().Position else instance.Position
 end
 
 -- 7.7 : ordre du Meneur : −20 aux coéquipiers à 15 studs, recharge 90 s
@@ -9448,15 +9587,33 @@ local function tick(dt)
 			if nearFire(position) then
 				delta += Fear.NearFirePerSecond
 			end
-			-- 7.5 : voir un corps (+15 une fois par corps), si la portée est donnée par la bible
-			if Fear.SeeBodyRange then
-				for _, corpse in TaggedSet.list("Corpse") do
-					local s = state[player]
-					local pivot = corpse:IsA("Model") and corpse:GetPivot().Position or corpse.Position
-					if not s.seenBodies[corpse] and (pivot - position).Magnitude <= Fear.SeeBodyRange then
-						s.seenBodies[corpse] = true
-						FearService:Add(player, Fear.SeeBody)
-					end
+			-- 7.5 et 19.6 (C1) : voir un corps à 40 studs ou moins, en ligne de vue (+15 une fois par corps)
+			local s = state[player]
+			for _, corpse in TaggedSet.list("Corpse") do
+				local pivot = pivotOf(corpse)
+				if
+					not s.seenBodies[corpse]
+					and corpse ~= player.Character
+					and (pivot - position).Magnitude <= Fear.SeeBodyRange
+					and canSee(player, corpse, pivot)
+				then
+					s.seenBodies[corpse] = true
+					FearService:Add(player, Fear.SeeBody)
+				end
+			end
+			-- voir la créature en ligne de vue jusqu'à 150 studs, au plus toutes les 10 s par créature
+			for _, creature in TaggedSet.list("Creature") do
+				local pivot = pivotOf(creature)
+				local distance = (pivot - position).Magnitude
+				local last = s.seenCreatures[creature]
+				if
+					distance <= Fear.SeeCreatureRange
+					and (last == nil or os.clock() - last >= Fear.SeeCreatureCooldown)
+					and creature.Parent == workspace
+					and canSee(player, creature, pivot)
+				then
+					s.seenCreatures[creature] = os.clock()
+					FearService:OnSeeCreature(player, distance)
 				end
 			end
 			FearService:Add(player, delta * dt)
@@ -9470,7 +9627,7 @@ end
 
 function FearService:Start()
 	services.CharacterService.Spawned:Connect(function(player)
-		state[player] = { seenBodies = {} }
+		state[player] = { seenBodies = {}, seenCreatures = {} }
 		player:SetAttribute("fear", 0)
 	end)
 	Players.PlayerRemoving:Connect(function(player)
@@ -10689,8 +10846,9 @@ function HealthService:Splint(player)
 end
 
 -- dégâts sur un membre ; `bleed` optionnel ("Light" / "Heavy") impose le niveau ;
--- `maxBleed` optionnel plafonne le niveau tiré des seuils (19.5, C2 : pierres → légère au plus)
-function HealthService:Damage(player, limb, amount, source, bleed, maxBleed)
+-- `maxBleed` optionnel plafonne le niveau tiré des seuils (19.5, C2 : pierres → légère au plus) ;
+-- `kind` optionnel : "Stone" (pierre lancée, 19.6 C3), "Burn" (brûlure du lance-fusées, C14)
+function HealthService:Damage(player, limb, amount, source, bleed, maxBleed, kind)
 	if not self:IsAlive(player) or amount <= 0 then
 		return
 	end
@@ -10699,7 +10857,18 @@ function HealthService:Damage(player, limb, amount, source, bleed, maxBleed)
 		return
 	end
 	if player:GetAttribute("isDowned") then
-		if PlayerConfig.Technical.DownedDamageKills then
+		-- 19.6 (C3) : une pierre ou un tir allié retire 10 s au compte à rebours, sans tuer ;
+		-- une attaque de la créature tue
+		local friendly = typeof(source) == "Instance" and source:IsA("Player")
+		local s = state[player]
+		if kind == "Burn" then
+			return -- la brûlure du lance-fusées fait partie du tir allié, déjà compté
+		end
+		if (kind == "Stone" or friendly) and s and s.downedRemaining then
+			-- DÉFAUT : le compte à rebours ne descend pas sous un pas de calcul (le coup ne tue pas)
+			s.downedRemaining =
+				math.max(PlayerConfig.Technical.Tick, s.downedRemaining - PlayerConfig.Downed.HitPenalty)
+		elseif not friendly and kind ~= "Stone" then
 			self:Kill(player, source)
 		end
 		return
@@ -11154,12 +11323,14 @@ return InteractionService
 -- État répliqué : attribut inventory (JSON { quick, bag, selected, weight }), heldItem, heavyHands,
 -- lightOn, lightBattery, busyUntil.
 local CollectionService = game:GetService("CollectionService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local ItemConfig = require(Config:WaitForChild("ItemConfig"))
+local LoreConfig = require(Config:WaitForChild("LoreConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local WeaponConfig = require(Config:WaitForChild("WeaponConfig"))
 local AmbienceConfig = require(Config:WaitForChild("AmbienceConfig"))
@@ -11181,7 +11352,9 @@ local services = nil
 local inventories = {} -- [Player] = { quick = {}, bag = {}, selected = 1 }
 
 local THROW = ItemConfig.Throw
-local NOISE_TRAP_RADIUS = ItemConfig.NoiseTrapRadius
+local placeNoiseTrap -- défini plus bas
+local NOISE_TRAP = ItemConfig.NoiseTrap
+local traps = {} -- [Player] = Part du piège posé (un seul à la fois, 19.6 C11)
 
 local function itemDef(id)
 	return ItemConfig.Items[id] or WeaponConfig.Weapons[id]
@@ -11189,7 +11362,13 @@ end
 
 local function weightOf(entry)
 	local def = itemDef(entry.id)
-	return ((def and def.weight) or 0) * (entry.count or 1)
+	local weight = (def and def.weight) or 0
+	-- 19.6 (C9) : une cassette pèse 0,1 kg, un document papier 0,05 kg
+	local doc = entry.doc and LoreConfig.Documents[entry.doc]
+	if def and def.tapeWeight and doc and doc.kind == "Tape" then
+		weight = def.tapeWeight
+	end
+	return weight * (entry.count or 1)
 end
 
 local function isHeavy(id)
@@ -11786,6 +11965,57 @@ EFFECTS.BearSpray = function(player, entry, slot, def)
 	InventoryService.BearSpray:Fire(player, root.Position, root.CFrame.LookVector, def.cone)
 end
 
+-- 19.6 (C11) : piège à bruit (boîte de conserve + corde) aux pieds du Pyrotechnicien ; se déclenche au
+-- passage de la créature ou d'un autre joueur (DÉFAUT : le poseur ne le déclenche pas) ; bruit de 150 studs
+-- pendant 3 s, puis le piège disparaît
+placeNoiseTrap = function(player)
+	local root = Util.characterRoot(player)
+	if root == nil then
+		return
+	end
+	local trap = Instance.new("Part")
+	trap.Name = "NoiseTrap_" .. player.Name
+	trap.Anchored = true
+	trap.CanCollide = false
+	trap.Size = ItemConfig.PlaceholderSize
+	trap.Color = ItemConfig.PlaceholderColor
+	trap.Position = root.Position - Vector3.new(0, ItemConfig.FireVisuals.GroundOffset, 0)
+	trap.Parent = workspace
+	traps[player] = trap
+	task.spawn(function()
+		local triggered = false
+		while trap.Parent and not triggered do
+			task.wait(PlayerConfig.Technical.Tick)
+			for _, creature in TaggedSet.list("Creature") do
+				local pivot = creature:GetPivot().Position
+				if (pivot - trap.Position).Magnitude <= NOISE_TRAP.TriggerRadius then
+					triggered = true
+				end
+			end
+			for _, other in Players:GetPlayers() do
+				local otherRoot = Util.characterRoot(other)
+				if
+					other ~= player
+					and otherRoot
+					and (otherRoot.Position - trap.Position).Magnitude <= NOISE_TRAP.TriggerRadius
+				then
+					triggered = true
+				end
+			end
+		end
+		local elapsed = 0
+		while triggered and elapsed < NOISE_TRAP.Duration do
+			services.NoiseService:Emit(trap.Position, NOISE_TRAP.Radius, NoiseTypes.Item, player)
+			task.wait(NOISE_TRAP.EmitInterval)
+			elapsed += NOISE_TRAP.EmitInterval
+		end
+		trap:Destroy()
+		if traps[player] == trap then
+			traps[player] = nil
+		end
+	end)
+end
+
 local function useAbility(player)
 	local role = player:GetAttribute("role")
 	if role == "Leader" then
@@ -11806,10 +12036,17 @@ local function useAbility(player)
 				InventoryService:Remove(player, id, n)
 			end
 			InventoryService:Add(player, "ITM_Flare", 1)
-		elseif canCraft(recipes.NoiseTrapRecipe) and NOISE_TRAP_RADIUS then
-			for id, n in recipes.NoiseTrapRecipe do
-				InventoryService:Remove(player, id, n)
-			end
+		elseif canCraft(recipes.NoiseTrapRecipe) and traps[player] == nil then
+			-- 19.6 (C11) : piège posé en 6 s, un seul à la fois
+			busy(player, NOISE_TRAP.PlaceTime, function()
+				if not canCraft(recipes.NoiseTrapRecipe) or traps[player] ~= nil then
+					return
+				end
+				for id, n in recipes.NoiseTrapRecipe do
+					InventoryService:Remove(player, id, n)
+				end
+				placeNoiseTrap(player)
+			end)
 		end
 	end
 	InventoryService.AbilityUsed:Fire(player, role)
@@ -12157,7 +12394,7 @@ local function spawnAll(info)
 		local base = markerOr(code, MapConfig.CluePoints[code].pos)
 		for i, id in contents do
 			local offset = Vector3.new((i - 1) * ItemConfig.ClueItemSpacing, 0, 0)
-			local count = if string.match(id, "^DOC_") then 1 else MapConfig.ClueItemQuantity
+			local count = if string.match(id, "^DOC_") then 1 else MapConfig.ClueItemQuantity[id] or 1
 			ItemSpawnService:SpawnWorldItem(id, count, base + offset, nil, code)
 		end
 	end
@@ -12208,6 +12445,15 @@ local function spawnAll(info)
 			1,
 			markerOr(code, MapConfig.CluePoints[code].pos) + Vector3.new(0, 0, ItemConfig.ClueItemSpacing)
 		)
+	end
+
+	-- 19.6 (C17) : branches et pierres partout au sol — Part taguées « GroundItem » (attribut itemId,
+	-- ITM_Branch ou ITM_Stone) posées dans le décor ; DÉFAUT : une unité par Part
+	for _, marker in CollectionService:GetTagged("GroundItem") do
+		local id = marker:GetAttribute("itemId")
+		if marker:IsA("BasePart") and (id == "ITM_Branch" or id == "ITM_Stone") then
+			ItemSpawnService:SpawnWorldItem(id, 1, marker.Position)
+		end
 	end
 
 	-- documents à lieu fixe (2.7) ; DOC_09 est un message radio (rejoué par la tour, J9)
@@ -12817,7 +13063,7 @@ local function tick(dt)
 				if (player:GetAttribute("fear") or 0) >= PlayerConfig.Fear.MisplacedSoundsAt then
 					regen *= PlayerConfig.Fear.StaminaRegenFactorAt80
 				end
-				-- TODO(BIBLE): 12.3 « endurance ×0,85 » par neige — PROVISOIRE : appliqué à la récupération
+				-- 12.3 et 19.6 (C18) : « endurance ×0,85 » par neige s'applique à la récupération
 				if weatherEntry and weatherEntry.staminaFactor then
 					regen *= weatherEntry.staminaFactor
 				end
@@ -13213,8 +13459,17 @@ local function applyHit(shooter, weaponId, weapon, result, creatureDamage, frien
 	end
 	local victim = playerFrom(result.Instance)
 	if victim and victim ~= shooter and friendlyFireOn() then
-		-- 8.2 : tir allié (torse)
-		services.HealthService:Damage(victim, "Torso", friendlyDamage, shooter)
+		-- 8.2 : tir allié (torse) ; 19.6 (C14) : lance-fusées = brûlure, jamais d'hémorragie grave
+		local maxBleed = if weapon.burnPerSecond then "Light" else nil
+		services.HealthService:Damage(victim, "Torso", friendlyDamage, shooter, nil, maxBleed)
+		if weapon.burnPerSecond then
+			task.spawn(function()
+				for _ = 1, weapon.burnDuration do
+					task.wait(1) -- constante (une brûlure par seconde)
+					services.HealthService:Damage(victim, "Torso", weapon.burnPerSecond, shooter, nil, "Light", "Burn")
+				end
+			end)
+		end
 	end
 end
 
@@ -13274,7 +13529,7 @@ local function onFire(player, origin, direction, _timestamp)
 	lastShot[player] = os.clock()
 
 	if weapon.melee then
-		local result = cast(player, origin, direction, WeaponConfig.MeleeRange)
+		local result = cast(player, origin, direction, WeaponConfig.MeleeRange[entry.id])
 		applyHit(player, entry.id, weapon, result, weapon.damage, weapon.friendlyDamage)
 		services.NoiseService:Emit(head.Position, weapon.noise, NoiseTypes.Melee, player)
 		return

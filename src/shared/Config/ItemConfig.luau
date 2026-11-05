@@ -130,16 +130,23 @@ ItemConfig.Items = {
 	-- 8.4 : carte mémoire créée après une vidéo de classe A = preuve A
 	ITM_SDCard = { name = "Carte mémoire", weight = 0, stack = 1, evidence = { class = "A", kind = "Video" } },
 	-- 8.4 : preuves B et C (objets d'inventaire ; noms du tableau 8.4)
-	EVD_Cast = { name = "Moulage d'empreinte", weight = 0, stack = 1, evidence = { class = "B", kind = "Cast" } },
+	EVD_Cast = { name = "Moulage d'empreinte", weight = 1.0, stack = 1, evidence = { class = "B", kind = "Cast" } },
 	EVD_Call = { name = "Enregistrement d'un cri", weight = 0, stack = 1, evidence = { class = "B", kind = "Call" } },
-	EVD_Hair = { name = "Poils", weight = 0, stack = 1, evidence = { class = "B", kind = "Hair" } },
+	EVD_Hair = { name = "Poils", weight = 0.05, stack = 1, evidence = { class = "B", kind = "Hair" } },
 	EVD_PhotoCreature = {
 		name = "Photo de la créature",
 		weight = 0,
 		stack = 1,
 		evidence = { class = "B", kind = "Photo" },
 	},
-	EVD_Document = { name = "Document", weight = 0, stack = 1, evidence = { class = "C", kind = "Document" } },
+	-- 19.6 (C9) : document papier 0,05 kg ; cassette 0,1 kg (documents de type « Tape »)
+	EVD_Document = {
+		name = "Document",
+		weight = 0.05,
+		tapeWeight = 0.1,
+		stack = 1,
+		evidence = { class = "C", kind = "Document" },
+	},
 	EVD_PhotoCharnier = {
 		name = "Photo du charnier P19",
 		weight = 0,
@@ -153,7 +160,8 @@ ItemConfig.Items = {
 	-- 19.5 (C12) : réserve du pistolet lance-fusées (« 2 en réserve »)
 	AMMO_WPN_FlareGun = { name = "Fusées", weight = 0, stack = 99, ammoFor = "WPN_FlareGun" },
 }
--- TODO(BIBLE): poids des preuves (carte mémoire, moulage, etc.) et des munitions. PROVISOIRE : 0 kg.
+-- 19.6 (C9) : munitions 0 kg (elles vont dans la réserve de l'arme), carte mémoire 0 kg, moulage 1,0 kg,
+-- sachet de poils 0,05 kg ; les photos ne sont pas pesées par 19.6 (0 kg).
 -- DÉFAUT : pile de 99 munitions (valeur technique de rangement).
 
 -- 8.1, colonne « Où » : objets de départ par rôle (quantité = nombre d'unités)
@@ -170,8 +178,7 @@ ItemConfig.StartingItems = {
 		Descendant = { ITM_Headlamp = 1, ITM_Notebook = 1 },
 		Geologist = { ITM_PowerLight = 1, ITM_Compass = 1 },
 		RadioOperator = { ITM_RadioScanner = 1, ITM_AudioRecorder = 1 },
-		-- TODO(BIBLE): combien de fusées à main pour le Pyrotechnicien au départ ? (1 en attendant)
-		Pyrotechnician = { ITM_Flare = 1 },
+		Pyrotechnician = { ITM_Flare = 2 }, -- 19.6 (C8) : 2 fusées à main, en plus du lance-fusées
 	},
 }
 
@@ -226,8 +233,16 @@ ItemConfig.Throw = {
 	SimStep = 0.05, -- DÉFAUT (technique) : pas du calcul de la trajectoire (s)
 	MaxFlight = 5, -- DÉFAUT (technique) : durée maximale simulée (s)
 }
--- TODO(BIBLE): bruit du piège à bruit du Pyrotechnicien (boîte de conserve + corde). Sans valeur : pas de piège.
-ItemConfig.NoiseTrapRadius = nil
+-- 19.6 (C11) : piège à bruit du Pyrotechnicien — posé en 6 s ; se déclenche au passage de la créature
+-- ou d'un joueur ; bruit de 150 studs pendant 3 s ; un seul piège posé à la fois par Pyrotechnicien
+ItemConfig.NoiseTrap = {
+	PlaceTime = 6,
+	Radius = 150,
+	Duration = 3,
+	MaxPerPlayer = 1,
+	TriggerRadius = 4, -- DÉFAUT (technique) : distance de passage qui déclenche le piège (studs)
+	EmitInterval = 0.5, -- DÉFAUT (technique) : le bruit est réémis toutes les 0,5 s pendant 3 s
+}
 
 -- 13.3 : modèles d'objets dans ReplicatedStorage/Items (Item_<Nom>) ; absent → bloc gris MANQUANT_<ID>
 ItemConfig.ModelsFolder = "Items"

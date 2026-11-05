@@ -72,6 +72,9 @@ PlayerConfig.Downed = {
 	ReviveTime = 6,
 	RoleReviveTime = { Medic = 3 },
 	ReviveLimbFraction = 0.2, -- le joueur revient avec 20 % sur le membre touché
+	-- 19.6 (C3) : une attaque de la créature tue un joueur à terre ; une pierre ou un tir allié retire 10 s
+	-- à son compte à rebours, sans le tuer
+	HitPenalty = 10,
 }
 
 -- 19.5 (C6) : porter un coéquipier à terre (vitesse, bruit et endurance : Movement.Carry, Stamina)
@@ -129,10 +132,12 @@ PlayerConfig.Fear = {
 	InvoluntaryScreamAt = 100,
 	InvoluntaryScreamNoise = 200,
 	InvoluntaryScreamCooldown = 60,
-	-- TODO(BIBLE): distance à laquelle un joueur « voit » un corps (+15) et la créature (+20 à +35).
-	-- Tant qu'elles valent nil, ces hausses ne sont pas appliquées.
-	SeeBodyRange = nil,
-	SeeCreatureRange = nil,
+	-- 19.6 (C1) : en ligne de vue ; un corps à 40 studs ou moins ; la créature jusqu'à 150 studs,
+	-- +20 à 150 studs montant linéairement jusqu'à +35 à 20 studs ou moins, au plus toutes les 10 s par créature
+	SeeBodyRange = 40,
+	SeeCreatureRange = 150,
+	SeeCreatureCloseRange = 20,
+	SeeCreatureCooldown = 10,
 }
 
 -- 7.6 : visibilité pour la créature (coefficient multiplié à sa portée de vue)
@@ -231,7 +236,6 @@ PlayerConfig.Technical = {
 	InteractGamepadKey = Enum.KeyCode.ButtonX,
 	HoldTolerance = 0.3, -- marge (s) sur le temps de maintien vérifié par le serveur
 	VideoCheckInterval = 0.25, -- s entre deux contrôles de la vidéo de classe A
-	DownedDamageKills = true, -- TODO(BIBLE): un coup reçu à terre tue-t-il ? PROVISOIRE : oui
 	-- DÉFAUT (19.5, C6) : Porter et Poser ont leur propre touche, pour ne pas se confondre avec Relever
 	CarryKey = Enum.KeyCode.G,
 	CarryGamepadKey = Enum.KeyCode.ButtonY,
@@ -243,11 +247,11 @@ PlayerConfig.Technical = {
 -- Saisie tenue plus de 2 s → légère. Les pierres ne causent jamais d'hémorragie grave.
 PlayerConfig.BleedOnDamage = { LightAt = 20, HeavyAt = 35, GrabLightAfter = 2, StoneMax = "Light" }
 
--- TODO(BIBLE): sur quel membre agissent le bandage (+10 PV) et la trousse (+40 PV) ?
--- PROVISOIRE : le membre le plus abîmé (en proportion).
+-- 19.6 (C4) : bandage et trousse soignent le membre le plus abîmé en proportion ; l'arrêt d'hémorragie
+-- s'applique quel que soit le membre
 PlayerConfig.HealTarget = "MostDamaged"
 
--- TODO(BIBLE): sang rendu au joueur relevé après être tombé faute de sang. PROVISOIRE : le seuil (20).
-PlayerConfig.ReviveBlood = 20
+-- 19.6 (C5) : un joueur relevé après être tombé faute de sang revient à 45 de sang
+PlayerConfig.ReviveBlood = 45
 
 return PlayerConfig

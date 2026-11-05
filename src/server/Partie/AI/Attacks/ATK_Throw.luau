@@ -82,7 +82,8 @@ function Attack.run(brain, target)
 		damage * damageFactor(brain),
 		brain.model,
 		nil,
-		PlayerConfig.BleedOnDamage.StoneMax
+		PlayerConfig.BleedOnDamage.StoneMax,
+		"Stone"
 	)
 end
 

@@ -399,8 +399,9 @@ function HealthService:Splint(player)
 end
 
 -- dégâts sur un membre ; `bleed` optionnel ("Light" / "Heavy") impose le niveau ;
--- `maxBleed` optionnel plafonne le niveau tiré des seuils (19.5, C2 : pierres → légère au plus)
-function HealthService:Damage(player, limb, amount, source, bleed, maxBleed)
+-- `maxBleed` optionnel plafonne le niveau tiré des seuils (19.5, C2 : pierres → légère au plus) ;
+-- `kind` optionnel : "Stone" (pierre lancée, 19.6 C3), "Burn" (brûlure du lance-fusées, C14)
+function HealthService:Damage(player, limb, amount, source, bleed, maxBleed, kind)
 	if not self:IsAlive(player) or amount <= 0 then
 		return
 	end
@@ -409,7 +410,18 @@ function HealthService:Damage(player, limb, amount, source, bleed, maxBleed)
 		return
 	end
 	if player:GetAttribute("isDowned") then
-		if PlayerConfig.Technical.DownedDamageKills then
+		-- 19.6 (C3) : une pierre ou un tir allié retire 10 s au compte à rebours, sans tuer ;
+		-- une attaque de la créature tue
+		local friendly = typeof(source) == "Instance" and source:IsA("Player")
+		local s = state[player]
+		if kind == "Burn" then
+			return -- la brûlure du lance-fusées fait partie du tir allié, déjà compté
+		end
+		if (kind == "Stone" or friendly) and s and s.downedRemaining then
+			-- DÉFAUT : le compte à rebours ne descend pas sous un pas de calcul (le coup ne tue pas)
+			s.downedRemaining =
+				math.max(PlayerConfig.Technical.Tick, s.downedRemaining - PlayerConfig.Downed.HitPenalty)
+		elseif not friendly and kind ~= "Stone" then
 			self:Kill(player, source)
 		end
 		return

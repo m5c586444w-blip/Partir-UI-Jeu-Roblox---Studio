@@ -29,7 +29,7 @@ CreatureConfig.LairPlace = "P07b"
 
 -- 9.2 : régénération hors combat, jusqu'à 70 % du maximum
 CreatureConfig.Regen = { PerSecond = 2, MaxFraction = 0.7 }
--- TODO(BIBLE): « hors combat » = combien de secondes sans dégâts ni attaque ? PROVISOIRE : 10 s (fenêtre de BHV_Retreat)
+-- 19.6 (C29) : « hors combat » = 10 s sans dégâts reçus ni attaque lancée
 CreatureConfig.OutOfCombatAfter = 10
 
 -- 9.2 : allures (studs/s) et bruit
@@ -169,7 +169,7 @@ CreatureConfig.Memory = {
 	FlareFleeLater = 4, -- …réduite à 4 s à partir de la 2e fusée
 	TightGroupRadius = 25,
 	TightGroupFor = 120,
-	-- TODO(BIBLE): « lance plus » après 2 tirs reçus : de combien ? PROVISOIRE : ×1,5
+	-- 19.6 (C31) : fréquence des lancers ×1,5 après 2 tirs reçus
 	ThrowMoreFactor = 1.5,
 }
 -- 9.8 : imitation (éclaireurs) — sons préenregistrés uniquement
@@ -209,8 +209,9 @@ CreatureConfig.Attacks = {
 }
 -- 19.5 (C10) : pierres à 90 studs/s
 CreatureConfig.StoneSpeed = 90
--- TODO(BIBLE): force du recul de ATK_Strike (C30, la vitesse des pierres est réglée par C10). PROVISOIRE : 40.
+-- 19.6 (C30) : recul de ATK_Strike : 40 studs/s vers l'arrière + 15 studs/s vers le haut
 CreatureConfig.KnockbackForce = 40
+CreatureConfig.KnockbackUp = 15
 
 -- 7.3 : la créature traîne un joueur à terre à 10 studs/s vers une réserve
 CreatureConfig.DragSpeed = 10

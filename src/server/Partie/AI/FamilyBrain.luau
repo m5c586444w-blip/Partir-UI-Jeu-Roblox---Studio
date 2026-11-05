@@ -152,7 +152,8 @@ function FamilyBrain:IntimidationStep(brain, player)
 		animator:Play(brain.model, "WoodKnock")
 		animator:PlaySoundAt("SFX_WoodKnock", position)
 		for _, other in Players:GetPlayers() do
-			if brain:DistanceTo(other) <= DirectorConfig.FarDistance then
+			-- 19.6 (C33) : un coup « au loin » s'entend jusqu'à la distance « au loin » la plus grande
+			if brain:DistanceTo(other) <= DirectorConfig.Far.max then
 				services.FearService:OnWoodKnock(other)
 			end
 		end
@@ -164,7 +165,7 @@ function FamilyBrain:IntimidationStep(brain, player)
 	elseif kind == "NearThrow" and root then
 		-- branche ou pierre qui tombe à côté du joueur, pas sur lui
 		local landing = root.Position
-			+ Vector3.new(math.random() - 0.5, 0, math.random() - 0.5).Unit * DirectorConfig.NearDistance / 2
+			+ Vector3.new(math.random() - 0.5, 0, math.random() - 0.5).Unit * DirectorConfig.nearDistance()
 		animator:PlaySoundAt("SFX_StoneGround", landing)
 		services.NoiseService:Emit(
 			landing,
@@ -175,7 +176,7 @@ function FamilyBrain:IntimidationStep(brain, player)
 	elseif kind == "BranchSnap" and root then
 		animator:PlaySoundAt(
 			"SFX_BranchSnap",
-			root.Position + (position - root.Position).Unit * DirectorConfig.NearDistance
+			root.Position + (position - root.Position).Unit * DirectorConfig.nearDistance()
 		)
 	elseif kind == "ChestBeat" then
 		if brain.id == "CRT_Alpha" then

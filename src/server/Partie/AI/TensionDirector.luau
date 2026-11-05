@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = ReplicatedStorage:WaitForChild("Config")
 local ActConfig = require(Config:WaitForChild("ActConfig"))
 local CreatureConfig = require(Config:WaitForChild("CreatureConfig"))
+local MapConfig = require(Config:WaitForChild("MapConfig"))
 local DirectorConfig = require(Config:WaitForChild("DirectorConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local Util = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Util"))
@@ -89,6 +90,14 @@ function TensionDirector:AllowAttack(brain, player)
 		local root = Util.characterRoot(player)
 		if root == nil or not ai.Perception:InPlace(root.Position, "P07b") then
 			return false
+		end
+	end
+	-- 19.6 (C26) : après le démarrage du van, attaque immédiate autorisée sur les joueurs autour du van
+	if state:GetAttribute("vanStartedAt") then
+		local root = Util.characterRoot(player)
+		local p01 = MapConfig.Places.P01
+		if root and (root.Position - p01.pos).Magnitude <= p01.radius then
+			return true
 		end
 	end
 	if self:IsPaused() then
@@ -188,6 +197,10 @@ local function tick()
 	local state = Util.getMatchState()
 	if state:GetAttribute("act") == 1 then
 		ai.EventDirector:EnsureAct1Guarantees()
+	end
+	-- 19.6 (C32) : événements hors catalogue « bas », selon leurs propres règles (acte, lieu)
+	for _, player in Players:GetPlayers() do
+		ai.EventDirector:RequestOwnRules(player)
 	end
 end
 

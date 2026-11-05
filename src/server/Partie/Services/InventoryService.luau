@@ -6,12 +6,14 @@
 -- État répliqué : attribut inventory (JSON { quick, bag, selected, weight }), heldItem, heavyHands,
 -- lightOn, lightBattery, busyUntil.
 local CollectionService = game:GetService("CollectionService")
+local TaggedSet = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("TaggedSet"))
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local ItemConfig = require(Config:WaitForChild("ItemConfig"))
+local LoreConfig = require(Config:WaitForChild("LoreConfig"))
 local PlayerConfig = require(Config:WaitForChild("PlayerConfig"))
 local WeaponConfig = require(Config:WaitForChild("WeaponConfig"))
 local AmbienceConfig = require(Config:WaitForChild("AmbienceConfig"))
@@ -33,7 +35,9 @@ local services = nil
 local inventories = {} -- [Player] = { quick = {}, bag = {}, selected = 1 }
 
 local THROW = ItemConfig.Throw
-local NOISE_TRAP_RADIUS = ItemConfig.NoiseTrapRadius
+local placeNoiseTrap -- défini plus bas
+local NOISE_TRAP = ItemConfig.NoiseTrap
+local traps = {} -- [Player] = Part du piège posé (un seul à la fois, 19.6 C11)
 
 local function itemDef(id)
 	return ItemConfig.Items[id] or WeaponConfig.Weapons[id]
@@ -41,7 +45,13 @@ end
 
 local function weightOf(entry)
 	local def = itemDef(entry.id)
-	return ((def and def.weight) or 0) * (entry.count or 1)
+	local weight = (def and def.weight) or 0
+	-- 19.6 (C9) : une cassette pèse 0,1 kg, un document papier 0,05 kg
+	local doc = entry.doc and LoreConfig.Documents[entry.doc]
+	if def and def.tapeWeight and doc and doc.kind == "Tape" then
+		weight = def.tapeWeight
+	end
+	return weight * (entry.count or 1)
 end
 
 local function isHeavy(id)
@@ -638,6 +648,57 @@ EFFECTS.BearSpray = function(player, entry, slot, def)
 	InventoryService.BearSpray:Fire(player, root.Position, root.CFrame.LookVector, def.cone)
 end
 
+-- 19.6 (C11) : piège à bruit (boîte de conserve + corde) aux pieds du Pyrotechnicien ; se déclenche au
+-- passage de la créature ou d'un autre joueur (DÉFAUT : le poseur ne le déclenche pas) ; bruit de 150 studs
+-- pendant 3 s, puis le piège disparaît
+placeNoiseTrap = function(player)
+	local root = Util.characterRoot(player)
+	if root == nil then
+		return
+	end
+	local trap = Instance.new("Part")
+	trap.Name = "NoiseTrap_" .. player.Name
+	trap.Anchored = true
+	trap.CanCollide = false
+	trap.Size = ItemConfig.PlaceholderSize
+	trap.Color = ItemConfig.PlaceholderColor
+	trap.Position = root.Position - Vector3.new(0, ItemConfig.FireVisuals.GroundOffset, 0)
+	trap.Parent = workspace
+	traps[player] = trap
+	task.spawn(function()
+		local triggered = false
+		while trap.Parent and not triggered do
+			task.wait(PlayerConfig.Technical.Tick)
+			for _, creature in TaggedSet.list("Creature") do
+				local pivot = creature:GetPivot().Position
+				if (pivot - trap.Position).Magnitude <= NOISE_TRAP.TriggerRadius then
+					triggered = true
+				end
+			end
+			for _, other in Players:GetPlayers() do
+				local otherRoot = Util.characterRoot(other)
+				if
+					other ~= player
+					and otherRoot
+					and (otherRoot.Position - trap.Position).Magnitude <= NOISE_TRAP.TriggerRadius
+				then
+					triggered = true
+				end
+			end
+		end
+		local elapsed = 0
+		while triggered and elapsed < NOISE_TRAP.Duration do
+			services.NoiseService:Emit(trap.Position, NOISE_TRAP.Radius, NoiseTypes.Item, player)
+			task.wait(NOISE_TRAP.EmitInterval)
+			elapsed += NOISE_TRAP.EmitInterval
+		end
+		trap:Destroy()
+		if traps[player] == trap then
+			traps[player] = nil
+		end
+	end)
+end
+
 local function useAbility(player)
 	local role = player:GetAttribute("role")
 	if role == "Leader" then
@@ -658,10 +719,17 @@ local function useAbility(player)
 				InventoryService:Remove(player, id, n)
 			end
 			InventoryService:Add(player, "ITM_Flare", 1)
-		elseif canCraft(recipes.NoiseTrapRecipe) and NOISE_TRAP_RADIUS then
-			for id, n in recipes.NoiseTrapRecipe do
-				InventoryService:Remove(player, id, n)
-			end
+		elseif canCraft(recipes.NoiseTrapRecipe) and traps[player] == nil then
+			-- 19.6 (C11) : piège posé en 6 s, un seul à la fois
+			busy(player, NOISE_TRAP.PlaceTime, function()
+				if not canCraft(recipes.NoiseTrapRecipe) or traps[player] ~= nil then
+					return
+				end
+				for id, n in recipes.NoiseTrapRecipe do
+					InventoryService:Remove(player, id, n)
+				end
+				placeNoiseTrap(player)
+			end)
 		end
 	end
 	InventoryService.AbilityUsed:Fire(player, role)

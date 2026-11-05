@@ -113,7 +113,7 @@ HANDLERS.FaunaSilence = function(def, player)
 end
 
 HANDLERS.Sound = function(def, player)
-	local far = pointNear(player, if def.nearWater then DirectorConfig.NearDistance else DirectorConfig.FarDistance)
+	local far = pointNear(player, if def.nearWater then DirectorConfig.nearDistance() else DirectorConfig.farDistance())
 	if far == nil then
 		return false
 	end
@@ -198,7 +198,7 @@ HANDLERS.EchoSteps = function(def, player)
 		task.delay(def.delay, function()
 			ai.CreatureAnimator:PlaySoundAt(
 				def.sounds[1],
-				root.Position - root.CFrame.LookVector * DirectorConfig.NearDistance
+				root.Position - root.CFrame.LookVector * DirectorConfig.nearDistance()
 			)
 		end)
 		return true
@@ -296,7 +296,7 @@ function EventDirector:RequestLow(player)
 		return false
 	end
 	for _, p in players do
-		local ids = DirectorConfig.LowCatalog or Util.sortedKeys(DirectorConfig.Events)
+		local ids = table.clone(DirectorConfig.LowCatalog) -- 19.6 (C32) ; copie mélangée
 		for i = #ids, 2, -1 do
 			local j = math.random(1, i)
 			ids[i], ids[j] = ids[j], ids[i]
@@ -308,6 +308,45 @@ function EventDirector:RequestLow(player)
 				lastEvent[id] = os.clock()
 				lastForPlayer[p] = os.clock()
 				guarantees.signs += 1
+				return true
+			end
+		end
+	end
+	return false
+end
+
+-- 19.6 (C32) : les événements hors catalogue « bas » suivent leurs propres règles. DÉFAUT : un événement
+-- qui a des lieux (`places`) est tenté quand le joueur est dans l'un d'eux ; un événement sans lieu est tenté
+-- une fois par acte ; EVT_08 (imitation) est joué par BHV_Mimic. Les cadences de 10.1 s'appliquent.
+local ownTriedInAct = {} -- [id] = numéro d'acte de la dernière tentative
+local lowSet = {}
+for _, id in DirectorConfig.LowCatalog do
+	lowSet[id] = true
+end
+
+function EventDirector:RequestOwnRules(player)
+	local act = Util.getMatchState():GetAttribute("act") or 0
+	local root = Util.characterRoot(player)
+	if root == nil then
+		return false
+	end
+	for _, id in Util.sortedKeys(DirectorConfig.Events) do
+		local def = DirectorConfig.Events[id]
+		local handler = HANDLERS[def.kind]
+		if not lowSet[id] and def.kind ~= "Mimic" and handler and eligible(id, def, act, player) then
+			local wanted
+			if def.places then
+				wanted = false
+				for _, code in def.places do
+					wanted = wanted or ai.Perception:InPlace(root.Position, code)
+				end
+			else
+				wanted = ownTriedInAct[id] ~= act
+				ownTriedInAct[id] = act
+			end
+			if wanted and handler(def, player) then
+				lastEvent[id] = os.clock()
+				lastForPlayer[player] = os.clock()
 				return true
 			end
 		end
