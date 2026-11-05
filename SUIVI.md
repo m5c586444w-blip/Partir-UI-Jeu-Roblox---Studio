@@ -38,6 +38,9 @@ Fait (un commit par étape, puis push) :
 4. **Remise à zéro** : étape 0 de `HANDOFF.md`, `RESET_INVENTAIRE.md`, `tools/studio/` (inventaire et chemins
    en lecture seule, comparaison avec `builds/`).
 5. Relecture : StyLua, selene, 0 nombre hors Config, `check_ui.py` à 0, build des deux places.
+   Corrections après relecture : un coéquipier à terre ne perd 10 s qu'une fois par tir de fusil à pompe
+   (pas une fois par plomb) ; les corps des géologues (`Body_*`) portent le tag `Corpse` (C1) ; les outils
+   d'inventaire impriment par paquets de 100 lignes.
 
 Laissé ouvert : rien dans la bible ; l'inventaire et la remise à zéro attendent la session Studio.
 

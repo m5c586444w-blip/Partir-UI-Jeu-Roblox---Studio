@@ -10420,6 +10420,8 @@ local function applyBodies()
 	local wanted = GoreService:Profile().geologistBodies
 	for _, body in places:GetDescendants() do
 		if body:IsA("Model") and string.match(body.Name, "^Body_") then
+			-- 19.6 (C1) : les corps des géologues comptent pour « voir un corps » (+15 de peur)
+			body:AddTag("Corpse")
 			for _, variant in body:GetChildren() do
 				if variant.Name == "Restricted" or variant.Name == "Moderate" then
 					variant.Parent = if variant.Name == wanted then body else nil
@@ -13441,7 +13443,8 @@ local function cast(shooter, origin, direction, range)
 	return workspace:Raycast(origin, direction.Unit * range, params)
 end
 
-local function applyHit(shooter, weaponId, weapon, result, creatureDamage, friendlyDamage)
+-- `shot` : table propre à un tir (plusieurs plombs) ; un coéquipier à terre n'est pénalisé qu'une fois par tir
+local function applyHit(shooter, weaponId, weapon, result, creatureDamage, friendlyDamage, shot)
 	if result == nil then
 		return
 	end
@@ -13461,6 +13464,13 @@ local function applyHit(shooter, weaponId, weapon, result, creatureDamage, frien
 	end
 	local victim = playerFrom(result.Instance)
 	if victim and victim ~= shooter and friendlyFireOn() then
+		-- 19.6 (C3) : à terre, un tir allié retire 10 s une seule fois par tir, quel que soit le nombre de plombs
+		if victim:GetAttribute("isDowned") and shot then
+			if shot[victim] then
+				return
+			end
+			shot[victim] = true
+		end
 		-- 8.2 : tir allié (torse) ; 19.6 (C14) : lance-fusées = brûlure, jamais d'hémorragie grave
 		local maxBleed = if weapon.burnPerSecond then "Light" else nil
 		services.HealthService:Damage(victim, "Torso", friendlyDamage, shooter, nil, maxBleed)
@@ -13541,6 +13551,7 @@ local function onFire(player, origin, direction, _timestamp)
 	services.NoiseService:Emit(head.Position, weapon.noise, NoiseTypes.Gunshot, player)
 	WeaponService.Fired:Fire(player, entry.id, origin)
 	if weapon.pellets then
+		local shot = {}
 		for _ = 1, weapon.pellets do
 			local spread = math.rad(weapon.spreadDegrees or 0)
 			local dir = (CFrame.lookAt(Vector3.zero, direction) * CFrame.Angles(
@@ -13562,7 +13573,15 @@ local function onFire(player, origin, direction, _timestamp)
 					)
 					factor = 1 - (1 - weapon.reducedFactor) * t
 				end
-				applyHit(player, entry.id, weapon, result, weapon.damagePerPellet * factor, weapon.friendlyPerPellet)
+				applyHit(
+					player,
+					entry.id,
+					weapon,
+					result,
+					weapon.damagePerPellet * factor,
+					weapon.friendlyPerPellet,
+					shot
+				)
 			end
 		end
 	else

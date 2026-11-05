@@ -73,6 +73,8 @@ local function applyBodies()
 	local wanted = GoreService:Profile().geologistBodies
 	for _, body in places:GetDescendants() do
 		if body:IsA("Model") and string.match(body.Name, "^Body_") then
+			-- 19.6 (C1) : les corps des géologues comptent pour « voir un corps » (+15 de peur)
+			body:AddTag("Corpse")
 			for _, variant in body:GetChildren() do
 				if variant.Name == "Restricted" or variant.Name == "Moderate" then
 					variant.Parent = if variant.Name == wanted then body else nil

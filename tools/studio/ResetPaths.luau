@@ -36,4 +36,8 @@ for _, serviceName in SERVICES do
 		visit(service, serviceName)
 	end
 end
-print(table.concat(lines, "\n"))
+-- impression par paquets de 100 lignes : une seule sortie trop longue serait coupée sans prévenir
+local CHUNK = 100 -- constante (outil)
+for first = 1, #lines, CHUNK do
+	print(table.concat(lines, "\n", first, math.min(first + CHUNK - 1, #lines)))
+end
