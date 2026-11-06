@@ -12,10 +12,10 @@ seulement pour que le code tourne : elle attend la bible.
 
 - Session cloud du 2026-11-05 (2) : bible 19.6 appliquée (plus aucun `TODO(BIBLE)` ni PROVISOIRE dans le code),
   bible découpée dans `docs/bible/`, `.claude/settings.json`, étape 0 « Remise à zéro » dans `HANDOFF.md`.
-- **Phase A terminée. Étape 0a faite (2026-11-06).** Prochaine étape : vérification des écrans (builds/, sans publier) ; avant : **l'étape 0a** (inventaire en lecture seule
-  des places publiées dans `RESET_INVENTAIRE.md`), puis ouvrir les deux places de `builds/` sans les publier
-  et vérifier chaque écran dans l'émulateur, puis attendre la publication en Overwrite par Gabriel, puis
-  l'étape 0b (résidus). Voir `HANDOFF.md`.
+- **Phase A terminée. 0a, vérification des écrans, publication (Lobby v12, Partie v13) et 0b faites (RESET_OK, 2026-11-07).**
+  Prochaine étape : phase B1, étape 8 de `HANDOFF.md` (`TerrainBuilder.Build()` dans la Partie). Les fenêtres Studio
+  contiennent désormais le seul exemplaire du terrain et des Part posées : ne jamais les fermer sans demander à Gabriel.
+- Lobby : le build n'a pas de nœud `Lighting` ; Studio ajoute `ColorGrading` et `Bloom` par défaut (à régler en B2).
 - Outils de relecture : `stylua --check src tools/terrain`, `selene src tools/terrain`,
   `python3 tools/check_values.py` (0 nombre hors Config), `python3 tools/ui/check_ui.py --previews`
   (chemins, débordements, chevauchements, aperçus dans `previews/`), puis `rojo build` des deux places.
