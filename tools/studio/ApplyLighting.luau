@@ -1,7 +1,9 @@
--- tools/studio/ApplyLighting (hors projets Rojo) — pose l'éclairage de base de la Partie en Édition (12.1, 12.2)
--- Lit ReplicatedStorage/Config/AmbienceConfig : moment « Arrivée », effets d'image et brouillard de forêt.
--- À lancer dans la Partie (contexte Édition). En partie, c'est AmbienceController qui règle ensuite la lumière,
--- le brouillard par zone et la météo ; ce script ne sert qu'à avoir le bon rendu dans Studio.
+-- tools/studio/ApplyLighting (hors projets Rojo) — bascule l'éclairage de la Partie en Édition (12.1, 12.2)
+-- Réglage de LA PLACE ENREGISTRÉE : jour neutre, sans effets (AmbienceConfig.EditorDay). La nuit n'est que temporaire,
+-- pour les captures : MODE = "Night" pose le moment AmbienceConfig.CaptureNightMoment, les effets d'image et le brouillard
+-- de forêt ; MODE = "Day" remet le jour et supprime les effets. En partie, AmbienceController pose toute l'ambiance.
+-- Lighting.Technology n'est pas modifiable par un script de plugin : à régler à la main (Future, 12.1).
+local MODE = "Night" -- "Night" ou "Day"
 
 local Lighting = game:GetService("Lighting")
 local AmbienceConfig = require(game:GetService("ReplicatedStorage").Config.AmbienceConfig)
@@ -22,30 +24,35 @@ local function effect(className, name)
 	return instance
 end
 
--- 12.1 : technologie et moment de départ (Arrivée)
--- Lighting.Technology n'est pas modifiable par un script de plugin (capacité RobloxScript) : la régler à la main dans
--- les propriétés de Lighting, ou laisser Rojo la poser ($properties de Partie.serve.project.json)
-pcall(function()
-	Lighting.Technology = Enum.Technology[AmbienceConfig.Technology]
-end)
-local moment = AmbienceConfig.Moments[1]
-Lighting.ClockTime = (moment.clockFrom + moment.clockTo) / 2
-Lighting.Brightness = moment.brightness
-Lighting.OutdoorAmbient = rgb(moment.outdoorAmbient)
-Lighting.Ambient = rgb(moment.ambient)
-Lighting.ExposureCompensation = moment.exposure
+local function apply(clock, brightness, outdoorAmbient, ambient, exposure)
+	Lighting.ClockTime = clock
+	Lighting.Brightness = brightness
+	Lighting.OutdoorAmbient = rgb(outdoorAmbient)
+	Lighting.Ambient = rgb(ambient)
+	Lighting.ExposureCompensation = exposure
+end
 
--- 12.1 : effets d'image
-local correction = effect("ColorCorrectionEffect", "ColorCorrection")
-correction.Saturation = AmbienceConfig.ColorCorrection.Saturation
-correction.Contrast = AmbienceConfig.ColorCorrection.Contrast
-correction.TintColor = rgb(AmbienceConfig.ColorCorrection.TintColor)
-effect("BloomEffect", "Bloom").Intensity = AmbienceConfig.Bloom.Intensity
-
--- 12.2 : brouillard de forêt par défaut (les zones changent ses valeurs en partie)
-local atmosphere = effect("Atmosphere", "Atmosphere")
-local forest = AmbienceConfig.Fog.Forest
-atmosphere.Density = forest.density
-atmosphere.Haze = forest.haze
-atmosphere.Color = rgb(forest.color)
-print("ApplyLighting : éclairage de base appliqué")
+if MODE == "Night" then
+	local moment = AmbienceConfig.Moments[AmbienceConfig.CaptureNightMoment]
+	apply(moment.clockFrom, moment.brightness, moment.outdoorAmbient, moment.ambient, moment.exposure)
+	local correction = effect("ColorCorrectionEffect", "ColorCorrection")
+	correction.Saturation = AmbienceConfig.ColorCorrection.Saturation
+	correction.Contrast = AmbienceConfig.ColorCorrection.Contrast
+	correction.TintColor = rgb(AmbienceConfig.ColorCorrection.TintColor)
+	effect("BloomEffect", "Bloom").Intensity = AmbienceConfig.Bloom.Intensity
+	local atmosphere = effect("Atmosphere", "Atmosphere")
+	local forest = AmbienceConfig.Fog.Forest
+	atmosphere.Density = forest.density
+	atmosphere.Haze = forest.haze
+	atmosphere.Color = rgb(forest.color)
+else
+	local day = AmbienceConfig.EditorDay
+	apply(day.clock, day.brightness, day.outdoorAmbient, day.ambient, day.exposure)
+	for _, name in { "ColorCorrection", "Bloom", "Atmosphere" } do
+		local child = Lighting:FindFirstChild(name)
+		if child then
+			child:Destroy()
+		end
+	end
+end
+print("ApplyLighting : " .. MODE)

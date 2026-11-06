@@ -123,4 +123,16 @@ AmbienceConfig.Reverb = {
 	ForbiddenZone = "Plain",
 }
 
+-- DÉFAUT (Gabriel, 2026-11-07) : la place enregistrée reste en plein jour neutre pour l'édition ; l'ambiance de 12 est posée
+-- au lancement par AmbienceController. editorDay = réglage d'édition ; captureNight = index du moment de 12.1 utilisé par
+-- tools/studio/ApplyLighting.luau pour les captures de nuit (Fin d'enquête).
+AmbienceConfig.EditorDay = {
+	clock = 14,
+	brightness = 3,
+	outdoorAmbient = { 127, 127, 127 },
+	ambient = { 70, 70, 70 },
+	exposure = 0,
+}
+AmbienceConfig.CaptureNightMoment = 2
+
 return AmbienceConfig
