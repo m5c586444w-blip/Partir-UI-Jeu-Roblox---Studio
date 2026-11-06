@@ -478,7 +478,7 @@ local function writeTerrain()
 					maxY = math.max(maxY, height[i][j], water[i][j] or -math.huge)
 				end
 			end
-			local columnBottom = math.floor((minY - CELL * 2) / VOXEL) * VOXEL
+			local columnBottom = math.floor(math.min(minY - CELL * 2, T.BedrockY) / VOXEL) * VOXEL
 			local columnTop = math.ceil((maxY + VOXEL) / VOXEL) * VOXEL
 			-- tranches verticales : WriteVoxels refuse les régions trop hautes (reliefs de plusieurs centaines de studs)
 			for bottom = columnBottom, columnTop - 1, T.WriteSlab do
@@ -728,7 +728,9 @@ function TerrainBuilder.Caves()
 		local x, z = entry.X + toward.X * distance, entry.Z + toward.Z * distance
 		local ground = terrainSurface(x, z)
 		local floorY = math.min(entry.Y + distance * entrance.slope, ground - 1)
-		local top = math.max(floorY + lowSection.boxHeight + lowSection.width / 2, ground + entrance.openLift)
+		-- couvert (tunnel) tant que le plafond reste sous la surface, puis tranchée ouverte jusqu'au ciel
+		local ceiling = floorY + lowSection.boxHeight + lowSection.width / 2
+		local top = if ceiling >= ground - entrance.cover then ground + entrance.openLift else ceiling
 		terrain:FillBlock(
 			CFrame.lookAt(
 				Vector3.new(x, (floorY + top) / 2, z),

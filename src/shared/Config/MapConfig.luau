@@ -365,7 +365,7 @@ MapConfig.ApeCave = {
 	plug = { place = "P07c", length = 12, material = "Mud" }, -- bouchon de sédiments (rayon du lieu : 6)
 	room = { place = "P07b", height = 30 }, -- salle de rayon 45 (rayon du lieu)
 	shaft = { place = "P21", radius = 15, openLift = 6 }, -- puits vertical ; descente à la corde (ITM_Rope)
-	entrance = { place = "P07a", toward = "P10", slope = 0.35, width = 40, openLift = 6, margin = 24 }, -- tranchée d'entrée vers la piste RD2
+	entrance = { place = "P07a", toward = "P10", slope = 0.35, width = 40, openLift = 6, margin = 24, cover = 4 }, -- tranchée d'entrée vers la piste RD2
 	seed = 7, -- bruit du relief des parois
 }
 
@@ -439,6 +439,8 @@ MapConfig.Terrain = {
 	WriteChunk = 256,
 	-- DÉFAUT (technique) : hauteur maximale d'une tranche écrite par WriteVoxels (au-delà : « Region is too large »)
 	WriteSlab = 512,
+	-- DÉFAUT (technique) : le terrain écrit descend au moins jusqu'à ce Y (sols des grottes de 3.2 : 5 à 85)
+	BedrockY = -20,
 	PlaceBlockSize = 6,
 	WallHeight = 2000,
 	Materials = {
