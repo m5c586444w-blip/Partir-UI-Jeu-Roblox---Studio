@@ -214,21 +214,28 @@ local function buildGorges()
 	-- resserrement à P05s : la largeur passe de topWidth à narrowWidth sur GorgeNarrowTaperFactor × topWidth
 	local narrow = MapConfig.Places[ape.narrowAt]
 	local narrowPoint = Vector2.new(narrow.pos.X, narrow.pos.Z)
-	local axis = (ape.to - ape.from).Unit
-	local narrowT = (narrowPoint - ape.from):Dot(axis)
 	local taper = ape.topWidth * T.GorgeNarrowTaperFactor
+	-- DÉFAUT : la gorge passe par les lieux de ape.via (P05, P05s), plus proches de leurs coordonnées que l'axe droit
+	local waypoints = { ape.from }
+	for _, code in ape.via do
+		local via = MapConfig.Places[code]
+		table.insert(waypoints, Vector2.new(via.pos.X, via.pos.Z))
+	end
+	table.insert(waypoints, ape.to)
 	-- les hauteurs du bord sont lues avant de creuser (sinon chaque point creuserait sous le précédent)
 	local cuts = {}
-	local count = math.ceil((ape.to - ape.from).Magnitude / CELL)
-	for k = 0, count do
-		local p = ape.from:Lerp(ape.to, k / count)
-		local along = math.abs((p - ape.from):Dot(axis) - narrowT)
-		local w = math.clamp(along / taper, 0, 1)
-		local top = ape.narrowWidth + (ape.topWidth - ape.narrowWidth) * w
-		table.insert(
-			cuts,
-			{ at = p, top = top, bottom = math.min(ape.bottomWidth, top), rim = getH(p.X, p.Y), depth = ape.depth }
-		)
+	for s = 1, #waypoints - 1 do
+		local a, b = waypoints[s], waypoints[s + 1]
+		local count = math.ceil((b - a).Magnitude / CELL)
+		for k = 0, count do
+			local p = a:Lerp(b, k / count)
+			local w = math.clamp((p - narrowPoint).Magnitude / taper, 0, 1)
+			local top = ape.narrowWidth + (ape.topWidth - ape.narrowWidth) * w
+			table.insert(
+				cuts,
+				{ at = p, top = top, bottom = math.min(ape.bottomWidth, top), rim = getH(p.X, p.Y), depth = ape.depth }
+			)
+		end
 	end
 	local lava = T.Gorges.LavaCanyon
 	checkWalls("Lava Canyon", lava.topWidth, lava.bottomWidth, lava.depth)
@@ -239,6 +246,18 @@ local function buildGorges()
 				{ at = p, top = lava.topWidth, bottom = lava.bottomWidth, rim = getH(p.X, p.Y), depth = lava.depth }
 			)
 		end
+	end
+	-- DÉFAUT : P03 n'est pas sur le tracé de R2 (200 studs) ; le fond de gorge est une cuvette creusée à son point
+	for code, basin in T.GorgeBasins do
+		local place = MapConfig.Places[code]
+		local center = Vector2.new(place.pos.X, place.pos.Z)
+		table.insert(cuts, {
+			at = center,
+			top = basin.top,
+			bottom = basin.bottom,
+			rim = getH(center.X, center.Y),
+			depth = T.Gorges[basin.gorge].depth,
+		})
 	end
 	for _, c in cuts do
 		carveGorge(c.at, c.top, c.bottom, c.rim, c.depth, T.Materials.GorgeCliff)
@@ -580,7 +599,8 @@ function TerrainBuilder.Measure()
 	local lines = {}
 	for code, place in MapConfig.Places do
 		if place.pos and not place.outOfBounds then
-			local got = getH(place.pos.X, place.pos.Z)
+			-- souterrain : le sol de la salle est creusé par Caves, la surface au-dessus ne compte pas
+			local got = if place.underground then place.pos.Y else getH(place.pos.X, place.pos.Z)
 			table.insert(
 				lines,
 				("%s attendu %d calculé %.0f%s"):format(

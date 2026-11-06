@@ -391,6 +391,7 @@ MapConfig.Terrain = {
 			topWidth = 80,
 			bottomWidth = 20,
 			narrowAt = "P05s",
+			via = { "P05", "P05s" }, -- DÉFAUT : la gorge passe par ces lieux (3.2)
 			narrowWidth = 9,
 		},
 		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600, topWidth = 60, bottomWidth = 15 },
@@ -400,6 +401,8 @@ MapConfig.Terrain = {
 	GorgeFloorPlaces = { P03 = "LavaCanyon", P05 = "ApeCanyon", P05s = "ApeCanyon" },
 	-- DÉFAUT (géométrie) : le bord est relevé sur ce rayon, raccordé sur GorgeRimPinBlend, avant de creuser la gorge
 	GorgeRimPinRadius = 60,
+	-- DÉFAUT : P03 est à ~200 studs du tracé de R2 ; son fond est une cuvette (largeur en haut / au fond, studs)
+	GorgeBasins = { P03 = { gorge = "LavaCanyon", top = 240, bottom = 60 } },
 	GorgeRimPinBlend = 120,
 	-- DÉFAUT (géométrie) : routes et sentiers prennent la hauteur du lieu qu'ils traversent à moins de ce rayon
 	RoadPinRadius = 60,
