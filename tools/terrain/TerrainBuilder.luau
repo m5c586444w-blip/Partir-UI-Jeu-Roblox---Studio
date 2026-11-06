@@ -605,6 +605,129 @@ local function groundAt(x, z)
 	return if hit then hit.Position.Y else T.SouthY
 end
 
+-- 3.2 : réseau d'Ape Cave (P21 → P07b → P07a → P07c), creusé dans le terrain déjà écrit (MapConfig.ApeCave)
+local function terrainSurface(x, z)
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Include
+	params.FilterDescendantsInstances = { workspace.Terrain }
+	local top = MapConfig.HighestPlayableY * 2 -- constante (au-dessus du point le plus haut)
+	local hit = workspace:Raycast(Vector3.new(x, top, z), Vector3.new(0, -top * 2, 0), params)
+	return if hit then hit.Position.Y else T.SouthY
+end
+
+local function floorOf(code)
+	local place = MapConfig.Places[code]
+	return place.tubeY or place.pos.Y
+end
+
+-- un tronçon d'arche à sol plat entre deux points du plancher : boîte, puis demi-cylindre posé dessus
+local function fillSection(a, b, width, boxHeight, fill)
+	local cave = MapConfig.ApeCave
+	local terrain = workspace.Terrain
+	local length = (b - a).Magnitude + cave.overlap
+	local base = CFrame.lookAt((a + b) / 2, b)
+	terrain:FillBlock(base * CFrame.new(0, boxHeight / 2, 0), Vector3.new(width, boxHeight, length), fill)
+	terrain:FillCylinder(base * CFrame.new(0, boxHeight, 0) * CFrame.Angles(math.pi / 2, 0, 0), length, width / 2, fill)
+end
+
+function TerrainBuilder.Caves()
+	local cave = MapConfig.ApeCave
+	local terrain = workspace.Terrain
+	local Air, count = Enum.Material.Air, 0
+	local function point(code)
+		local place = MapConfig.Places[code]
+		return Vector3.new(place.pos.X, floorOf(code), place.pos.Z)
+	end
+	-- tubes entre les lieux ; points du plancher décalés pour la partie haute (parois accidentées)
+	local plugAt, plugDir
+	for k = 1, #cave.route - 1 do
+		local from, to = point(cave.route[k]), point(cave.route[k + 1])
+		local section = cave[cave.sections[k]]
+		local direction = (to - from) * Vector3.new(1, 0, 1)
+		local side = Vector3.new(-direction.Z, 0, direction.X).Unit
+		local pieces = math.max(1, math.ceil((to - from).Magnitude / cave.step))
+		local previous = from
+		local rockfall = {}
+		for _, fraction in cave.rockfalls.fractions do
+			if k == 1 then
+				table.insert(rockfall, math.floor(fraction * pieces))
+			end
+		end
+		for i = 1, pieces do
+			local t = i / pieces
+			local p = from:Lerp(to, t)
+			if section.meander and i < pieces then
+				local n = math.noise(i * 0.37, cave.seed, 0) -- constante (échelle du bruit)
+				p += side * n * section.meander + Vector3.new(
+					0,
+					math.noise(0, cave.seed, i * section.floorNoiseScale) * section.floorRoughness,
+					0
+				)
+			end
+			fillSection(previous, p, section.width, section.boxHeight, Air)
+			if table.find(rockfall, i) then
+				local r = cave.rockfalls
+				for _, offset in r.ballOffsets do
+					terrain:FillBall(
+						p + side * offset + Vector3.new(0, r.height - r.radius, 0),
+						r.radius,
+						Enum.Material[r.material]
+					)
+				end
+			end
+			previous = p
+			count += 1
+			if count % 20 == 0 then -- constante (pause pour ne pas figer Studio)
+				task.wait()
+			end
+		end
+		plugAt, plugDir = previous, (to - from).Unit
+	end
+	-- salle P07b
+	local room = cave.room
+	local roomPlace = MapConfig.Places[room.place]
+	local roomFloor = point(room.place)
+	terrain:FillCylinder(CFrame.new(roomFloor + Vector3.new(0, room.height / 2, 0)), room.height, roomPlace.radius, Air)
+	-- puits P21 : vertical, du plancher du tube à la surface
+	local shaft = cave.shaft
+	local shaftFloor = point(shaft.place)
+	local surface = terrainSurface(shaftFloor.X, shaftFloor.Z) + shaft.openLift
+	terrain:FillCylinder(
+		CFrame.new(shaftFloor.X, (shaftFloor.Y + surface) / 2, shaftFloor.Z),
+		surface - shaftFloor.Y,
+		shaft.radius,
+		Air
+	)
+	-- entrée principale P07a : tranchée ouverte, le sol monte de sloppe vers la piste jusqu'à la surface
+	local entrance = cave.entrance
+	local entry = point(entrance.place)
+	local target = MapConfig.Places[entrance.toward].pos
+	local toward = ((target - entry) * Vector3.new(1, 0, 1)).Unit
+	local lowSection = cave.Low
+	for distance = 0, (MapConfig.Places[entrance.place].pos.Y - entry.Y) / entrance.slope + entrance.margin, cave.step do
+		local x, z = entry.X + toward.X * distance, entry.Z + toward.Z * distance
+		local ground = terrainSurface(x, z)
+		local floorY = math.min(entry.Y + distance * entrance.slope, ground - 1)
+		local top = math.max(floorY + lowSection.boxHeight + lowSection.width / 2, ground + entrance.openLift)
+		terrain:FillBlock(
+			CFrame.lookAt(
+				Vector3.new(x, (floorY + top) / 2, z),
+				Vector3.new(x + toward.X, (floorY + top) / 2, z + toward.Z)
+			),
+			Vector3.new(entrance.width, top - floorY, cave.step + cave.overlap),
+			Air
+		)
+		if floorY >= ground - 1 then
+			break
+		end
+	end
+	-- bouchon de sédiments à l'extrémité (P07c)
+	local plug = cave.plug
+	local last = cave[cave.sections[#cave.sections]]
+	fillSection(plugAt - plugDir * plug.length, plugAt, last.width, last.boxHeight, Enum.Material[plug.material])
+	print("TerrainBuilder : Ape Cave creusée")
+end
+
 function TerrainBuilder.Vegetation()
 	local source = ServerStorage:FindFirstChild("Vegetation")
 	if source == nil then

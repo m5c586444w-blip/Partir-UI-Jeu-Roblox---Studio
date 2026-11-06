@@ -349,6 +349,26 @@ MapConfig.GroundItems = {
 	Shelters = { places = { "P05c", "P09", "P17" }, branches = 3, stones = 6, radius = 20 },
 	AttemptsPerItem = 8, -- tirages maximum par objet à placer (un bloc d'eau ou de route reste vide)
 }
+-- 3.2 (P21, P07b, P07a, P07c) : réseau d'Ape Cave creusé en voxels par TerrainBuilder.Caves, DÉFAUT (réponse de Gabriel,
+-- 2026-11-07). Les sols viennent du tableau 3.2 (tubeY pour P21 et P07a, sinon Y du lieu) : P21 85, P07b 30, P07a 5, P07c 20.
+-- Pentes entre lieux : P21→P07b 6,7 %, P07b→P07a 3,1 %, P07a→P07c 1,2 % (aucune contradiction à arbitrer).
+-- Section : arche à sol plat (boîte puis demi-cylindre) ; la partie haute (P21→P07b) est étroite et accidentée.
+-- Hauteur de saut : non réglée dans le jeu (défaut Roblox 7,2 studs) ; éboulements de 4 studs de haut, franchissables.
+MapConfig.ApeCave = {
+	route = { "P21", "P07b", "P07a", "P07c" },
+	sections = { "High", "Low", "Low" }, -- une section par tronçon de la route
+	Low = { width = 36, boxHeight = 12 }, -- 30 de haut (12 + demi-cylindre de rayon 18), 36 de large (30 à 40)
+	High = { width = 13, boxHeight = 24, meander = 4, floorRoughness = 1.5, floorNoiseScale = 0.53 }, -- 30 de haut, 13 de large (12 à 15)
+	step = 6, -- longueur d'un tronçon de creusement (studs)
+	overlap = 2, -- recouvrement entre tronçons (studs)
+	rockfalls = { fractions = { 0.2, 0.5, 0.8 }, height = 4, radius = 5, ballOffsets = { -4, 0, 4 }, material = "Rock" },
+	plug = { place = "P07c", length = 12, material = "Mud" }, -- bouchon de sédiments (rayon du lieu : 6)
+	room = { place = "P07b", height = 30 }, -- salle de rayon 45 (rayon du lieu)
+	shaft = { place = "P21", radius = 15, openLift = 6 }, -- puits vertical ; descente à la corde (ITM_Rope)
+	entrance = { place = "P07a", toward = "P10", slope = 0.35, width = 40, openLift = 6, margin = 24 }, -- tranchée d'entrée vers la piste RD2
+	seed = 7, -- bruit du relief des parois
+}
+
 MapConfig.VegetationCap = 20000 -- modèles de végétation et rochers
 MapConfig.TreeLodDistance = 700 -- au-delà : Model.LevelOfDetail = StreamingMesh
 
