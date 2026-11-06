@@ -167,7 +167,7 @@ MapConfig.KeyItems = {
 
 -- 8.1, colonne « Où » : objets posés à un lieu fixe (un exemplaire par lieu cité)
 -- 19.6 (C17) : 1 objet par lieu fixe, sauf 6 planches (P05c), 3 bandages et 2 piles au poste P17.
--- Branches et pierres : partout au sol (posées dans le décor, Part taguées « GroundItem », B1).
+-- Branches et pierres : partout au sol, générées par ItemSpawnService (MapConfig.GroundItems, DÉFAUT du 2026-11-07).
 MapConfig.FixedItems = {
 	{ item = "ITM_Splint", places = { "P17" } },
 	{ item = "ITM_Bandage", places = { "P17" }, count = 3 },
@@ -332,6 +332,23 @@ MapConfig.Biomes = {
 		fallen = { "Tree_Fallen" },
 	},
 }
+-- 19.6 (C17), DÉFAUT (réponse de Gabriel, 2026-11-07) : branches et pierres au sol, générées au lancement de la partie
+-- (graine de la partie, par blocs de Terrain.ChunkSize comme la végétation), jamais posées à la main ; pas de réapparition.
+-- Branches : par bloc, Forest dans la forêt ancienne et la forêt mixte (matériaux de Biomes), ForbiddenZone dans P08 ;
+-- jamais à moins de trunkClearance d'un tronc (Workspace/Vegetation). Pierres : par bloc, partout sauf matériaux exclus.
+-- DÉFAUT (technique) : « routes » = matériau Asphalt ; les routes de gravier et les sentiers partagent leur matériau avec
+-- le lahar et le sol de forêt et ne sont donc pas exclus. Garantis près des abris : branches et pierres à moins de radius.
+MapConfig.GroundItems = {
+	Branch = {
+		item = "ITM_Branch",
+		perChunk = { Forest = 10, ForbiddenZone = 2 },
+		forestMaterials = { "LeafyGrass", "Grass", "Ground" },
+		trunkClearance = 4, -- studs
+	},
+	Stone = { item = "ITM_Stone", perChunk = 6, excludedMaterials = { "Water", "Asphalt" } },
+	Shelters = { places = { "P05c", "P09", "P17" }, branches = 3, stones = 6, radius = 20 },
+	AttemptsPerItem = 8, -- tirages maximum par objet à placer (un bloc d'eau ou de route reste vide)
+}
 MapConfig.VegetationCap = 20000 -- modèles de végétation et rochers
 MapConfig.TreeLodDistance = 700 -- au-delà : Model.LevelOfDetail = StreamingMesh
 
@@ -387,6 +404,8 @@ MapConfig.Terrain = {
 	-- hauteur du mur invisible des limites
 	Cell = 8,
 	WriteChunk = 256,
+	-- DÉFAUT (technique) : hauteur maximale d'une tranche écrite par WriteVoxels (au-delà : « Region is too large »)
+	WriteSlab = 512,
 	PlaceBlockSize = 6,
 	WallHeight = 2000,
 	Materials = {

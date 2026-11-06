@@ -413,41 +413,45 @@ local function writeTerrain()
 					maxY = math.max(maxY, height[i][j], water[i][j] or -math.huge)
 				end
 			end
-			local bottom = math.floor((minY - CELL * 2) / VOXEL) * VOXEL
-			local top = math.ceil((maxY + VOXEL) / VOXEL) * VOXEL
-			local region = Region3.new(Vector3.new(x0, bottom, z0), Vector3.new(x0 + chunk, top, z0 + chunk))
-				:ExpandToGrid(VOXEL)
-			local size = region.Size / VOXEL
-			local mats, occ = {}, {}
-			for xi = 1, size.X do
-				mats[xi], occ[xi] = {}, {}
-				local x = region.CFrame.Position.X - region.Size.X / 2 + (xi - 0.5) * VOXEL
-				for yi = 1, size.Y do
-					mats[xi][yi], occ[xi][yi] = {}, {}
-				end
-				for zi = 1, size.Z do
-					local z = region.CFrame.Position.Z - region.Size.Z / 2 + (zi - 0.5) * VOXEL
-					local i, j = toCell(x), toCell(z)
-					local ground = height[i][j]
-					local level = water[i][j]
-					local mat = Enum.Material[columnMaterial(i, j)] or Enum.Material.Grass
+			local columnBottom = math.floor((minY - CELL * 2) / VOXEL) * VOXEL
+			local columnTop = math.ceil((maxY + VOXEL) / VOXEL) * VOXEL
+			-- tranches verticales : WriteVoxels refuse les régions trop hautes (reliefs de plusieurs centaines de studs)
+			for bottom = columnBottom, columnTop - 1, T.WriteSlab do
+				local top = math.min(bottom + T.WriteSlab, columnTop)
+				local region = Region3.new(Vector3.new(x0, bottom, z0), Vector3.new(x0 + chunk, top, z0 + chunk))
+					:ExpandToGrid(VOXEL)
+				local size = region.Size / VOXEL
+				local mats, occ = {}, {}
+				for xi = 1, size.X do
+					mats[xi], occ[xi] = {}, {}
+					local x = region.CFrame.Position.X - region.Size.X / 2 + (xi - 0.5) * VOXEL
 					for yi = 1, size.Y do
-						local y = bottom + (yi - 0.5) * VOXEL
-						if y <= ground then
-							mats[xi][yi][zi] = mat
-							occ[xi][yi][zi] = 1
-						elseif level and y <= level then
-							mats[xi][yi][zi] = Enum.Material.Water
-							occ[xi][yi][zi] = 1
-						else
-							mats[xi][yi][zi] = Enum.Material.Air
-							occ[xi][yi][zi] = 0
+						mats[xi][yi], occ[xi][yi] = {}, {}
+					end
+					for zi = 1, size.Z do
+						local z = region.CFrame.Position.Z - region.Size.Z / 2 + (zi - 0.5) * VOXEL
+						local i, j = toCell(x), toCell(z)
+						local ground = height[i][j]
+						local level = water[i][j]
+						local mat = Enum.Material[columnMaterial(i, j)] or Enum.Material.Grass
+						for yi = 1, size.Y do
+							local y = bottom + (yi - 0.5) * VOXEL
+							if y <= ground then
+								mats[xi][yi][zi] = mat
+								occ[xi][yi][zi] = 1
+							elseif level and y <= level then
+								mats[xi][yi][zi] = Enum.Material.Water
+								occ[xi][yi][zi] = 1
+							else
+								mats[xi][yi][zi] = Enum.Material.Air
+								occ[xi][yi][zi] = 0
+							end
 						end
 					end
 				end
+				terrain:WriteVoxels(region, VOXEL, mats, occ)
+				task.wait()
 			end
-			terrain:WriteVoxels(region, VOXEL, mats, occ)
-			task.wait()
 		end
 		print(("TerrainBuilder : colonne X = %d écrite"):format(x0))
 	end

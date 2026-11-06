@@ -22,6 +22,8 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## Journal des sessions
 
+### 2026-11-07 (3) — session Studio, B1
+- Fait : plugin `roblox-path-plugin-main` déplacé dans `Plugins/_ancien/` (Gabriel : Team Create = son compte TheDarkArtist02). `TerrainBuilder` : écriture par tranches de `MapConfig.Terrain.WriteSlab` (512, DÉFAUT technique) après « Region is too large ». Objets au sol générés par script (voir DÉFAUT 2026-11-07).
 ### 2026-11-07 (2) — session Studio, publication et 0b
 - **RESET_OK** : Gabriel a publié `builds/Lobby.rbxlx` (v12) et `builds/Partie.rbxlx` (v13) en Overwrite depuis des fenêtres neuves ; places rouvertes depuis Roblox et comparées à `builds/` : aucun résidu (détail dans `RESET_INVENTAIRE.md`). DataStore existant : `PisteFroide_Profils_v1` seulement (pas de conflit avec `PisteFroide_v1`). Tableau Creator Dashboard : toujours à remplir par Gabriel (non bloquant).
 ### 2026-11-06 — session Studio, étape 0a
@@ -233,6 +235,10 @@ Interprétation nouvelle, à confirmer (non bloquante) : 19.6 (C9) ne pèse pas 
 elles restent à 0 kg.
 
 ## Décisions DÉFAUT (section 0)
+### DÉFAUT 2026-11-07 — objets au sol (réponse de Gabriel, remplace le TODO(BIBLE) sur les `GroundItem`)
+- Plus de Part `GroundItem` posées à la main. `ItemSpawnService` génère branches et pierres au lancement de la partie (graine de la partie), par blocs de 512 studs comme la végétation ; pas de réapparition. Valeurs dans `MapConfig.GroundItems` : `ITM_Branch` 10 par bloc en forêt ancienne et mixte, 2 par bloc dans P08, jamais à moins de 4 studs d'un tronc (4 = DÉFAUT) ; `ITM_Stone` 6 par bloc sauf eau et routes ; garanti à moins de 20 studs de P05c, P09 et P17 : 3 branches et 6 pierres.
+- Limites DÉFAUT : « routes » = matériau `Asphalt` seulement (gravier et sentiers partagent leur matériau avec le lahar et le sol de forêt) ; « forêt » = matériaux `LeafyGrass`, `Grass`, `Ground` de `MapConfig.Biomes` ; « cabane P05 » = P05c. Coût : jusqu'à ~5 000 objets au sol créés au lancement, à mesurer en J15 (budget mobile, section 17).
+
 
 Lancement et données (A1) :
 - Carte de hachage MemoryStore « Launch » ; 3 essais de téléportation à 5 s ; file rapide et code limités au serveur du lobby ; seul le groupe privé a un code ; demande ignorée si le joueur a déjà un groupe ; le plus ancien membre remplace le créateur ; `MSG_Countdown` envoyé une fois au début ; partie de test sans configuration dans Studio (Normal, aléatoire, S1, rôles dans l'ordre) ; `{player}` = `DisplayName` ; état du groupe en attributs ; verrou dans les métadonnées DataStore ; graine tirée au départ du groupe ; résultats dans les données de téléportation (affichage seulement) ; limite 16.3 par joueur et par remote.

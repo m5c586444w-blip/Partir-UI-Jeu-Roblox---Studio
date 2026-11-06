@@ -115,8 +115,7 @@ et suppression des résidus). Outils : `tools/studio/ResetInventory.luau`, `tool
     ancres d'extraction (`E1_Van`, `E2_Radio`, `E3_Bulldozer`, `E4_Plug`), ouvertures de la cabane
     (`P05c/Door`, `Window`, `RoofHole`), `Body_LeahBrandt` (P09) ; 19.5 (C7) : Part `CrawlSpace` (vide
     sanitaire sous le plancher de P05c, 2 joueurs) et `Ford` (gué, 60 studs en aval de HC3, près de P16) ;
-    19.6 (C17) : branches et pierres au sol, Part taguées `GroundItem` avec l'attribut `itemId`
-    (`ITM_Branch` en forêt, `ITM_Stone` partout).
+    19.6 (C17) : branches et pierres ne se posent plus à la main : `ItemSpawnService` les génère au lancement (`MapConfig.GroundItems`, DÉFAUT du 2026-11-07)
 13. Lobby : poser la ville (4.1) et les Part taguées `RangerHollis`, `MuseumPanel` ×8 (attribut `panelId`),
     `EvidenceBoard`, `SkinShop`, `RecordsBoard`, une `SpawnLocation` en L01 (0, 5, 120).
 

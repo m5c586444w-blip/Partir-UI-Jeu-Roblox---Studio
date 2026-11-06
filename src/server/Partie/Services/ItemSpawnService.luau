@@ -21,6 +21,7 @@ local ItemSpawnService = {}
 ItemSpawnService.ClueFound = Signal.new() -- (clueId, player)
 
 local services = nil
+local spawnGroundItems -- défini plus bas (19.6, C17)
 local folder = nil
 local drawn = {} -- résultat du tirage, pour la console et les tests
 
@@ -180,6 +181,112 @@ local function drawCluePoints(random)
 	return assignment
 end
 
+-- 19.6 (C17), DÉFAUT : branches et pierres au sol, par blocs de Terrain.ChunkSize, sans réapparition
+local function groundHit(x, z, params)
+	local top = MapConfig.HighestPlayableY * 2 -- constante (au-dessus du point le plus haut)
+	return workspace:Raycast(Vector3.new(x, top, z), Vector3.new(0, -top * 2, 0), params)
+end
+
+local function inForbiddenZone(x, z)
+	local zone = MapConfig.Places.P08.zone
+	return x >= zone.minX and x <= zone.maxX and z >= zone.minZ and z <= zone.maxZ
+end
+
+local function materialSet(names)
+	local set = {}
+	for _, name in names do
+		set[Enum.Material[name]] = true
+	end
+	return set
+end
+
+spawnGroundItems = function(random)
+	local cfg = MapConfig.GroundItems
+	local chunkSize = MapConfig.Terrain.ChunkSize
+	local half = MapConfig.PlayableHalf
+	local forest = materialSet(cfg.Branch.forestMaterials)
+	local excluded = materialSet(cfg.Stone.excludedMaterials)
+	local groundParams = RaycastParams.new()
+	groundParams.FilterType = Enum.RaycastFilterType.Include
+	groundParams.FilterDescendantsInstances = { workspace.Terrain }
+	local trunkParams = OverlapParams.new()
+	trunkParams.FilterType = Enum.RaycastFilterType.Include
+	local vegetation = workspace:FindFirstChild("Vegetation")
+	trunkParams.FilterDescendantsInstances = if vegetation then { vegetation } else {}
+	local function nearTrunk(position)
+		return vegetation ~= nil
+			and #workspace:GetPartBoundsInRadius(position, cfg.Branch.trunkClearance, trunkParams) > 0
+	end
+	-- catégorie d'une branche en ce point : "Forest", "ForbiddenZone" ou nil
+	local function branchCategory(x, z, hit)
+		if inForbiddenZone(x, z) then
+			return "ForbiddenZone"
+		end
+		return if forest[hit.Material] then "Forest" else nil
+	end
+	local count = { ITM_Branch = 0, ITM_Stone = 0 }
+	for cx = -half, half - 1, chunkSize do
+		for cz = -half, half - 1, chunkSize do
+			local quota = { Forest = cfg.Branch.perChunk.Forest, ForbiddenZone = cfg.Branch.perChunk.ForbiddenZone }
+			local stones = cfg.Stone.perChunk
+			local attempts = (quota.Forest + quota.ForbiddenZone + stones) * cfg.AttemptsPerItem
+			-- branches
+			for _ = 1, attempts do
+				local x = cx + random:NextNumber() * chunkSize
+				local z = cz + random:NextNumber() * chunkSize
+				local hit = groundHit(x, z, groundParams)
+				local category = hit and branchCategory(x, z, hit)
+				if category and quota[category] > 0 and not nearTrunk(hit.Position) then
+					quota[category] -= 1
+					count.ITM_Branch += 1
+					ItemSpawnService:SpawnWorldItem(cfg.Branch.item, 1, hit.Position)
+				end
+			end
+			-- pierres
+			for _ = 1, stones * cfg.AttemptsPerItem do
+				if stones <= 0 then
+					break
+				end
+				local x = cx + random:NextNumber() * chunkSize
+				local z = cz + random:NextNumber() * chunkSize
+				local hit = groundHit(x, z, groundParams)
+				if hit and not excluded[hit.Material] then
+					stones -= 1
+					count.ITM_Stone += 1
+					ItemSpawnService:SpawnWorldItem(cfg.Stone.item, 1, hit.Position)
+				end
+			end
+			task.wait()
+		end
+	end
+	-- garantis près des abris (cabane P05c, camp P09, poste P17)
+	local shelters = cfg.Shelters
+	for _, code in shelters.places do
+		local center = MapConfig.resolve(MapConfig.Places[code])
+		if center then
+			for _, spec in { { cfg.Branch.item, shelters.branches }, { cfg.Stone.item, shelters.stones } } do
+				local left = spec[2]
+				for _ = 1, spec[2] * cfg.AttemptsPerItem do
+					if left <= 0 then
+						break
+					end
+					local angle = random:NextNumber() * 2 * math.pi -- constante (tour complet)
+					local distance = math.sqrt(random:NextNumber()) * shelters.radius
+					local x = center.X + math.cos(angle) * distance
+					local z = center.Z + math.sin(angle) * distance
+					local hit = groundHit(x, z, groundParams)
+					if hit and not excluded[hit.Material] and not nearTrunk(hit.Position) then
+						left -= 1
+						count[spec[1]] += 1
+						ItemSpawnService:SpawnWorldItem(spec[1], 1, hit.Position)
+					end
+				end
+			end
+		end
+	end
+	print(("ItemSpawnService : %d branches et %d pierres au sol"):format(count.ITM_Branch, count.ITM_Stone))
+end
+
 local function spawnAll(info)
 	local random = Random.new(info.seed)
 	print(("ItemSpawnService : graine %d"):format(info.seed))
@@ -246,14 +353,8 @@ local function spawnAll(info)
 		)
 	end
 
-	-- 19.6 (C17) : branches et pierres partout au sol — Part taguées « GroundItem » (attribut itemId,
-	-- ITM_Branch ou ITM_Stone) posées dans le décor ; DÉFAUT : une unité par Part
-	for _, marker in CollectionService:GetTagged("GroundItem") do
-		local id = marker:GetAttribute("itemId")
-		if marker:IsA("BasePart") and (id == "ITM_Branch" or id == "ITM_Stone") then
-			ItemSpawnService:SpawnWorldItem(id, 1, marker.Position)
-		end
-	end
+	-- 19.6 (C17) : branches et pierres au sol, générées avec la graine de la partie (DÉFAUT du 2026-11-07)
+	spawnGroundItems(random)
 
 	-- documents à lieu fixe (2.7) ; DOC_09 est un message radio (rejoué par la tour, J9)
 	for doc, place in MapConfig.FixedDocuments do
