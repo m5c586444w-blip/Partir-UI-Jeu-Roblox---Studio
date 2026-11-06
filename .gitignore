@@ -4,3 +4,9 @@
 sourcemap.json
 .DS_Store
 __pycache__/
+
+# CodeGraph : local à la session Studio (pas installé dans la session cloud)
+.codegraph/
+.mcp.json
+.claude/CLAUDE.md
+.claude/settings.local.json

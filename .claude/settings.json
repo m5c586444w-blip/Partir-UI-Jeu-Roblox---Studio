@@ -34,7 +34,8 @@
       "Bash(git push:*)",
       "mcp__Roblox_Studio",
       "mcp__roblox_studio",
-      "mcp__roblox-studio"
+      "mcp__roblox-studio",
+      "mcp__codegraph__*"
     ],
     "deny": [
       "Bash(git push --force:*)",
