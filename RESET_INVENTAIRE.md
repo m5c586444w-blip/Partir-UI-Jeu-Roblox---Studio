@@ -22,9 +22,20 @@ Contenu (ancien projet en français, rien à conserver) :
 
 ## Partie — PlaceId 103506696801797
 
-Date, version de la place : _à remplir_
+Date, version de la place : 2026-11-06, place « Place1 » (GameId 10772103184), version 11. Lecture seule, rien modifié.
 
-Sortie de `ResetInventory.luau` : _à coller_
+Contenu (ancien projet en français, rien à conserver) :
+- Workspace : dossiers vides `Carte`, `Zones`, `EmplacementsIndices`, `Cachettes`, `Barricades`, `Escalade`, `Extractions` ; `Departs` (6 descendants) ; `Baseplate`, `SpawnLocation`, Terrain (0 cellule).
+- Lighting : `Sky` (mêmes ciels que le Lobby), `SunRays`, `Atmosphere`, `Bloom`, `DepthOfField`.
+- ReplicatedStorage : `Config` (8 modules), `Shared` (4), `Remotes` (vide), `EtatPartie` (vide).
+- ServerScriptService : `Demarrage`, `Services` (ChargementDonnees, GameManager, DirecteurTension, SanteService, ArmesService, ObjectifsService, BruitService, GoreService, ProgressionService, `IAFamille/CerveauGroupe`). 24 scripts au total, dont le LocalScript `StarterPlayerScripts/ControleurDemarrage`.
+- ServerStorage : `Personnages` (20 descendants), `Creatures` et `Gore` (vides).
+- Aucun package, aucune UI, aucun son.
+
+Noms de stockage de l'ancien projet (trouvés par `script_grep`, absents de `ResetInventory.luau` car définis dans des modules Config, pas en littéral à l'appel) — les mêmes modules `ConfigProgression` et `ConfigPlaces` existent dans le Lobby :
+- DataStore `PisteFroide_Progression_v1` (`ConfigProgression.NomDataStore`).
+- MemoryStore HashMap `PisteFroide_DonneesPartie` (`ConfigPlaces.NomMemoireGroupes`).
+- Aucun ne coïncide avec les noms du nouveau code (`PisteFroide_v1`, `Parties`, `Launch_<PrivateServerId>`). La liste réelle des DataStores reste à faire après publication (étape 3).
 
 ## Expérience « PISTE FROIDE (test) » (Creator Dashboard, par Gabriel)
 
