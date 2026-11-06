@@ -23,9 +23,11 @@ seulement pour que le code tourne : elle attend la bible.
 ## Journal des sessions
 
 ### 2026-11-06 — session Studio, étape 0a
-- Fait : outils installés (Rokit 1.2.0, Rojo 7.7.1 en tête du PATH — l'ancien Rojo 7.7.0 renommé `Documentsojo_ancien` —, StyLua 2.6.0, selene 0.31.0, plugin Rojo). Hygiène git : `.codegraph/`, `.mcp.json`, `.claude/CLAUDE.md`, `.claude/settings.local.json` ignorés. Inventaire 0a du Lobby et de la Partie dans `RESET_INVENTAIRE.md`.
+- Fait : outils installés (Rokit 1.2.0, Rojo 7.7.1 en tête du PATH — l'ancien Rojo 7.7.0 renommé `Documents
+ojo_ancien` —, StyLua 2.6.0, selene 0.31.0, plugin Rojo). Hygiène git : `.codegraph/`, `.mcp.json`, `.claude/CLAUDE.md`, `.claude/settings.local.json` ignorés. Inventaire 0a du Lobby et de la Partie dans `RESET_INVENTAIRE.md`.
 - Constat : les deux places publiées contiennent l'ancien projet (Lobby 17 scripts, Partie 24, terrain vide, aucune UI/son/package). Anciens noms de stockage : DataStore `PisteFroide_Progression_v1`, MemoryStore `PisteFroide_DonneesPartie` ; aucun ne coïncide avec `PisteFroide_v1`, `Parties`, `Launch_*`.
 - Laissé ouvert : tableau « Creator Dashboard » de `RESET_INVENTAIRE.md` (Gabriel le remplira plus tard) ; liste réelle des DataStores après publication et accès aux API (HANDOFF, étape 0). Push GitHub impossible pour l'instant : commits locaux seulement.
+- Écrans, Lobby (`builds/Lobby.rbxlx`, 2026-11-07) : émulateur piloté par `StudioDeviceSimulatorService` (`CreateDeviceAsync({Name, Width, Height, PixelDensity (72–10000), IsTouchEnabled})` puis `SetDeviceAsync(nom)`) : viewports obtenus 843×369 (tactile) et 1279×700. Contrôle numérique (`execute_luau`, hors `ScrollingFrame`) : 0 débordement réel aux deux tailles, 0 texte hors boîte (les textes sont en `TextScaled`). Faux positif connu : les 6 boutons de `PartyGui` sont empilés dans le fichier, le contrôleur n'en montre que 4 (sans groupe) ou 2 (en groupe). `screen_capture` rend l'UI en Edit (une seule `ScreenGui` à la fois) : vérifiés `SettingsGui`, `PartyGui`, `RoleSelectGui`, `EvidenceBoardGui` à 843×369 ; RAS, portraits vides (images attendues en B3). Reste : captures des 10 autres écrans du Lobby, puis la Partie (`builds/Partie.rbxlx`). Les modifs de `Visible`/`Enabled` faites dans la fenêtre Studio ne doivent jamais être enregistrées.
 - Outils : `python3` renvoie au raccourci du Microsoft Store sous Windows ; utiliser `python`.
 
 ### 2026-11-05 (2) — session cloud, bible 19.6
