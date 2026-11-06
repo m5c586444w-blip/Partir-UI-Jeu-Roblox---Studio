@@ -375,6 +375,16 @@ MapConfig.Terrain = {
 		},
 		LavaCanyon = { depth = 70, path = "R2", fromZ = 1600, toZ = 2600, topWidth = 60, bottomWidth = 15 },
 	},
+	-- 3.2 : pour un lieu « fond de gorge », Y est le fond et le bord est plus haut de la profondeur de la gorge
+	-- (P03 : 110 − 70 = 40 ; P05 : 400 − 150 = 250 ; P05s : fond à 330). Gorge qui le contient :
+	GorgeFloorPlaces = { P03 = "LavaCanyon", P05 = "ApeCanyon", P05s = "ApeCanyon" },
+	-- DÉFAUT (géométrie) : le bord est relevé sur ce rayon, raccordé sur GorgeRimPinBlend, avant de creuser la gorge
+	GorgeRimPinRadius = 60,
+	GorgeRimPinBlend = 120,
+	-- DÉFAUT (géométrie) : routes et sentiers prennent la hauteur du lieu qu'ils traversent à moins de ce rayon
+	RoadPinRadius = 60,
+	-- 3.2 : tolérance de position des lieux (studs), pour le contrôle TerrainBuilder.Measure
+	PlaceTolerance = 5,
 	GorgeMinWallDegrees = 60,
 	-- DÉFAUT (géométrie) : le resserrement de P05s se fait sur une longueur égale à la largeur du haut
 	GorgeNarrowTaperFactor = 1,

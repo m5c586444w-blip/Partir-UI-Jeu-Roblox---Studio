@@ -199,6 +199,15 @@ local function checkWalls(name, top, bottom, depth)
 	end
 end
 
+-- 3.2 : Y d'un lieu « fond de gorge » = le fond ; on relève le bord de la profondeur de la gorge avant de creuser
+local function pinGorgeRims()
+	for code, gorge in T.GorgeFloorPlaces do
+		local place = MapConfig.Places[code]
+		local center = Vector2.new(place.pos.X, place.pos.Z)
+		stamp(center, T.GorgeRimPinRadius, T.GorgeRimPinBlend, place.pos.Y + T.Gorges[gorge].depth)
+	end
+end
+
 local function buildGorges()
 	local ape = T.Gorges.ApeCanyon
 	checkWalls("Ape Canyon", ape.topWidth, ape.bottomWidth, ape.depth)
@@ -238,8 +247,14 @@ end
 
 -- 5. aplanir chaque lieu sur son rayon, raccordé sur 1,5 fois le rayon
 local function flattenPlaces()
-	for _, place in MapConfig.Places do
-		if place.pos and place.radius and not place.outOfBounds and not place.underground then
+	for code, place in MapConfig.Places do
+		if
+			place.pos
+			and place.radius
+			and not place.outOfBounds
+			and not place.underground
+			and T.GorgeFloorPlaces[code] == nil
+		then
 			local center = Vector2.new(place.pos.X, place.pos.Z)
 			stamp(center, place.radius, place.radius * (T.FlattenBlendFactor - 1), place.pos.Y)
 		end
@@ -268,6 +283,42 @@ local function buildRivers()
 end
 
 -- 6. routes et sentiers : pente maximale 8 % (routes) et 15 % (sentiers) ; les lacets à part (C42)
+-- hauteur imposée à un point de route : celle du lieu (3.2) qu'il traverse, sinon nil
+local function pinnedHeight(point)
+	for _, place in MapConfig.Places do
+		if place.pos and place.radius and not place.outOfBounds and not place.underground then
+			local reach = math.min(place.radius, T.RoadPinRadius)
+			if (Vector2.new(place.pos.X, place.pos.Z) - point).Magnitude <= reach then
+				return place.pos.Y
+			end
+		end
+	end
+	return nil
+end
+
+-- profil de hauteur d'une route ou d'un sentier : sol voisin, hauteurs des lieux traversés imposées, puis pente limitée
+-- (avant, arrière, avant) sans toucher aux hauteurs imposées
+local function roadProfile(samples, maxSlope)
+	local h, fixed = {}, {}
+	for k, p in samples do
+		local pin = pinnedHeight(p)
+		fixed[k] = pin ~= nil
+		h[k] = pin or getH(p.X, p.Y)
+	end
+	local function limit(from, to, step)
+		for k = from, to, step do
+			if not fixed[k] then
+				local d = (samples[k] - samples[k - step]).Magnitude * maxSlope
+				h[k] = math.clamp(h[k], h[k - step] - d, h[k - step] + d)
+			end
+		end
+	end
+	limit(2, #samples, 1)
+	limit(#samples - 1, 1, -1)
+	limit(2, #samples, 1)
+	return h
+end
+
 local function buildRoads()
 	for _, path in MapConfig.Paths do
 		if path.kind ~= "River" and path.kind ~= "Switchbacks" and (path.width or 0) > 0 then
@@ -277,14 +328,9 @@ local function buildRoads()
 				elseif path.surface == "Gravel" then T.Materials.Gravel
 				else T.Materials.Trail
 			local samples = samplePath(path, CELL)
-			local previous = nil
-			for _, p in samples do
-				local target = getH(p.X, p.Y)
-				if previous then
-					target = math.clamp(target, previous - maxSlope * CELL, previous + maxSlope * CELL)
-				end
-				previous = target
-				stamp(p, path.width / 2, path.width, target, mat)
+			local profile = roadProfile(samples, maxSlope)
+			for k, p in samples do
+				stamp(p, path.width / 2, path.width, profile[k], mat)
 			end
 		end
 	end
@@ -503,11 +549,10 @@ local function walls()
 	end
 end
 
-function TerrainBuilder.Build()
-	local started = os.clock()
-	workspace.Terrain:Clear()
-	print("TerrainBuilder : relief")
+-- relief complet en mémoire (tableaux height / material / water), sans écrire les voxels
+local function compute()
 	buildHeights()
+	pinGorgeRims()
 	buildGorges()
 	buildRivers()
 	flattenPlaces()
@@ -515,11 +560,40 @@ function TerrainBuilder.Build()
 	buildCliff()
 	buildSwitchbacks()
 	buildLakes()
+end
+
+function TerrainBuilder.Build()
+	local started = os.clock()
+	workspace.Terrain:Clear()
+	print("TerrainBuilder : relief")
+	compute()
 	print("TerrainBuilder : écriture du terrain")
 	writeTerrain()
 	placeBlocks()
 	walls()
 	print(("TerrainBuilder : terminé en %d s"):format(os.clock() - started))
+end
+
+-- contrôle sans écriture : hauteur calculée au point exact de chaque lieu (3.2) comparée à la colonne Y du tableau
+function TerrainBuilder.Measure()
+	compute()
+	local lines = {}
+	for code, place in MapConfig.Places do
+		if place.pos and not place.outOfBounds then
+			local got = getH(place.pos.X, place.pos.Z)
+			table.insert(
+				lines,
+				("%s attendu %d calculé %.0f%s"):format(
+					code,
+					place.pos.Y,
+					got,
+					if math.abs(got - place.pos.Y) <= T.PlaceTolerance then "" else "  <-- ÉCART"
+				)
+			)
+		end
+	end
+	table.sort(lines)
+	return table.concat(lines, "\n")
 end
 
 -- 9. végétation : répartition aléatoire (graine 1924), distance minimale, rotation libre, échelle ±15 %,
