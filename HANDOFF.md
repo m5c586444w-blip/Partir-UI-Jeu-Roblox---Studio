@@ -3,9 +3,10 @@
 Mis à jour le 2026-11-05 (soir) : phase A (A1 → A8) terminée, bible 19.5, 19.6 et 15.7 appliquées (plus
 aucun `TODO(BIBLE)` ni PROVISOIRE), bible découpée dans `docs/bible/` (point d'entrée : `docs/bible/INDEX.md`). Section 18.1 ter de la bible. Questions ouvertes : `SUIVI.md`.
 
-> **État au 2026-11-06 (session Studio)** : 0a faite (`RESET_INVENTAIRE.md`, Lobby et Partie). Prochaine étape exacte :
-> section 2 (écrans de `builds/Lobby.rbxlx` puis `builds/Partie.rbxlx`, sans publier), puis « Prêt à publier ».
-> Le tableau Creator Dashboard est laissé à Gabriel (non bloquant). Python : `python`, pas `python3` (Windows).
+> **État au 2026-11-07 (session Studio)** : 0a faite ; écrans de Lobby et Partie vérifiés (SUIVI.md), rien à corriger.
+> **Prêt à publier** : `builds/Lobby.rbxlx` → place 77677833738174, `builds/Partie.rbxlx` → place 103506696801797, en Overwrite,
+> par Gabriel, depuis les fenêtres Studio neuves déjà ouvertes. Attendre sa réponse « Publié », puis : accès aux API,
+> liste des DataStores, étape 0b. Ensuite uniquement `rojo serve` (jamais `rojo build`). Python : `python`, pas `python3` (Windows).
 
 ## Ce qui est prêt
 
