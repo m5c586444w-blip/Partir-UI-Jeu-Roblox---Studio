@@ -24,6 +24,7 @@ seulement pour que le code tourne : elle attend la bible.
 
 ### 2026-11-07 (3) — session Studio, B1
 - Fait : plugin `roblox-path-plugin-main` déplacé dans `Plugins/_ancien/` (Gabriel : Team Create = son compte TheDarkArtist02). `TerrainBuilder` : écriture par tranches de `MapConfig.Terrain.WriteSlab` (512, DÉFAUT technique) après « Region is too large ». Objets au sol générés par script (voir DÉFAUT 2026-11-07).
+- B1, étape 8–9 (2026-11-07) : `TerrainBuilder.Build()` terminé dans la Partie. Contrôle du sol à ±5 studs du tableau 3.2 (rayon vertical sur le terrain) : 18 lieux conformes ; 8 écarts : P01 70 (attendu 120, asphalte), P03 98 (40), P05 358 (250, rebord au lieu du fond), P05c 254 (300), P05s 254 (330), P07a 94 (60), P07b 166 (30, sous terre), P11 382 (420). La plupart sont des gorges, grottes ou tours où le rayon touche le dessus : à vérifier à l'œil puis retoucher à la main ; P01 et P11 sont les plus probables à corriger.
 ### 2026-11-07 (2) — session Studio, publication et 0b
 - **RESET_OK** : Gabriel a publié `builds/Lobby.rbxlx` (v12) et `builds/Partie.rbxlx` (v13) en Overwrite depuis des fenêtres neuves ; places rouvertes depuis Roblox et comparées à `builds/` : aucun résidu (détail dans `RESET_INVENTAIRE.md`). DataStore existant : `PisteFroide_Profils_v1` seulement (pas de conflit avec `PisteFroide_v1`). Tableau Creator Dashboard : toujours à remplir par Gabriel (non bloquant).
 ### 2026-11-06 — session Studio, étape 0a
