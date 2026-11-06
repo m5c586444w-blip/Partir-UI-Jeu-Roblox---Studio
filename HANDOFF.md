@@ -3,6 +3,10 @@
 Mis à jour le 2026-11-05 (soir) : phase A (A1 → A8) terminée, bible 19.5, 19.6 et 15.7 appliquées (plus
 aucun `TODO(BIBLE)` ni PROVISOIRE), bible découpée dans `docs/bible/` (point d'entrée : `docs/bible/INDEX.md`). Section 18.1 ter de la bible. Questions ouvertes : `SUIVI.md`.
 
+> **État au 2026-11-06 (session Studio)** : 0a faite (`RESET_INVENTAIRE.md`, Lobby et Partie). Prochaine étape exacte :
+> section 2 (écrans de `builds/Lobby.rbxlx` puis `builds/Partie.rbxlx`, sans publier), puis « Prêt à publier ».
+> Le tableau Creator Dashboard est laissé à Gabriel (non bloquant). Python : `python`, pas `python3` (Windows).
+
 ## Ce qui est prêt
 
 - `builds/Lobby.rbxlx` et `builds/Partie.rbxlx`, assemblées par Rojo 7.7.1 (`rojo build`, 2026-11-05).

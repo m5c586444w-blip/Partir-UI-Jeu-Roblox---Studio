@@ -12,7 +12,7 @@ seulement pour que le code tourne : elle attend la bible.
 
 - Session cloud du 2026-11-05 (2) : bible 19.6 appliquée (plus aucun `TODO(BIBLE)` ni PROVISOIRE dans le code),
   bible découpée dans `docs/bible/`, `.claude/settings.json`, étape 0 « Remise à zéro » dans `HANDOFF.md`.
-- **Phase A terminée.** Prochaine étape : session Studio, d'abord **l'étape 0a** (inventaire en lecture seule
+- **Phase A terminée. Étape 0a faite (2026-11-06).** Prochaine étape : vérification des écrans (builds/, sans publier) ; avant : **l'étape 0a** (inventaire en lecture seule
   des places publiées dans `RESET_INVENTAIRE.md`), puis ouvrir les deux places de `builds/` sans les publier
   et vérifier chaque écran dans l'émulateur, puis attendre la publication en Overwrite par Gabriel, puis
   l'étape 0b (résidus). Voir `HANDOFF.md`.
@@ -21,6 +21,12 @@ seulement pour que le code tourne : elle attend la bible.
   (chemins, débordements, chevauchements, aperçus dans `previews/`), puis `rojo build` des deux places.
 
 ## Journal des sessions
+
+### 2026-11-06 — session Studio, étape 0a
+- Fait : outils installés (Rokit 1.2.0, Rojo 7.7.1 en tête du PATH — l'ancien Rojo 7.7.0 renommé `Documentsojo_ancien` —, StyLua 2.6.0, selene 0.31.0, plugin Rojo). Hygiène git : `.codegraph/`, `.mcp.json`, `.claude/CLAUDE.md`, `.claude/settings.local.json` ignorés. Inventaire 0a du Lobby et de la Partie dans `RESET_INVENTAIRE.md`.
+- Constat : les deux places publiées contiennent l'ancien projet (Lobby 17 scripts, Partie 24, terrain vide, aucune UI/son/package). Anciens noms de stockage : DataStore `PisteFroide_Progression_v1`, MemoryStore `PisteFroide_DonneesPartie` ; aucun ne coïncide avec `PisteFroide_v1`, `Parties`, `Launch_*`.
+- Laissé ouvert : tableau « Creator Dashboard » de `RESET_INVENTAIRE.md` (Gabriel le remplira plus tard) ; liste réelle des DataStores après publication et accès aux API (HANDOFF, étape 0). Push GitHub impossible pour l'instant : commits locaux seulement.
+- Outils : `python3` renvoie au raccourci du Microsoft Store sous Windows ; utiliser `python`.
 
 ### 2026-11-05 (2) — session cloud, bible 19.6
 
