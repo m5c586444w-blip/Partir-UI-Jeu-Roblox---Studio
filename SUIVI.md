@@ -22,6 +22,8 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## Journal des sessions
 
+### 2026-11-07 (2) — session Studio, publication et 0b
+- **RESET_OK** : Gabriel a publié `builds/Lobby.rbxlx` (v12) et `builds/Partie.rbxlx` (v13) en Overwrite depuis des fenêtres neuves ; places rouvertes depuis Roblox et comparées à `builds/` : aucun résidu (détail dans `RESET_INVENTAIRE.md`). DataStore existant : `PisteFroide_Profils_v1` seulement (pas de conflit avec `PisteFroide_v1`). Tableau Creator Dashboard : toujours à remplir par Gabriel (non bloquant).
 ### 2026-11-06 — session Studio, étape 0a
 - Fait : outils installés (Rokit 1.2.0, Rojo 7.7.1 en tête du PATH — l'ancien Rojo 7.7.0 renommé `Documents
 ojo_ancien` —, StyLua 2.6.0, selene 0.31.0, plugin Rojo). Hygiène git : `.codegraph/`, `.mcp.json`, `.claude/CLAUDE.md`, `.claude/settings.local.json` ignorés. Inventaire 0a du Lobby et de la Partie dans `RESET_INVENTAIRE.md`.

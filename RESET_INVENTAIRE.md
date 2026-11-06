@@ -44,7 +44,7 @@ Ces éléments ne sont pas dans les fichiers de place : une publication en Overw
 | Élément | Contenu trouvé | Décision |
 | --- | --- | --- |
 | Autres places de l'univers | _à remplir_ | |
-| DataStores (`DataStoreService:ListDataStoresAsync`, avant tout test avec accès aux API) | _à remplir_ | |
+| DataStores (`DataStoreService:ListDataStoresAsync`, avant tout test avec accès aux API) | 2026-11-07 : un seul, `PisteFroide_Profils_v1` (origine inconnue, absent des anciens scripts). Aucun `PisteFroide_v1`. | Aucun conflit avec `PisteFroide_v1` ; laissé intact (Gabriel décide s'il faut le supprimer) |
 | Badges, passes de jeu, produits développeur | _à remplir_ | |
 | Paramètres de l'expérience (avatar, sécurité, accès) et collaborateurs | _à remplir_ | |
 | Packages à mise à jour automatique | _à remplir_ | |
@@ -53,4 +53,5 @@ Ces éléments ne sont pas dans les fichiers de place : une publication en Overw
 
 | Place | Chemin | Type (script, modèle, terrain, UI, son, package, ID d'asset) | Supprimé le |
 | --- | --- | --- | --- |
-| | | | |
+| Lobby, Partie | (aucun résidu) | Comparaison des places rouvertes depuis Roblox (Lobby v12, Partie v13) avec `builds/` : mêmes dossiers, mêmes nombres de descendants par service ; 0 identifiant d'asset, 0 package, terrain vide (0 cellule) ; anciens `Baseplate`, `Ville`, `Sky`, `SpawnLocation`, scripts français disparus | 2026-11-07 |
+| Lobby | `Lighting/ColorGrading`, `Lighting/Bloom` | Effets par défaut ajoutés par Studio (le build n'a pas de nœud Lighting) : pas un résidu, sans identifiant d'asset | non supprimé |
