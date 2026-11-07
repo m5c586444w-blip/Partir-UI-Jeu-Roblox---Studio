@@ -1,9 +1,21 @@
--- tools/studio/ApplyLighting (hors projets Rojo) — bascule l'éclairage de la Partie en Édition (12.1, 12.2)
--- Réglage de LA PLACE ENREGISTRÉE : jour neutre, sans effets (AmbienceConfig.EditorDay). La nuit n'est que temporaire,
--- pour les captures : MODE = "Night" pose le moment AmbienceConfig.CaptureNightMoment, les effets d'image et le brouillard
--- de forêt ; MODE = "Day" remet le jour et supprime les effets. En partie, AmbienceController pose toute l'ambiance.
--- Lighting.Technology n'est pas modifiable par un script de plugin : à régler à la main (Future, 12.1).
-local MODE = "Night" -- "Night" ou "Day"
+-- tools/studio/ApplyLighting (hors projets Rojo) — éclairage d'ÉDITION de la Partie (12.1, 12.2), recréable par script
+-- MODE = "Day" : jour réaliste lisible pour travailler (AmbienceConfig.Editor) : ombres globales, environnement à 1,
+-- ambiance très basse, Atmosphere « Forêt » (12.2), ColorCorrection (12.1), nuages couverts sous Terrain, ciel Poly Haven.
+-- MODE = "Night" : nuit TEMPORAIRE pour les captures (moment AmbienceConfig.CaptureNightMoment) ; relancer en "Day" ensuite.
+-- En partie, AmbienceController garde la main (moments, brouillard par zone, météo) et retire le ciel d'édition.
+-- Lighting.Technology (Future, 12.1) n'est pas modifiable par un script de plugin (capacité RobloxScript) : à régler à la
+-- main dans les propriétés de Lighting.
+local MODE = "Day" -- "Day" ou "Night"
+
+-- ciel : HDRI Poly Haven CC0 « overcast_soil_puresky » converti en 6 faces (tools/terrain/make_sky.py), envoi du 2026-11-07
+local SKY = {
+	SkyboxFt = 107356012648169,
+	SkyboxBk = 82835751404125,
+	SkyboxLf = 92814009618843,
+	SkyboxRt = 85129441425842,
+	SkyboxUp = 84688319824181,
+	SkyboxDn = 113746013104240,
+}
 
 local Lighting = game:GetService("Lighting")
 local AmbienceConfig = require(game:GetService("ReplicatedStorage").Config.AmbienceConfig)
@@ -12,47 +24,67 @@ local function rgb(t)
 	return Color3.fromRGB(t[1], t[2], t[3])
 end
 
-local function effect(className, name)
-	local instance = Lighting:FindFirstChild(name)
+local function effect(parent, className, name)
+	local instance = parent:FindFirstChild(name)
 	if instance and not instance:IsA(className) then
 		instance:Destroy()
 		instance = nil
 	end
 	instance = instance or Instance.new(className)
 	instance.Name = name
-	instance.Parent = Lighting
+	instance.Parent = parent
 	return instance
 end
 
-local function apply(clock, brightness, outdoorAmbient, ambient, exposure)
-	Lighting.ClockTime = clock
-	Lighting.Brightness = brightness
-	Lighting.OutdoorAmbient = rgb(outdoorAmbient)
-	Lighting.Ambient = rgb(ambient)
-	Lighting.ExposureCompensation = exposure
-end
+pcall(function()
+	Lighting.Technology = Enum.Technology.Future
+end)
+
+local editor = AmbienceConfig.Editor
+local forest = AmbienceConfig.Fog.Forest
+local atmosphere = effect(Lighting, "Atmosphere", "Atmosphere")
+atmosphere.Density = forest.density
+atmosphere.Haze = forest.haze
+atmosphere.Color = rgb(forest.color)
+local correction = effect(Lighting, "ColorCorrectionEffect", "ColorCorrection")
+correction.Saturation = AmbienceConfig.ColorCorrection.Saturation
+correction.Contrast = AmbienceConfig.ColorCorrection.Contrast
+correction.TintColor = rgb(AmbienceConfig.ColorCorrection.TintColor)
 
 if MODE == "Night" then
 	local moment = AmbienceConfig.Moments[AmbienceConfig.CaptureNightMoment]
-	apply(moment.clockFrom, moment.brightness, moment.outdoorAmbient, moment.ambient, moment.exposure)
-	local correction = effect("ColorCorrectionEffect", "ColorCorrection")
-	correction.Saturation = AmbienceConfig.ColorCorrection.Saturation
-	correction.Contrast = AmbienceConfig.ColorCorrection.Contrast
-	correction.TintColor = rgb(AmbienceConfig.ColorCorrection.TintColor)
-	effect("BloomEffect", "Bloom").Intensity = AmbienceConfig.Bloom.Intensity
-	local atmosphere = effect("Atmosphere", "Atmosphere")
-	local forest = AmbienceConfig.Fog.Forest
-	atmosphere.Density = forest.density
-	atmosphere.Haze = forest.haze
-	atmosphere.Color = rgb(forest.color)
+	Lighting.ClockTime = moment.clockFrom
+	Lighting.Brightness = moment.brightness
+	Lighting.OutdoorAmbient = rgb(moment.outdoorAmbient)
+	Lighting.Ambient = rgb(moment.ambient)
+	Lighting.ExposureCompensation = moment.exposure
+	effect(Lighting, "BloomEffect", "Bloom").Intensity = AmbienceConfig.Bloom.Intensity
 else
-	local day = AmbienceConfig.EditorDay
-	apply(day.clock, day.brightness, day.outdoorAmbient, day.ambient, day.exposure)
-	for _, name in { "ColorCorrection", "Bloom", "Atmosphere" } do
-		local child = Lighting:FindFirstChild(name)
-		if child then
-			child:Destroy()
-		end
+	Lighting.ClockTime = editor.clock
+	Lighting.Brightness = editor.brightness
+	Lighting.OutdoorAmbient = rgb(editor.outdoorAmbient)
+	Lighting.Ambient = rgb(editor.ambient)
+	Lighting.ExposureCompensation = editor.exposure
+	local bloom = Lighting:FindFirstChild("Bloom")
+	if bloom then
+		bloom:Destroy()
 	end
 end
+Lighting.GlobalShadows = editor.globalShadows
+Lighting.EnvironmentDiffuseScale = editor.environmentDiffuseScale
+Lighting.EnvironmentSpecularScale = editor.environmentSpecularScale
+
+-- nuages couverts sous Terrain
+local clouds = effect(workspace.Terrain, "Clouds", "Clouds")
+clouds.Cover = editor.clouds.cover
+clouds.Density = editor.clouds.density
+clouds.Color = rgb(editor.clouds.color)
+
+-- ciel réaliste à la place du ciel par défaut
+local sky = effect(Lighting, "Sky", "Sky")
+for face, id in SKY do
+	sky[face] = "rbxassetid://" .. id
+end
+sky.CelestialBodiesShown = false
+sky.StarCount = 0
 print("ApplyLighting : " .. MODE)

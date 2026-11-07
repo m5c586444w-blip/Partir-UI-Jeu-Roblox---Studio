@@ -123,15 +123,19 @@ AmbienceConfig.Reverb = {
 	ForbiddenZone = "Plain",
 }
 
--- DÉFAUT (Gabriel, 2026-11-07) : la place enregistrée reste en plein jour neutre pour l'édition ; l'ambiance de 12 est posée
--- au lancement par AmbienceController. editorDay = réglage d'édition ; captureNight = index du moment de 12.1 utilisé par
--- tools/studio/ApplyLighting.luau pour les captures de nuit (Fin d'enquête).
-AmbienceConfig.EditorDay = {
+-- DÉFAUT (Gabriel, 2026-11-07) : éclairage d'ÉDITION de la place (tools/studio/ApplyLighting.luau). Jour lisible, rendu
+-- réaliste ; en partie, AmbienceController garde la main (moments, brouillard par zone, météo, nuit) et retire le ciel
+-- d'édition. CaptureNightMoment = index du moment de 12.1 utilisé par ApplyLighting en mode « Night » (captures).
+AmbienceConfig.Editor = {
 	clock = 14,
 	brightness = 3,
-	outdoorAmbient = { 127, 127, 127 },
-	ambient = { 70, 70, 70 },
+	outdoorAmbient = { 90, 95, 100 },
+	ambient = { 10, 12, 14 }, -- très bas : l'ombre doit rester profonde
 	exposure = 0,
+	globalShadows = true,
+	environmentDiffuseScale = 1,
+	environmentSpecularScale = 1,
+	clouds = { cover = 0.85, density = 0.6, color = { 205, 208, 214 } }, -- ciel couvert (objet Clouds sous Terrain)
 }
 AmbienceConfig.CaptureNightMoment = 2
 

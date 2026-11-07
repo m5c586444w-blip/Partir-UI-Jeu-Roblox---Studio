@@ -295,7 +295,7 @@ MapConfig.Biomes = {
 	},
 	MixedForest = {
 		default = true,
-		materials = { "Grass", "Ground" },
+		materials = { "LeafyGrass", "Ground" }, -- DÉFAUT (Gabriel, 2026-11-07) : forêt = LeafyGrass + Ground par taches
 		treesPer10k = 6,
 		trees = { "Tree_DouglasFir" },
 		undergrowth = { "Fern", "Shrub" },
@@ -323,7 +323,7 @@ MapConfig.Biomes = {
 	},
 	ForbiddenZone = {
 		places = { "P08" },
-		materials = { "Sand", "Ground" },
+		materials = { "Sand", "Ground", "Rock" }, -- DÉFAUT (Gabriel, 2026-11-07) : cendre + terre + roche
 		treesPer10k = 0,
 		snagsPer10k = 4,
 		fallenPer10k = 6,
@@ -408,6 +408,36 @@ MapConfig.Terrain = {
 	RoadPinRadius = 60,
 	-- 3.2 : tolérance de position des lieux (studs), pour le contrôle TerrainBuilder.Measure
 	PlaceTolerance = 5,
+	-- DÉFAUT (réponse de Gabriel, 2026-11-07) : teintes sombres et désaturées (forêt humide du Nord-Ouest américain),
+	-- appliquées par Terrain:SetMaterialColor ; Sand garde AshColor (3.6)
+	Tints = {
+		Grass = "#7E8A72",
+		LeafyGrass = "#7F8A76",
+		Ground = "#8A857E",
+		Mud = "#7C776F",
+		Rock = "#8F8F8C",
+		Basalt = "#8A8A8E",
+	},
+	-- DÉFAUT (Gabriel, 2026-11-07) : relief et peinture du sol
+	-- couches de bruit ajoutées au relief (grandes ondulations, collines, petites bosses) ; les lieux de 3.2 restent à ±5
+	RoughLayers = {
+		{ period = 900, amplitude = 24, seed = 11 },
+		{ period = 320, amplitude = 14, seed = 12 },
+		{ period = 70, amplitude = 2.5, seed = 13 },
+	},
+	PatchSize = 45, -- taille des taches de matériaux (30 à 60 studs)
+	RockyMixSlope = 25, -- degrés : de là à CliffSlopeDegrees, Ground mêlé de Rock
+	MudBand = 6, -- largeur des berges de boue de chaque côté d'un cours d'eau (studs)
+	-- parois de gorge irrégulières : décalage de la distance au centre (amplitude et échelle du bruit, studs)
+	GorgeWallNoise = 6,
+	GorgeWallNoiseScale = 35,
+	GorgeNarrowWobble = 0.3, -- part de la demi-largeur : décalage maximal des parois des passages étroits (P05s)
+	PaintSeeds = { gorgeWall = 5, cliff = 3, slope = 5, biome = 7 }, -- décalages de graine du bruit de peinture
+	PatchContrast = 0.9, -- contraste du bruit de taches
+	PatchMid = 0.5,
+	PatchMax = 0.999,
+	BasaltShareAbove = 0.55, -- falaises : Basalt au-dessus de cette valeur de bruit, sinon Rock
+	GroundShareAbove = 0.5, -- pentes de 25 à 40° : Ground au-dessus de cette valeur de bruit, sinon Rock
 	GorgeMinWallDegrees = 60,
 	-- DÉFAUT (géométrie) : le resserrement de P05s se fait sur une longueur égale à la largeur du haut
 	GorgeNarrowTaperFactor = 1,
@@ -445,7 +475,7 @@ MapConfig.Terrain = {
 	WallHeight = 2000,
 	Materials = {
 		-- 3.6 : sol par biome (premier matériau) ; routes et sentiers (3.5)
-		Default = "Grass",
+		Default = "Ground", -- pentes de 25 à 40° : Ground mêlé de Rock
 		Cliff = "Rock",
 		GorgeCliff = "Basalt",
 		Road = "Asphalt",

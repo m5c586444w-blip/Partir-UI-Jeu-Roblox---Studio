@@ -1,27 +1,29 @@
--- tools/studio/ApplyTerrainMaterials (hors projets Rojo) — recrée les MaterialVariant du terrain (13.4)
--- À lancer dans la Partie (barre de commande ou outil MCP, contexte Édition) : crée ou met à jour les variantes de
--- MaterialService et les associe aux matériaux de terrain. Textures Poly Haven CC0 (1 024 px, couleur / normale /
--- rugosité) téléversées le 2026-11-07 depuis assets/terrain/ ; sources et licences : ReplicatedStorage/Credits.
--- Les identifiants sont ceux renvoyés par l'envoi ; ils appartiennent au compte qui a téléversé les images.
+-- tools/studio/ApplyTerrainMaterials (hors projets Rojo) — recrée les MaterialVariant du terrain (13.4) et les teintes
+-- À lancer dans la Partie (barre de commande ou outil MCP, contexte Édition). Une texture PBR Poly Haven (CC0, 1 024 px :
+-- couleur, normale, rugosité) par matériau de terrain ; sources et licences : ReplicatedStorage/Credits, fichiers dans
+-- assets/terrain/. Les identifiants sont ceux renvoyés par l'envoi du 2026-11-07 (compte qui a téléversé les images).
+-- Un MaterialVariant doit avoir le même matériau de base que le matériau qu'il remplace : une variante par matériau.
 
 local MaterialService = game:GetService("MaterialService")
+local MapConfig = require(game:GetService("ReplicatedStorage").Config.MapConfig)
 
 local TILE = 30 -- constante (studs par tuile de texture, DÉFAUT du 2026-11-07)
-local TILE_GROUND = 48 -- constante (herbe et sols de forêt : tuiles plus grandes, le quadrillage se voit de loin)
+local TILE_GROUND = 48 -- constante (sols d'herbe et de forêt : tuiles plus grandes, le quadrillage se voit de loin)
 
 -- nom de la variante = { matériau de base, couleur, normale, rugosité }
 local VARIANTS = {
-	PF_Ground = { Enum.Material.Ground, 109245734977514, 86039605845052, 72840541166694 }, -- Forest Ground 01
-	PF_LeafyGrass = { Enum.Material.LeafyGrass, 89404280888803, 127598096126730, 76382098325593 }, -- Forest Floor
-	PF_Grass = { Enum.Material.Grass, 89404280888803, 127598096126730, 76382098325593 }, -- DÉFAUT : Forest Floor
+	PF_LeafyGrass = { Enum.Material.LeafyGrass, 124168886532888, 96914400027905, 114963976285212 }, -- Forest Ground 03 (aiguilles, feuilles)
+	PF_Grass = { Enum.Material.Grass, 113465666955005, 76264927084395, 127390191584644 }, -- Leafy Grass (prairie)
+	PF_Ground = { Enum.Material.Ground, 121479777950608, 109721597947101, 106483111108966 }, -- Brown Mud Dry (terre)
 	PF_Mud = { Enum.Material.Mud, 114832597009649, 94221255311704, 123616034213106 }, -- Mud Forest
-	PF_MuddyTracks = { Enum.Material.Mud, 83719219601931, 110820452256959, 105533623514053 }, -- Muddy Tracks
+	PF_MuddyTracks = { Enum.Material.Mud, 83719219601931, 110820452256959, 105533623514053 }, -- Muddy Tracks (disponible)
 	PF_Rock = { Enum.Material.Rock, 138983756842743, 134786768170619, 114950488225100 }, -- Rock Pitted Mossy
-	PF_Basalt = { Enum.Material.Basalt, 138983756842743, 134786768170619, 114950488225100 }, -- Rock Pitted Mossy (un matériau de base par variante)
-	PF_Sand = { Enum.Material.Sand, 121732491769634, 93330635692484, 86038684208427 }, -- Brown Mud 03 : couleur passée en gris neutre (assets/terrain/ash_gray, moyenne 0,87) pour que AshColor (#7A7670) donne la cendre de 3.6
+	PF_Basalt = { Enum.Material.Basalt, 116309104997137, 105660698607364, 72483149639042 }, -- Dark Rock (basalte sombre)
+	-- Burned Ground 01 : couleur passée en gris neutre (assets/terrain/ash_gray) pour que AshColor (#7A7670) donne la cendre de 3.6
+	PF_Sand = { Enum.Material.Sand, 92965341258568, 128216929274994, 122275822330630 },
 }
 
--- matériau de terrain → variante (PF_MuddyTracks reste disponible, sans remplacer Mud)
+-- matériau de terrain → variante (PF_MuddyTracks ne remplace rien)
 local OVERRIDES = {
 	Grass = "PF_Grass",
 	Ground = "PF_Ground",
@@ -54,4 +56,9 @@ end
 for material, name in OVERRIDES do
 	MaterialService:SetBaseMaterialOverride(Enum.Material[material], name)
 end
-print("ApplyTerrainMaterials : variantes et remplacements appliqués")
+-- teintes sombres et désaturées (MapConfig.Terrain.Tints) ; Sand : AshColor
+for material, hex in MapConfig.Terrain.Tints do
+	workspace.Terrain:SetMaterialColor(Enum.Material[material], Color3.fromHex(hex))
+end
+workspace.Terrain:SetMaterialColor(Enum.Material.Sand, MapConfig.Terrain.Materials.AshColor)
+print("ApplyTerrainMaterials : variantes, remplacements et teintes appliqués")

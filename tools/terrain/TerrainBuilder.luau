@@ -154,13 +154,22 @@ local function stamp(center, halfWidth, blend, target, mat)
 	end
 end
 
+-- 4. relief : couches de bruit supplémentaires (MapConfig.Terrain.RoughLayers)
+local function roughness(x, z)
+	local total = 0
+	for _, layer in T.RoughLayers do
+		total += math.noise(x / layer.period, z / layer.period, T.Seed + layer.seed) * layer.amplitude
+	end
+	return total
+end
+
 local function buildHeights()
 	for i = 1, N do
 		height[i], material[i], water[i] = {}, {}, {}
 		local x = toWorld(i)
 		for j = 1, N do
 			local z = toWorld(j)
-			height[i][j] = anchors(x, z, baseHeight(x, z)) + noise(x, z)
+			height[i][j] = anchors(x, z, baseHeight(x, z)) + noise(x, z) + roughness(x, z)
 		end
 		if i % 64 == 0 then -- constante (pause pour ne pas figer Studio)
 			task.wait()
@@ -173,9 +182,14 @@ end
 local function carveGorge(center, top, bottom, rimY, depth, mat)
 	local floor = rimY - depth
 	local halfTop, halfBottom = top / 2, math.min(bottom, top) / 2
-	for i = toCell(center.X - halfTop), toCell(center.X + halfTop) do
-		for j = toCell(center.Y - halfTop), toCell(center.Y + halfTop) do
-			local d = (Vector2.new(toWorld(i), toWorld(j)) - center).Magnitude
+	-- parois irrégulières : la distance au centre est décalée par un bruit (faible pour les passages étroits, P05s)
+	local wobble = math.min(T.GorgeWallNoise, halfTop * T.GorgeNarrowWobble)
+	local reach = halfTop + wobble
+	for i = toCell(center.X - reach), toCell(center.X + reach) do
+		for j = toCell(center.Y - reach), toCell(center.Y + reach) do
+			local x, z = toWorld(i), toWorld(j)
+			local n = math.noise(x / T.GorgeWallNoiseScale, z / T.GorgeWallNoiseScale, T.Seed + T.PaintSeeds.gorgeWall)
+			local d = (Vector2.new(x, z) - center).Magnitude - n * wobble * 2
 			if d <= halfTop then
 				local h = floor
 				if d > halfBottom and halfTop > halfBottom then
@@ -285,15 +299,29 @@ local function buildRivers()
 	for _, path in MapConfig.Paths do
 		if path.kind == "River" then
 			local samples = samplePath(path, CELL)
+			-- hauteurs du sol lues avant de creuser : sinon chaque point creuse sous le précédent, en cascade (lit sous le socle)
+			local ground = {}
+			for k, p in samples do
+				ground[k] = getH(p.X, p.Y)
+			end
 			local bed = math.huge
 			for k, p in samples do
 				local w = widthAt(path, (k - 1) / math.max(1, #samples - 1))
 				local depth = T.RiverDepthFactor * w + T.RiverDepthBase
-				bed = math.min(bed, getH(p.X, p.Y) - depth)
-				stamp(p, w / 2, w * T.RiverBlendFactor, bed, "Ground")
+				bed = math.min(bed, ground[k] - depth)
+				stamp(p, w / 2, w * T.RiverBlendFactor, bed, "Mud")
 				for i = toCell(p.X - w / 2), toCell(p.X + w / 2) do
 					for j = toCell(p.Y - w / 2), toCell(p.Y + w / 2) do
 						water[i][j] = bed + depth -- 8. eau du terrain
+					end
+				end
+				-- berges de boue : bande de MudBand studs de chaque côté du cours d'eau
+				local reach = w / 2 + T.MudBand
+				for i = toCell(p.X - reach), toCell(p.X + reach) do
+					for j = toCell(p.Y - reach), toCell(p.Y + reach) do
+						if (Vector2.new(toWorld(i), toWorld(j)) - p).Magnitude <= reach and not material[i][j] then
+							material[i][j] = "Mud"
+						end
 					end
 				end
 			end
@@ -419,15 +447,22 @@ local function buildLakes()
 	end
 end
 
--- 7. matériau d'une colonne : pente > 40° = Rock (Basalt dans les gorges), puis biome (3.6)
-local function biomeMaterial(x, z)
-	for _, biome in MapConfig.Biomes do
+-- 7. biome d'une colonne (nom), d'après les lieux de MapConfig.Biomes ; sinon le biome par défaut
+local defaultBiome = "MixedForest"
+for name, biome in MapConfig.Biomes do
+	if biome.default then
+		defaultBiome = name
+	end
+end
+
+local function biomeAt(x, z)
+	for name, biome in MapConfig.Biomes do
 		for _, code in biome.places or {} do
 			local place = MapConfig.Places[code]
 			if place.zone then
 				local zz = place.zone
 				if x >= zz.minX and x <= zz.maxX and z >= zz.minZ and z <= zz.maxZ then
-					return biome.materials[1]
+					return name
 				end
 			elseif place.corridor then
 				local c = place.corridor
@@ -435,37 +470,56 @@ local function biomeMaterial(x, z)
 				local p = Vector2.new(x, z)
 				local t = math.clamp((p - a):Dot(b - a) / (b - a):Dot(b - a), 0, 1)
 				if (p - (a + (b - a) * t)).Magnitude <= c.width / 2 then
-					return biome.materials[1]
+					return name
 				end
 			elseif
 				place.pos
 				and place.radius
 				and (Vector2.new(x, z) - Vector2.new(place.pos.X, place.pos.Z)).Magnitude <= place.radius
 			then
-				return biome.materials[1]
+				return name
 			end
 		end
 	end
-	return T.Materials.Default
+	return defaultBiome
 end
 
+-- bruit de taches (deux octaves, taches de PatchSize studs environ), valeur dans [0, 1)
+local function patchValue(x, z, seed)
+	local n = math.noise(x / T.PatchSize, z / T.PatchSize, T.Seed + seed)
+		+ 0.5 * math.noise(x / (T.PatchSize / 2), z / (T.PatchSize / 2), T.Seed + seed + 1)
+	return math.clamp(n * T.PatchContrast + T.PatchMid, 0, T.PatchMax)
+end
+
+-- 7. matériau d'une colonne : pente > 40° = Rock ou Basalt ; 25–40° = Ground mêlé de Rock ; sinon mélange du biome par taches
 local function columnMaterial(i, j)
 	if material[i][j] then
 		return material[i][j]
 	end
+	local x, z = toWorld(i), toWorld(j)
 	local h = height[i][j]
 	local hx = height[math.min(N, i + 1)][j]
 	local hz = height[i][math.min(N, j + 1)]
 	local slope = math.deg(math.atan(math.max(math.abs(hx - h), math.abs(hz - h)) / CELL))
 	if slope > T.CliffSlopeDegrees then
-		return T.Materials.Cliff
+		return if patchValue(x, z, T.PaintSeeds.cliff) > T.BasaltShareAbove
+			then T.Materials.GorgeCliff
+			else T.Materials.Cliff
+	elseif slope > T.RockyMixSlope then
+		return if patchValue(x, z, T.PaintSeeds.slope) > T.GroundShareAbove
+			then T.Materials.Default
+			else T.Materials.Cliff
 	end
-	return biomeMaterial(toWorld(i), toWorld(j))
+	local list = MapConfig.Biomes[biomeAt(x, z)].materials
+	return list[math.floor(patchValue(x, z, T.PaintSeeds.biome) * #list) + 1]
 end
 
 -- écriture des voxels, bloc par bloc
 local function writeTerrain()
 	local terrain = workspace.Terrain
+	for tintMaterial, hex in T.Tints do -- teintes sombres et désaturées (DÉFAUT du 2026-11-07)
+		terrain:SetMaterialColor(Enum.Material[tintMaterial], Color3.fromHex(hex))
+	end
 	terrain:SetMaterialColor(Enum.Material.Sand, T.Materials.AshColor) -- Sand recoloré gris cendre (3.6)
 	local chunk = T.WriteChunk
 	for x0 = -HALF, HALF - 1, chunk do
@@ -770,15 +824,7 @@ function TerrainBuilder.Vegetation()
 			local folder = Instance.new("Folder")
 			folder.Name = ("Chunk_%d_%d"):format(cx // T.ChunkSize, cz // T.ChunkSize)
 			folder.Parent = root
-			local centerBiome = "MixedForest"
-			for name, biome in MapConfig.Biomes do
-				if
-					biome.materials[1] == biomeMaterial(cx + T.ChunkSize / 2, cz + T.ChunkSize / 2)
-					and not biome.default
-				then
-					centerBiome = name
-				end
-			end
+			local centerBiome = biomeAt(cx + T.ChunkSize / 2, cz + T.ChunkSize / 2)
 			local biome = MapConfig.Biomes[centerBiome]
 			local trees = biome.trees or {}
 			local amount = math.floor(biome.treesPer10k * cellArea / areaUnit)

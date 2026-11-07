@@ -15,12 +15,14 @@ API = "https://api.polyhaven.com"
 
 # 13.4 : matériau Roblox → texture Poly Haven (identifiants de l'API)
 TEXTURES = [
-    ("Ground", "Forest Ground 01", "forrest_ground_01"),
-    ("LeafyGrass", "Forest Floor", "forest_floor"),
+    ("LeafyGrass (sol de forêt : aiguilles et feuilles)", "Forest Ground 03", "forrest_ground_03"),
+    ("Grass (prairie)", "Leafy Grass", "leafy_grass"),
+    ("Ground (terre)", "Brown Mud Dry", "brown_mud_dry"),
     ("Mud", "Mud Forest", "mud_forest"),
-    ("Mud", "Muddy Tracks", "muddy_tracks"),
-    ("Rock / Basalt", "Rock Pitted Mossy", "rock_pitted_mossy"),
-    ("Sand (cendre)", "Brown Mud 03 (recoloré gris)", "brown_mud_03"),
+    ("Mud (pistes)", "Muddy Tracks", "muddy_tracks"),
+    ("Rock", "Rock Pitted Mossy", "rock_pitted_mossy"),
+    ("Basalt (sombre)", "Dark Rock", "dark_rock"),
+    ("Sand (cendre)", "Burned Ground 01 (recoloré gris)", "burned_ground_01"),
 ]
 MAPS = {"Diffuse": "color", "nor_gl": "normal", "Rough": "roughness"}
 RESOLUTION = "1k"
