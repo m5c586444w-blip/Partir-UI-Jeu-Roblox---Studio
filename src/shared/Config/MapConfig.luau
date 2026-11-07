@@ -403,7 +403,7 @@ MapConfig.Terrain = {
 	GorgeRimPinRadius = 60,
 	-- DÉFAUT : P03 est à ~200 studs du tracé de R2 ; son fond est une cuvette (largeur en haut / au fond, studs)
 	GorgeBasins = { P03 = { gorge = "LavaCanyon", top = 240, bottom = 60 } },
-	GorgeRimPinBlend = 120,
+	GorgeRimPinBlend = 300, -- DÉFAUT : raccord long, sinon le bord relevé forme un monticule (P05 : 330 → 400)
 	-- DÉFAUT (géométrie) : routes et sentiers prennent la hauteur du lieu qu'ils traversent à moins de ce rayon
 	RoadPinRadius = 60,
 	-- 3.2 : tolérance de position des lieux (studs), pour le contrôle TerrainBuilder.Measure
