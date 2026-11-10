@@ -131,6 +131,10 @@ local function sway(now)
 	local wind = workspace.GlobalWind
 	local flat = Vector3.new(wind.X, 0, wind.Z)
 	if flat.Magnitude == 0 or strongest == 0 then
+		-- Sans vent, les os reviennent à leur position de repos.
+		for tree in active do
+			rest(tree)
+		end
 		return
 	end
 	-- axe horizontal perpendiculaire au vent : l'arbre penche dans le sens du vent

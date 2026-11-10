@@ -13,6 +13,7 @@ local WeatherService = {}
 local services = nil
 local current = nil
 local random = nil
+local weatherRevision = 0 -- invalide les rafales en attente après un changement de météo
 
 local function draw()
 	local roll = random:NextNumber()
@@ -27,6 +28,7 @@ local function draw()
 end
 
 local function apply(id)
+	weatherRevision += 1
 	current = id
 	Util.getMatchState():SetAttribute("weather", id)
 	local wind = AmbienceConfig.Wind[id]
@@ -63,11 +65,18 @@ local function gustLoop()
 		elseif wind == nil or (wind.gust or 0) <= 0 or wind.gustIntervalMin == nil then
 			task.wait(AmbienceConfig.Wind.Clear.gustIntervalMin)
 		else
+			local revision = weatherRevision
 			task.wait(random:NextNumber(wind.gustIntervalMin, wind.gustIntervalMax))
-			local base = Vector3.new(table.unpack(wind.base))
-			workspace.GlobalWind = base + base.Unit * wind.gust
-			task.wait(AmbienceConfig.GustDuration)
-			workspace.GlobalWind = base
+			-- Une nouvelle météo invalide la rafale programmée avec l'ancienne.
+			if revision == weatherRevision then
+				local base = Vector3.new(table.unpack(wind.base))
+				workspace.GlobalWind = base + base.Unit * wind.gust
+				task.wait(AmbienceConfig.GustDuration)
+				-- Ne pas rétablir l'ancien vent si la météo change pendant la rafale.
+				if revision == weatherRevision then
+					workspace.GlobalWind = base
+				end
+			end
 		end
 	end
 end
