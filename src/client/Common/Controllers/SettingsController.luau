@@ -89,6 +89,12 @@ function SettingsController:Apply()
 		gore.ReducedGore = values.ReducedGore
 		gore.Preset = values.Preset
 	end
+	-- 12.4, 17.2, 17.3 : vent dans les arbres (Partie seulement)
+	local treeWind = controllers.TreeWindController
+	if treeWind then
+		treeWind.Enabled = values.TreeWind
+		treeWind.Preset = values.Preset
+	end
 	-- 17.3 : préréglage (profondeur de champ, flou lumineux)
 	local preset = ProgressionConfig.Presets[values.Preset]
 	local dof = Lighting:FindFirstChildOfClass("DepthOfFieldEffect")

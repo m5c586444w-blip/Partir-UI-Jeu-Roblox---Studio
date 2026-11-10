@@ -112,6 +112,16 @@ AmbienceConfig.WindSinePeriod = 12 -- période du cycle en sinus de la pluie (s)
 AmbienceConfig.WindSineStep = 0.5 -- pas de mise à jour du vent en sinus (s)
 AmbienceConfig.GustDuration = 1 -- durée d'une rafale (s)
 AmbienceConfig.TreeWindRange = 120 -- 12.4 : arbres animés par leurs os à moins de 120 studs (réglage Élevé)
+-- TreeWindController (16.2, ticket T02B) : la portée suit le préréglage (17.3 : Élevé 120 = TreeWindRange,
+-- Ultra 200, Bas et Moyen aucun, ProgressionConfig.Presets.animatedTrees) ; aucun arbre animé sur mobile (17.1).
+-- La bible ne donne ni amplitude, ni fréquence, ni plafond : valeurs visuelles, DÉFAUT PROPOSÉ (section 0).
+AmbienceConfig.TreeWind = {
+	ModelPrefix = "Tree_", -- DÉFAUT PROPOSÉ : arbres = modèles « Tree_* » (13.3) rangés dans Workspace/Vegetation (3.7)
+	MaxSwayDegrees = 3, -- DÉFAUT PROPOSÉ : inclinaison de chaque os au vent le plus fort de 12.4 (pluie + rafale)
+	Frequency = 0.25, -- DÉFAUT PROPOSÉ : balancements par seconde
+	MaxActiveTrees = 40, -- DÉFAUT PROPOSÉ : plafond d'arbres animés à la fois (les plus proches d'abord)
+	RescanInterval = 0.5, -- DÉFAUT PROPOSÉ : recherche des arbres proches toutes les 0,5 s
+}
 
 -- 12.5 : réverbération par zone (SoundService.AmbientReverb)
 AmbienceConfig.Reverb = {
