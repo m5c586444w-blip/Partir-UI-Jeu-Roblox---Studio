@@ -22,6 +22,25 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## Journal des sessions
 
+### 2026-11-10 — session cloud, tickets C1, T02B, T04B (branche `integration/2026-11-10`, depuis `d86b4ec`)
+- C1 : `docs/RECONCILIATION.md` (SUIVI contre `studio-export/wiki`, Config contre 3.2/3.7/12.4/17.3, stockage 16.4,
+  placements contre 3.2 : seul P09 en place, 9 lieux équipés hors ±5 (P10, P11, P15, P16, P17, P18, P24, P25, P26) ; `HauteurGlobale` contre 3.7 : graine 7.31
+  contre 1924, pas d'ancres ni de bruit fractal ; noms `TerrainSectors`, `S3_NordEst`/`S8_NordEst`, 13.3) ;
+  `Credits.luau` : 15 modèles Sketchfab « CC BY (version à relever) » + Rock 09 (CC0) ;
+  `docs/PROPOSITION_CLAUDE_MD.md` (CLAUDE.md non modifié).
+- T02B : `TreeWindController` (Partie, client) : os des arbres `Tree_*` de `Workspace/Vegetation`, portée du
+  préréglage (Élevé 120 = `TreeWindRange`, Ultra 200, 17.3), réglage TreeWind (17.2), aucun sur mobile (17.1),
+  `workspace.GlobalWind` ; arbre sans os ignoré. `AmbienceConfig.TreeWind` : 5 valeurs **DÉFAUT PROPOSÉ**
+  (préfixe, 3°, 0,25 Hz, 40 arbres, 0,5 s). `SettingsController.Apply` pousse Enabled et Preset.
+- T04B : `docs/ECARTS_INTERACTIFS.md` ; aucun changement de gameplay. Tronçonneuse absente de la bible 8 ;
+  aucune réaction physique aux impacts décrite.
+- Relecture : selene 0/0, 0 nombre hors Config, `check_ui.py` 0, `rojo build` des deux places vers un dossier
+  temporaire (pas `builds/`). StyLua : seul `Credits.luau` en écart (déjà le cas à `d86b4ec` : format sur une
+  ligne du générateur, conservé). Aucun test en jeu possible.
+- Laissé ouvert : questions de `RECONCILIATION.md` (D02, terrain de référence, nom du dossier de terrain,
+  10 textures non créditées, version CC BY, appareil photo EricKos/Ledger9o9) et de `ECARTS_INTERACTIFS.md`
+  (soins d'un coéquipier, objet lancé au sol, tronçonneuse, débris de 17.1). `HANDOFF.md` non modifié (hors ticket).
+
 ### 2026-11-07 (3) — session Studio, B1
 - Fait : plugin `roblox-path-plugin-main` déplacé dans `Plugins/_ancien/` (Gabriel : Team Create = son compte TheDarkArtist02). `TerrainBuilder` : écriture par tranches de `MapConfig.Terrain.WriteSlab` (512, DÉFAUT technique) après « Region is too large ». Objets au sol générés par script (voir DÉFAUT 2026-11-07).
 - B1, étape 8–9 (2026-11-07) : `TerrainBuilder.Build()` terminé dans la Partie. Contrôle du sol à ±5 studs du tableau 3.2 (rayon vertical sur le terrain) : 18 lieux conformes ; 8 écarts : P01 70 (attendu 120, asphalte), P03 98 (40), P05 358 (250, rebord au lieu du fond), P05c 254 (300), P05s 254 (330), P07a 94 (60), P07b 166 (30, sous terre), P11 382 (420). La plupart sont des gorges, grottes ou tours où le rayon touche le dessus : à vérifier à l'œil puis retoucher à la main ; P01 et P11 sont les plus probables à corriger.
