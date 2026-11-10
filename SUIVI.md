@@ -22,6 +22,24 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## Journal des sessions
 
+### 2026-11-10 (3) — session cloud, ticket C2 : crédits des textures (branche `integration/2026-11-10`, depuis `c734cb5`, rebasé sur `bdcac1b`)
+- `Credits.luau` : 10 textures Poly Haven appliquées dans Studio ajoutées (preuve : `studio-export/wiki/hot.md`,
+  ligne 31) : forrest_ground_01 (Grass), forest_floor (LeafyGrass), forest_ground_04 (Ground), brown_mud_03 (Mud),
+  river_small_rocks (Slate), rock_wall_02 (Rock), dry_riverbed_rock (Basalt), asphalt_02 (Asphalt),
+  gravel_ground_01 (Sand), large_pebbles (Cobblestone). Titre et auteur de 3 d'entre elles repris du `Credits.luau`
+  de `cb37b12` (écrit par l'API) ; les 7 autres : `name` = identifiant, auteur « non confirmé (à relever sur la
+  fiche) » (polyhaven.com bloqué depuis le cloud). Les 8 textures d'origine sont conservées, commentées « plus
+  appliquées dans Studio » (hot.md lignes 2 et 31). Fichier formaté par StyLua (plus aucun écart).
+- `tools/terrain/download_polyhaven.py` : `write_credits` fusionne par url (entrées et commentaires existants
+  conservés, ajout avant l'accolade fermante, StyLua à relancer ensuite). Testé sur une copie, sans réseau :
+  34 url avant, 35 après, 0 perdue ; 2e passage sans changement.
+- Relecture : StyLua 0 écart, selene 0/0, 0 nombre hors Config, `rojo build` des deux places vers un dossier
+  temporaire. Aucun test en jeu possible.
+- Laissé ouvert : auteurs et titres des 7 textures (à relever sur polyhaven.com) ; identifiant `forest_ground_04`
+  (la fiche s'écrit peut-être `forrest_ground_04`) ; `ash_gray` (couleur recolorée en local, pas une fiche Poly
+  Haven) et les 6 matériaux `PF_` générés par IA (hot.md ligne 25) non crédités ; question 4 de `RECONCILIATION.md`
+  (les 10 textures remplacent-elles les 8 ?) à confirmer par Gabriel.
+
 ### 2026-11-10 (2) — session cloud, ticket C3 (branche `integration/2026-11-10`, depuis `c734cb5`)
 - VENT01 (`5c65548`) : diffs Codex appliqués tels quels (`git apply --check` OK). `WeatherService` : compteur
   `weatherRevision`, une rafale programmée avant un changement de météo est ignorée et ne rétablit pas l'ancien vent.

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Section 13.4 et 18.1 bis : télécharge les textures de terrain Poly Haven (CC0, sans compte) en 1 024
-(13.2 : 1 024 × 1 024 au plus) et écrit la liste des crédits (src/shared/Credits.luau, ReplicatedStorage/Credits).
+(13.2 : 1 024 × 1 024 au plus) et ajoute les crédits manquants à src/shared/Credits.luau
+(ReplicatedStorage/Credits), sans retirer
+les entrées existantes (fusion par url).
 
 Usage : python3 tools/terrain/download_polyhaven.py
 Sortie : assets/terrain/<id>/<id>_<carte>_1k.<ext> (couleur, normale GL, rugosité).
@@ -65,20 +67,48 @@ def main():
     write_credits(credits)
 
 
+CREDITS_PATH = os.path.join(ROOT, "src", "shared", "Credits.luau")
+HEADER = [
+    "-- ReplicatedStorage/Credits",
+    "-- Section 0, règle 4 : chaque asset importé est inscrit ici (nom, auteur, URL, licence).",
+    "-- Généré par tools/terrain/download_polyhaven.py ; compléter à chaque import (phase B).",
+]
+
+
+def credit_line(name, authors, url, license_, material):
+    return (
+        f'\t{{ name = "{name}", author = "{authors}", url = "{url}", license = "{license_}", '
+        f'usage = "Texture de terrain : {material}" }},'
+    )
+
+
 def write_credits(credits):
-    lines = [
-        "-- ReplicatedStorage/Credits",
-        "-- Section 0, règle 4 : chaque asset importé est inscrit ici (nom, auteur, URL, licence).",
-        "-- Généré par tools/terrain/download_polyhaven.py ; compléter à chaque import (phase B).",
-        "return {",
-    ]
+    """Fusion par url (ticket C2) : les entrées et commentaires déjà présents dans Credits.luau sont
+    conservés tels quels ; seules les textures dont l'url n'y figure pas encore sont ajoutées, juste
+    avant l'accolade fermante. Lancer StyLua ensuite (stylua src/shared/Credits.luau)."""
+    if os.path.exists(CREDITS_PATH):
+        with open(CREDITS_PATH, encoding="utf-8") as f:
+            text = f.read()
+    else:
+        text = "\n".join(HEADER + ["return {", "}"]) + "\n"
+    closing = text.rstrip().rfind("}")
+    if closing < 0:
+        raise SystemExit(f"accolade fermante introuvable dans {CREDITS_PATH} : fichier laissé tel quel")
+    added = []
     for name, authors, url, license_, material in credits:
-        lines.append(
-            f'\t{{ name = "{name}", author = "{authors}", url = "{url}", license = "{license_}", usage = "Texture de terrain : {material}" }},'
-        )
-    lines.append("}")
-    with open(os.path.join(ROOT, "src", "shared", "Credits.luau"), "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
+        # une url déjà citée (entre guillemets) garde son entrée existante, même modifiée à la main
+        if f'"{url}"' in text or url in added:
+            print(f"  déjà crédité, conservé : {url}")
+            continue
+        added.append(credit_line(name, authors, url, license_, material))
+    if not added:
+        print("Credits.luau inchangé")
+        return
+    head = text[:closing].rstrip("\n\t ")
+    text = head + "\n" + "\n".join(added) + "\n" + text[closing:]
+    with open(CREDITS_PATH, "w", encoding="utf-8") as f:
+        f.write(text if text.endswith("\n") else text + "\n")
+    print(f"Credits.luau : {len(added)} entrée(s) ajoutée(s)")
 
 
 if __name__ == "__main__":
