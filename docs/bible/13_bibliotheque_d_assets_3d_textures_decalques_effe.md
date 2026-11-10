@@ -116,7 +116,7 @@ Tout est à créer par Gabriel (ou en Blender), jamais à partir de photos réel
 | Portraits des rôles | Pas d'image : `Portrait` est un `ViewportFrame` qui affiche le modèle `Skin_A` du rôle | Claude Code |
 | Icon\_\<ID objet ou arme> | Phase A : icônes simples à traits blancs (SVG exporté en PNG 256 × 256), dessinées par script. Phase B : rendu des vrais modèles 3D sur fond transparent | A : Claude Code ; B : session Studio ou Gabriel |
 
-Aucune image du jeu ni des miniatures n'est produite par une IA générative d'images.
+**Modification du 9 novembre 2026 (décision de Gabriel) :** les images du jeu et des miniatures peuvent être produites par une IA générative d'images (ex. ChatGPT), à ces conditions : (1) Gabriel valide chaque image avant import ; (2) l'image est ajoutée à `ReplicatedStorage/Credits` (outil, date, « généré par IA ») ; (3) aucune image ne reproduit une personne réelle, un logo ou une œuvre existante ; (4) les textes affichés restent ceux de la section 2, écrits dans Studio ou par script, pas par l'IA ; (5) `Img_FearVignette` et les icônes restent faites par script. Claude Code ne génère pas d'images lui-même : il importe celles que Gabriel dépose dans `assets/images-ia/`.
 
 ### 13.6 Effets
 
