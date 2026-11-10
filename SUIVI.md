@@ -22,6 +22,17 @@ seulement pour que le code tourne : elle attend la bible.
 
 ## Journal des sessions
 
+### 2026-11-10 (2) — session cloud, ticket C3 (branche `integration/2026-11-10`, depuis `c734cb5`)
+- VENT01 (`5c65548`) : diffs Codex appliqués tels quels (`git apply --check` OK). `WeatherService` : compteur
+  `weatherRevision`, une rafale programmée avant un changement de météo est ignorée et ne rétablit pas l'ancien vent.
+  `TreeWindController` : sans vent, les os des arbres actifs reviennent au repos.
+- Bible 13.5 (`f8e4d35`) : ligne « Aucune image… IA générative » remplacée par la décision de Gabriel du 9 nov. 2026
+  (images IA sous 5 conditions, dépôt `assets/images-ia/`). `docs/bible/` régénéré, reconstitution identique.
+- Vérifications : selene 0/0/0, `check_values` 0, `check_ui` 0, `rojo build` des deux places OK (vers un dossier
+  temporaire, `builds/` non touché). `stylua --check` échoue sur `src/shared/Credits.luau` seul (lignes longues,
+  héritées de C1 `fe7697d`) ; les deux fichiers modifiés passent.
+- Laissé ouvert : formatage stylua de `Credits.luau` (hors ticket) ; dossier `assets/images-ia/` non créé (aucune image déposée).
+
 ### 2026-11-10 — session cloud, tickets C1, T02B, T04B (branche `integration/2026-11-10`, depuis `d86b4ec`)
 - C1 : `docs/RECONCILIATION.md` (SUIVI contre `studio-export/wiki`, Config contre 3.2/3.7/12.4/17.3, stockage 16.4,
   placements contre 3.2 : seul P09 en place, 9 lieux équipés hors ±5 (P10, P11, P15, P16, P17, P18, P24, P25, P26) ; `HauteurGlobale` contre 3.7 : graine 7.31
