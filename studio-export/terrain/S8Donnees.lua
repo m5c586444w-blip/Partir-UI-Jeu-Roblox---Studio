@@ -2,7 +2,7 @@
  Flanc du volcan : H + montee vers le nord, falaises en gradins (non gravissables), ravins, eboulis de cendre ; sentier de randonnee
  (ruine d'Ape Canyon -> crete (2800,-3000) -> boucle) ; ruisseau de fonte relie a la source de S3 (2690,-1950).
  D.Colonne(X,Z) -> h, genre, eau, gor, hum, sable. Coordonnees MONDE. ]]
-local H = require(script.Parent.HauteurGlobale)
+local H = require(script.Parent.HauteurEST) -- A1 : H + Alignement_EST.Delta
 local S3 = require(script.Parent.S3Donnees)
 local S7 = require(script.Parent.S7Donnees)
 local noise, Lisse, clamp, sqrt = math.noise, H.Lisse, math.clamp, math.sqrt
@@ -21,7 +21,7 @@ D.Cfg = {
 	Cascades = { {170,12},{330,12},{480,12},{900,10},{1080,10},{1260,10} }, -- {s depuis la jonction, chute}
 	Prof = 70, PenteMin = 0.0045, PenteMax = 0.12, Largeur = { Jonc = 12, Max = 18 },
 	Sentier = { Demi = 2.2, Fondu = 14, PenteMax = 0.33 }, -- axe 3,3..4,8 avec bords irreguliers
-	PtsSentier = { {2615,-1400},{2585,-1520},{2565,-1650},{2550,-1780},{2540,-1900},{2530,-2000},{2500,-2080},{2545,-2160},{2505,-2240},{2545,-2320},{2565,-2420},{2575,-2520},{2600,-2610},{2625,-2660},{2670,-2700},{2710,-2760},{2740,-2830},{2770,-2920},{2800,-3000} },
+	PtsSentier = { {2550,-1300},{2565,-1420},{2585,-1520},{2565,-1650},{2550,-1780},{2540,-1900},{2530,-2000},{2500,-2080},{2545,-2160},{2505,-2240},{2545,-2320},{2565,-2420},{2575,-2520},{2600,-2610},{2625,-2660},{2670,-2700},{2710,-2760},{2740,-2830},{2770,-2920},{2800,-3000} },
 	PtsBoucle = { {2740,-2830},{2790,-2790},{2870,-2800},{2920,-2880},{2905,-2980},{2845,-3050},{2800,-3000} },
 	Crete = { 2800, -3000 },
 }
@@ -253,12 +253,37 @@ local function profil(ch, depart)
 end
 D.Sentier = creerChemin(C.PtsSentier, 12, 6)
 D.Boucle = creerChemin(C.PtsBoucle, 12, 6)
-profil(D.Sentier, { 2615, -1400, S3.Cfg.Ruine.Y })
+profil(D.Sentier, { S3.Cfg.Ruine.X, S3.Cfg.Ruine.Z, S3.Cfg.Ruine.Y })
 -- pente limitee (aller puis retour)
 do
 	local Y, mx = D.Sentier.Y, C.Sentier.PenteMax
 	for i = 2, #Y do
 		local ds = D.Sentier.S[i] - D.Sentier.S[i - 1]
+		Y[i] = clamp(Y[i], Y[i - 1] - mx * ds, Y[i - 1] + mx * ds)
+	end
+end
+do -- A1 phase B : le premier troncon du sentier de crete (Z > -1380, hors boite S8) est pose par S3.Ruine : meme hauteur (plein jusqu'a Z=-1400, fondu sur 110 studs)
+	local Y, R = D.Sentier.Y, S3.Ruine
+	for i = 1, #D.Sentier.P do
+		local x, z = D.Sentier.P[i][1], D.Sentier.P[i][2]
+		local w = 1 - Lisse((-1400 - z) / 110)
+		if w > 0 then
+			local d, j, f = S3.Proche(R, x, z, nil)
+			Y[i] += (R.Y[j] + (R.Y[j + 1] - R.Y[j]) * f - Y[i]) * w
+		end
+	end
+end
+do -- A1 phase B : croisement avec la branche P05 de T1 (S3.P05) : meme hauteur a l'intersection (fondu de 70 studs le long du sentier de crete)
+	local Y, S = D.Sentier.Y, D.Sentier.S
+	local bd, bi, by = 1e18, 1, 0
+	for i = 1, #D.Sentier.P do
+		local d, j, f = S3.Proche(S3.P05, D.Sentier.P[i][1], D.Sentier.P[i][2], nil)
+		if d < bd then bd, bi, by = d, i, S3.P05.Y[j] + (S3.P05.Y[j + 1] - S3.P05.Y[j]) * f end
+	end
+	for i = 1, #Y do Y[i] += (by - Y[i]) * (1 - Lisse(math.abs(S[i] - S[bi]) / 70)) end
+	local mx = C.Sentier.PenteMax
+	for i = 2, #Y do
+		local ds = S[i] - S[i - 1]
 		Y[i] = clamp(Y[i], Y[i - 1] - mx * ds, Y[i - 1] + mx * ds)
 	end
 end
@@ -310,6 +335,9 @@ local function appliquer(ch, X, Z, h, genre)
 	return h, genre
 end
 
+-- P23 station meteo (bible 3.2) : plate-forme Y=560, rayon 12
+C.Station = { X = 2400, Z = -3467, Y = 560, Demi = 12, Fondu = 45 }
+
 function D.Colonne(X, Z)
 	local h, genre, eau, gor, hum, sable
 	local R = C.Raccord
@@ -334,6 +362,12 @@ function D.Colonne(X, Z)
 			if wm > 0.5 then genre, eau, gor, hum, sable = g2, e2, o2, hu2, sa2 end
 			if eau and h >= eau - 0.3 then eau = nil end
 		end
+	end
+	local St = C.Station
+	local dS = sqrt((X - St.X) ^ 2 + (Z - St.Z) ^ 2)
+	if dS < St.Demi + St.Fondu then
+		h += (St.Y - h) * (1 - Lisse((dS - St.Demi) / St.Fondu))
+		if dS <= St.Demi then genre = "aire" end
 	end
 	return h, genre, eau, gor, hum, sable
 end

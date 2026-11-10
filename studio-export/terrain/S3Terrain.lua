@@ -10,7 +10,7 @@ local M = {}
 local N = 256
 M.NbX = math.ceil((C.XMax - C.XMin) / N)
 M.NbZ = math.ceil((C.ZMax - C.ZMin) / N)
-local YBAS, YHAUT = -40, 640
+local YBAS, YHAUT = -40, 720
 
 -- vide la boite d'un chunk (air), toute hauteur
 function M.NettoyerChunk(cx, cz)
@@ -80,6 +80,7 @@ function M.Construire(cx, cz)
 		end
 		Ms[ix], Os[ix] = Mx, Ox
 	end
+	if y0 > -40 then T:FillBlock(CFrame.new(x0 + 2 * nx, (-40 + y0) / 2, z0 + 2 * nz), Vector3.new(4 * nx, y0 - -40, 4 * nz), Mat.Slate) end -- A1 : socle plein sous la bande ecrite
 	T:WriteVoxels(Region3.new(Vector3.new(x0, y0, z0), Vector3.new(x0 + 4 * nx, y0 + 4 * ny, z0 + 4 * nz)), 4, Ms, Os)
 end
 

@@ -10,7 +10,15 @@ local M = {}
 local N = 256
 M.NbChunks = math.ceil((C.XMax - C.XMin) / N)
 
-function M.Nettoyer() workspace.Terrain:Clear() end
+function M.NettoyerChunk(cx, cz) -- A1 : vide la boite d'un chunk (jamais Terrain:Clear)
+	local x0, z0 = C.XMin + cx * N, C.ZMin + cz * N
+	local lx, lz = math.min(N, C.XMax - x0), math.min(N, C.ZMax - z0)
+	if lx <= 0 or lz <= 0 then return end
+	workspace.Terrain:FillBlock(CFrame.new(x0 + lx / 2, 340, z0 + lz / 2), Vector3.new(lx, 760, lz), Mat.Air)
+end
+function M.Nettoyer()
+	for cx = 0, M.NbChunks - 1 do for cz = 0, M.NbChunks - 1 do M.NettoyerChunk(cx, cz) end task.wait() end
+end
 
 function M.Construire(cx, cz)
 	local T = workspace.Terrain
@@ -66,6 +74,7 @@ function M.Construire(cx, cz)
 		end
 		Ms[ix], Os[ix] = Mx, Ox
 	end
+	if y0 > -40 then T:FillBlock(CFrame.new(x0 + 2 * nx, (-40 + y0) / 2, z0 + 2 * nz), Vector3.new(4 * nx, y0 - -40, 4 * nz), Mat.Slate) end -- A1 : socle plein sous la bande ecrite
 	T:WriteVoxels(Region3.new(Vector3.new(x0, y0, z0), Vector3.new(x0 + 4 * nx, y0 + 4 * ny, z0 + 4 * nz)), 4, Ms, Os)
 end
 

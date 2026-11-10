@@ -1,3 +1,5 @@
+2026-11-10 : décision de Gabriel. La coordinatrice (session Claude PISTE FROIDE) décide de l'ordre des tâches et rédige les prompts. Cette session est opérateur Studio exclusif et exécute les tickets.
+
 # État actuel (08/11/2026)
 - Place Partie cloud (103506696801797) **vidée le 08/11 à la demande de Gabriel** (1 654 éléments : ancien projet scripts, StarterGui, 8 matériaux PF_, Places, terrain effacé). Garde : Workspace.Camera, Terrain (vide), Lighting.
 - Le squelette du jalon 1 (22/10) n'existait plus dans la place : à reconstruire (Config, Shared, Demarrage) si on le veut.
@@ -41,3 +43,8 @@
 
 ## Phase de polissage (demandée par Gabriel, 08/11)
 - Brief prêt : `wiki/BRIEF_POLISSAGE.md` (eau variée, mares, micro-relief, transitions de matériaux, détails de lieux ; 1 agent Textures + 4 agents régions EST/CENTRE/OUEST/NORD-OUEST). À lancer APRÈS les rapports de S2, S6 (raccords S5/S4), S8 (couloir S3) et l'agent de raccords S1/S4/S5, pour ne pas polir des zones encore modifiées.
+
+## Export au dépôt GitHub et renommage (10/11/2026)
+- Branche `studio/local-2026-11-07` du dépôt `m5c586444w-blip/Partir-UI-Jeu-Roblox---Studio` : `fe35644` poussé par Gabriel, puis commit `d86b4ec` (export Studio : 18 modules de terrain vérifiés par somme de contrôle, wiki, `studio-export/placements.md`). Aucun fichier de src/ ni builds/ touché.
+- Dans Studio, `ServerStorage/TerrainBuilder` (Folder) est renommé **`ServerStorage/TerrainSectors`** pour éviter la collision avec le ModuleScript `TerrainBuilder` du dépôt Rojo. Les pages wiki et briefs qui disent « ServerStorage/TerrainBuilder » désignent désormais `TerrainSectors` ; les modules s'appellent entre eux par `script.Parent`, donc rien n'est cassé.
+- Les agents de polissage et de raccords sont stoppés (limite d'usage) ; à relancer sur commande de Gabriel.

@@ -1,3 +1,5 @@
+2026-11-10 : décision de Gabriel. La coordinatrice (session Claude PISTE FROIDE) décide de l'ordre des tâches et rédige les prompts. Cette session est opérateur Studio exclusif et exécute les tickets.
+
 # Décisions
 
 ## De Gabriel

@@ -15,7 +15,7 @@ local Z_ = {
 M.Zones = Z_
 M.Nb = {}
 for k, z in pairs(Z_) do M.Nb[k] = { math.ceil((z.X1 - z.X0) / N), math.ceil((z.Z1 - z.Z0) / N) } end
-local YBAS, YHAUT = 100, 1000
+local YBAS, YHAUT = 100, 1100
 
 function M.Nettoyer(zone)
 	for k, z in pairs(Z_) do
@@ -85,6 +85,7 @@ function M.Construire(zone, cx, cz)
 		end
 		Ms[ix], Os[ix] = Mx, Ox
 	end
+	if y0 > 100 then T:FillBlock(CFrame.new(x0 + 2 * nx, (100 + y0) / 2, z0 + 2 * nz), Vector3.new(4 * nx, y0 - 100, 4 * nz), Mat.Slate) end -- A1 : socle plein sous la bande ecrite
 	T:WriteVoxels(Region3.new(Vector3.new(x0, y0, z0), Vector3.new(x0 + 4 * nx, y0 + 4 * ny, z0 + 4 * nz)), 4, Ms, Os)
 end
 
